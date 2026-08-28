@@ -1,0 +1,21 @@
+import { useGameStore } from './store';
+import ConfigScreen from './ConfigScreen';
+import GameplayScreen from './GameplayScreen';
+
+/**
+ * Root Application Component.
+ *
+ * Manages view routing between the Setup Configuration screen and the Active Gameplay screen
+ * based on the `isPlaying` state in the Zustand store.
+ */
+function App() {
+  const isPlaying = useGameStore((state) => state.isPlaying);
+
+  return (
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      {!isPlaying ? <ConfigScreen /> : <GameplayScreen />}
+    </div>
+  );
+}
+
+export default App;
