@@ -81,10 +81,11 @@ interface GameState {
   endGame: () => void;
   
   /**
-   * Manually reveals the top card of the draw pile by setting `isRevealed: true`. 
+   * Manually reveals specific cards in the draw pile by setting `isRevealed: true`. 
    * This state persists until the card is drawn or the pile is shuffled.
+   * @param indices Array of indices in the draw pile to reveal.
    */
-  revealTopCard: () => void;
+  revealCards: (indices: number[]) => void;
   
   /**
    * Shuffles the remaining cards in the active draw pile.
@@ -120,8 +121,9 @@ interface GameState {
    *
    * @param newDrawPile - The new ordered list of cards in the Draw Pile
    * @param newDiscardPile - The new ordered list of cards in the Discard Pile
+   * @returns true if the operation was successful, false if validation failed
    */
-  setPiles: (newDrawPile: Card[], newDiscardPile: Card[]) => void;
+  setPiles: (newDrawPile: Card[], newDiscardPile: Card[]) => boolean;
 }
 
 /**
@@ -229,11 +231,15 @@ export const useGameStore = create<GameState>()(
         });
       },
 
-      revealTopCard: () => {
+      revealCards: (indices: number[]) => {
         const state = get();
         if (state.drawPile.length > 0) {
           const newDrawPile = [...state.drawPile];
-          newDrawPile[0] = { ...newDrawPile[0], isRevealed: true };
+          indices.forEach(index => {
+            if (index >= 0 && index < newDrawPile.length) {
+              newDrawPile[index] = { ...newDrawPile[index], isRevealed: true };
+            }
+          });
           set({ drawPile: newDrawPile });
         }
       },
@@ -304,13 +310,14 @@ export const useGameStore = create<GameState>()(
         const newTotal = newDrawPile.length + newDiscardPile.length;
         if (currentTotal !== newTotal) {
           console.warn('Cheating detected: card count mismatch');
-          return;
+          return false;
         }
         
         newDiscardPile = newDiscardPile.map(c => ({ ...c, isRevealed: true }));
         newDrawPile = applyVisibility(newDrawPile, state.visibilityOption);
 
         set({ drawPile: newDrawPile, discardPile: newDiscardPile });
+        return true;
       },
     }),
     {

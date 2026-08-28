@@ -31,9 +31,9 @@ Decks are constructed according to official Aeon's End rules:
 - **Discard Pile (Top):** Horizontal scrolling display showing up to 6 previously played cards in the active round. All cards in the discard pile are rendered face-up with their official artwork (`isRevealed: true`).
 - **Current Turn (Center):** Prominent display featuring official game artwork for the active card face (Player 1–4, Nemesis, or Wild), with a clear decision banner for Wild turns. The active turn is directly represented by the top card of the discard pile (`discardPile[discardPile.length - 1]`), rather than a separate disconnected state, enabling it to be moved or rearranged manually if needed.
 - **Custom Actions (Middle):** Dedicated button opening a modal for mid-round deck manipulation:
-  - **Shuffle Draw Pile:** Re-shuffles remaining unplayed cards in the draw pile while preserving consecutive Nemesis rules (gracefully disabled when 1 or 0 cards remain). Resets individual reveal states and re-applies the configured visibility setting.
-  - **Move Cards (Edit Mode):** Enters an inline, interactive drag-and-drop Edit Mode to freely rearrange cards within or across the Draw Pile and Discard Pile.
-  - **Reveal Top Card:** Manually reveals the top card of the draw pile.
+  - **Shuffle Draw Pile:** Re-shuffles remaining unplayed cards in the draw pile while preserving consecutive Nemesis rules (gracefully disabled when 1 or 0 cards remain). Resets individual reveal states and re-applies the configured visibility setting. Displays a success notification upon completion.
+  - **Move Cards (Edit Mode):** Enters an inline, interactive drag-and-drop Edit Mode to freely rearrange cards within or across the Draw Pile and Discard Pile. Displays a notification upon successful or failed save.
+  - **Reveal Cards from Draw Pile:** Opens a visual selection modal displaying the current draw pile cards, allowing users to select specific card(s) to reveal or cancel without modifying card visibility. Displays a success notification upon completion.
 - **Draw Queue (Bottom):** Horizontal queue showing upcoming cards. Face orientation (face-up artwork vs card back) is governed directly and solely by each card's `isRevealed` property, populated dynamically based on the configured visibility option or manual reveals.
 - **Next Turn / New Round:** Large, thumb-friendly tap target to advance turns or seamlessly shuffle a new deck for the next round. When a card is drawn, it is moved to the discard pile with `isRevealed: true`.
 - **End Game Control:** Reset the session and return to configuration at any time.
@@ -47,9 +47,9 @@ Supports card abilities, player relics/spells, and Nemesis effects that manipula
   - *Frozen Visibility State:* Cards maintain their snapshot face-up or face-down visual state (captured from each card's `isRevealed` status) while being dragged, and only re-evaluate visibility against game settings after saving.
   - *Consecutive Nemesis Exemption:* Manual card arrangements committed in Edit Mode are honored as intentional player choices (e.g. resolving card effects), bypassing automatic consecutive Nemesis prevention.
   - *State Integrity Validation:* Deck integrity checks prevent accidental card duplication or deletion by validating that the total card count across both piles is strictly preserved before saving.
-  - *Save & Cancel Controls:* "Save" commits the newly arranged piles to active game state (marking discard cards as `isRevealed: true` and applying visibility settings to draw pile cards); "Cancel" discards all local edits and reverts piles to their previous state without mutating gameplay.
-- **Shuffle Remaining Draw Pile:** Re-randomizes remaining cards in the active round's draw pile without modifying discarded cards or round progression, resetting reveals and re-applying visibility settings.
-- **Reveal Top Card:** Manually sets `isRevealed: true` on the top card of the draw pile. This revealed state persists even if the card is moved during Edit Mode, but is cleared when the card is drawn or if the deck is shuffled.
+  - *Save & Cancel Controls:* "Save" commits the newly arranged piles to active game state (marking discard cards as `isRevealed: true` and applying visibility settings to draw pile cards) and displays a success or error notification based on validation; "Cancel" discards all local edits and reverts piles to their previous state without mutating gameplay.
+- **Shuffle Remaining Draw Pile:** Re-randomizes remaining cards in the active round's draw pile without modifying discarded cards or round progression, resetting reveals and re-applying visibility settings. A success notification confirms the action.
+- **Reveal Cards from Draw Pile:** Opens an interactive visual modal allowing players to select any unrevealed cards in the draw pile to reveal (`isRevealed: true`) or cancel without making changes. Already revealed cards are indicated and disabled from selection. Revealed state persists even if cards are moved during Edit Mode, but is cleared when drawn or when the draw pile is shuffled. A success notification confirms the action.
 - **Dynamic Visibility Updates:** Revealed cards instantly update when cards are moved or shuffled according to the active visibility setting (*Current + Next* or *All following*).
 
 ### 6. Offline & Session Persistence
@@ -115,9 +115,9 @@ The core game state is managed via Zustand (`src/store.ts`) with client-side loc
 | `nextTurn()` | `() => void` | Advances turn or starts a new round when draw pile is exhausted, marking drawn cards with `isRevealed: true` |
 | `endGame()` | `() => void` | Resets game state and returns to setup screen |
 | `shuffleDrawPile()` | `() => void` | Re-shuffles remaining draw pile cards, clearing reveals and reapplying visibility settings |
-| `revealTopCard()` | `() => void` | Manually sets `isRevealed: true` on the top card of the draw pile until it is drawn or shuffled |
+| `revealCards(indices)` | `(indices: number[]) => void` | Manually sets `isRevealed: true` on the specified cards in the draw pile by index until drawn or shuffled |
 | `moveCard(source, id, dest, pos)` | `(source, id, dest, pos) => void` | Moves a card between Draw and Discard piles with placement options (`'top'`, `'bottom'`, `'shuffled'`), updating `isRevealed` accordingly |
-| `setPiles(newDrawPile, newDiscardPile)` | `(newDrawPile: Card[], newDiscardPile: Card[]) => void` | Commits validated draw and discard piles from Edit Mode, setting discard cards to `isRevealed: true` and applying visibility to draw pile |
+| `setPiles(newDrawPile, newDiscardPile)` | `(newDrawPile: Card[], newDiscardPile: Card[]) => boolean` | Commits validated draw and discard piles from Edit Mode, setting discard cards to `isRevealed: true` and applying visibility to draw pile, returning true on success and false on failure |
 
 ---
 

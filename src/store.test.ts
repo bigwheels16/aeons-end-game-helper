@@ -77,15 +77,16 @@ describe('useGameStore custom actions', () => {
     expect(state.drawPile.length).toBe(5);
   });
 
-  it('should reveal the top card of the draw pile', () => {
+  it('should reveal the specified cards of the draw pile', () => {
     const deck = generateDeck(1);
     useGameStore.setState({ drawPile: deck });
     
-    useGameStore.getState().revealTopCard();
+    useGameStore.getState().revealCards([0, 2]);
     
     const state = useGameStore.getState();
     expect(state.drawPile[0].isRevealed).toBe(true);
     expect(state.drawPile[1].isRevealed).toBeUndefined();
+    expect(state.drawPile[2].isRevealed).toBe(true);
   });
 
   it('should explicitly set isRevealed to true on the card when moving to discardPile in nextTurn', () => {

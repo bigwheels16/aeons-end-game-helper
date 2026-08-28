@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { useGameStore } from './store';
 import { CARD_BACK_URL } from './deckEngine';
 import { CustomActionsModal } from './CustomActionsModal';
@@ -34,7 +35,14 @@ const GameplayScreen: React.FC = () => {
     return (
       <EditModeController 
         onCancel={() => setIsEditMode(false)}
-        onSave={() => setIsEditMode(false)}
+        onSave={(success) => {
+          setIsEditMode(false);
+          if (success) {
+            toast.success('Cards have been moved!');
+          } else {
+            toast.error('Failed to move cards. Invalid operation.');
+          }
+        }}
       />
     );
   }

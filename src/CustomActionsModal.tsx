@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { useGameStore } from './store';
+import { RevealModal } from './RevealModal';
 
 /**
  * Properties for the CustomActionsModal component.
@@ -18,19 +20,21 @@ interface CustomActionsModalProps {
  *
  * Provides mid-round deck manipulation options:
  * - "Shuffle Draw Pile": Triggers a re-shuffle of remaining cards in the active draw pile
- *   (disabled if 1 or fewer cards remain). Resets reveals and reapplies current visibility options.
+ *   (disabled if 1 or fewer cards remain). Resets reveals and reapplies current visibility options. Displays a toast notification.
  * - "Move Cards": Enters inline drag-and-drop Edit Mode to reorder and transfer cards
  *   between the Draw and Discard piles.
- * - "Reveal top card of Draw Pile": Manually sets `isRevealed: true` on the top card of the draw pile
- *   (disabled if the draw pile is empty, the top card is already revealed, or global visibility already shows the top card).
+ * - "Reveal cards from Draw Pile": Opens a visual modal allowing the user to select specific
+ *   cards in the draw pile to reveal, with options to confirm or cancel. Displays a toast notification upon confirmation.
  */
 export const CustomActionsModal: React.FC<CustomActionsModalProps> = ({ isOpen, onClose, onEnterEditMode }) => {
-  const { shuffleDrawPile, drawPile, visibilityOption, revealTopCard } = useGameStore();
+  const { shuffleDrawPile, drawPile, revealCards } = useGameStore();
+  const [isRevealModalOpen, setIsRevealModalOpen] = useState(false);
 
   if (!isOpen) return null;
 
   const handleShuffle = () => {
     shuffleDrawPile();
+    toast.success('Draw pile has been shuffled!');
     onClose();
   };
 
@@ -39,14 +43,35 @@ export const CustomActionsModal: React.FC<CustomActionsModalProps> = ({ isOpen, 
     onClose();
   };
 
-  const handleRevealTopCard = () => {
-    revealTopCard();
+  const handleRevealClick = () => {
+    setIsRevealModalOpen(true);
+  };
+
+  const handleConfirmReveal = (selectedIndices: number[]) => {
+    revealCards(selectedIndices);
+    toast.success('Cards have been revealed!');
+    setIsRevealModalOpen(false);
     onClose();
   };
 
-  const isRevealDisabled = drawPile.length === 0 || visibilityOption === 'next' || visibilityOption === 'all' || drawPile[0]?.isRevealed;
+  const handleCancelReveal = () => {
+    setIsRevealModalOpen(false);
+  };
+
+  const isRevealDisabled = drawPile.length === 0;
 
   const isShuffleDisabled = drawPile.length <= 1;
+
+  if (isRevealModalOpen) {
+    return (
+      <RevealModal
+        isOpen={isRevealModalOpen}
+        drawPile={drawPile}
+        onClose={handleCancelReveal}
+        onConfirm={handleConfirmReveal}
+      />
+    );
+  }
 
   return (
     <div style={{
@@ -73,11 +98,11 @@ export const CustomActionsModal: React.FC<CustomActionsModalProps> = ({ isOpen, 
         </button>
 
         <button 
-          onClick={handleRevealTopCard}
+          onClick={handleRevealClick}
           disabled={isRevealDisabled}
           style={{ width: '100%', padding: '15px', fontSize: '18px', opacity: isRevealDisabled ? 0.5 : 1 }}
         >
-          Reveal top card of Draw Pile
+          Reveal cards from Draw Pile
         </button>
         
         <button 

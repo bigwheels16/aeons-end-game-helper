@@ -1,3 +1,4 @@
+import { Toaster } from 'react-hot-toast';
 import { useGameStore } from './store';
 import ConfigScreen from './ConfigScreen';
 import GameplayScreen from './GameplayScreen';
@@ -14,6 +15,7 @@ function App() {
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
       {!isPlaying ? <ConfigScreen /> : <GameplayScreen />}
+      <Toaster position="bottom-center" toastOptions={{ duration: 3000 }} />
     </div>
   );
 }

@@ -30,8 +30,8 @@ import { useGameStore } from './store';
 interface EditModeControllerProps {
   /** Callback triggered when changes are discarded to return to gameplay without modifying state */
   onCancel: () => void;
-  /** Callback triggered after successfully committing modified card arrangements */
-  onSave: () => void;
+  /** Callback triggered after attempting to commit modified card arrangements, receiving true if successful and false if validation failed */
+  onSave: (success: boolean) => void;
 }
 
 /**
@@ -203,8 +203,8 @@ export const EditModeController: React.FC<EditModeControllerProps> = ({ onCancel
   };
 
   const handleSave = () => {
-    setPiles(localDrawPile, localDiscardPile);
-    onSave();
+    const success = setPiles(localDrawPile, localDiscardPile);
+    onSave(success);
   };
 
   const dropAnimation = {
