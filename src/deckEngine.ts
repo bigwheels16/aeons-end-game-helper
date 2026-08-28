@@ -20,6 +20,11 @@ export interface Card {
   type: CardType;
   /** URL for the official card face image. */
   imageFaceUrl: string;
+  /**
+   * Whether the card face is currently revealed.
+   * Serves as the single source of truth for whether the card is rendered face up or face down.
+   */
+  isRevealed?: boolean;
 }
 
 /**
@@ -81,6 +86,7 @@ export function generateDeck(playerCount: number): Card[] {
  *   - If the previous round ended with a Nemesis turn (`lastTurnType === 'Nemesis'`),
  *     the new round will not begin with a Nemesis turn.
  *   - In unavoidable cases (e.g. deck contains only Nemesis cards), rule is suspended.
+ * - Resets `isRevealed` on all cards in the deck upon shuffling.
  *
  * @param deck - The deck of cards to shuffle
  * @param allowConsecutiveNemesis - Whether back-to-back Nemesis turns are permitted
@@ -92,7 +98,10 @@ export function shuffleDeck(
   allowConsecutiveNemesis: boolean,
   lastTurnType: CardType | null
 ): Card[] {
-  let shuffled = [...deck];
+  let shuffled = deck.map(c => {
+    const { isRevealed, ...rest } = c;
+    return rest as Card;
+  });
   let valid = false;
   let attempts = 0;
 

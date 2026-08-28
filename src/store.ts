@@ -19,6 +19,7 @@ const CardSchema = z.object({
   id: z.string(),
   type: CardTypeSchema,
   imageFaceUrl: z.string(),
+  isRevealed: z.boolean().optional(),
 });
 
 /** Schema for validating VisibilityOption in persisted storage */
@@ -32,7 +33,6 @@ const GameStateSchema = z.object({
   isPlaying: z.boolean(),
   drawPile: z.array(CardSchema),
   discardPile: z.array(CardSchema),
-  currentTurn: CardSchema.nullable(),
   roundNumber: z.number().min(0),
 });
 
@@ -49,12 +49,17 @@ interface GameState {
   /** Whether a game session is actively in progress. */
   isPlaying: boolean;
   
-  /** Remaining unrevealed/unplayed cards in the current round draw pile. */
+  /** 
+   * Remaining cards in the current round draw pile.
+   * Face orientation of each card is determined by its `isRevealed` property.
+   */
   drawPile: Card[];
-  /** Previously played cards in the current round (discard pile history). */
+  /** 
+   * Previously played cards in the current round (discard pile history). 
+   * The top card (last element: `discardPile[discardPile.length - 1]`) represents the currently active turn.
+   * Cards in the discard pile have `isRevealed: true`.
+   */
   discardPile: Card[];
-  /** Currently active turn card. */
-  currentTurn: Card | null;
   /** Current round number (1-indexed during play, 0 when inactive). */
   roundNumber: number;
 
@@ -67,17 +72,26 @@ interface GameState {
   
   /** Initialize and start a new game session with current configuration */
   startGame: () => void;
-  /** Advance to the next turn or start a new round if the draw pile is exhausted */
+  /** 
+   * Advance to the next turn or start a new round if the draw pile is exhausted.
+   * Moves the drawn card to the discard pile with `isRevealed: true`, and applies visibility to the remaining draw pile.
+   */
   nextTurn: () => void;
   /** Reset active game state and return to configuration screen */
   endGame: () => void;
   
   /**
+   * Manually reveals the top card of the draw pile by setting `isRevealed: true`. 
+   * This state persists until the card is drawn or the pile is shuffled.
+   */
+  revealTopCard: () => void;
+  
+  /**
    * Shuffles the remaining cards in the active draw pile.
    *
    * Utilizes the Fisher-Yates engine while honoring the `allowConsecutiveNemesis`
-   * setting relative to the currently active turn. Gracefully ignores calls
-   * if the draw pile has 1 or fewer cards.
+   * setting relative to the currently active turn (top card of the discard pile). Gracefully ignores calls
+   * if the draw pile has 1 or fewer cards. Resets reveals and re-applies current visibility configuration.
    */
   shuffleDrawPile: () => void;
 
@@ -88,7 +102,7 @@ interface GameState {
    * @param cardId - Unique identifier of the card to move
    * @param destination - The target pile ('draw' or 'discard')
    * @param position - Insertion position when moving into the draw pile ('top', 'bottom', or 'shuffled').
-   *                   When moving to discard, the card is appended to the discard history.
+   *                   When moving to discard, the card is marked with `isRevealed: true` and appended to history.
    */
   moveCard: (
     source: 'draw' | 'discard',
@@ -96,7 +110,40 @@ interface GameState {
     destination: 'draw' | 'discard',
     position: 'top' | 'bottom' | 'shuffled'
   ) => void;
+
+  /**
+   * Commits newly arranged Draw and Discard piles from drag-and-drop Edit Mode.
+   *
+   * Enforces deck integrity validation (anti-cheating) to ensure the total number
+   * of cards across both piles remains identical before committing the state changes.
+   * Ensures all cards in the discard pile have `isRevealed: true` and re-applies visibility to the draw pile.
+   *
+   * @param newDrawPile - The new ordered list of cards in the Draw Pile
+   * @param newDiscardPile - The new ordered list of cards in the Discard Pile
+   */
+  setPiles: (newDrawPile: Card[], newDiscardPile: Card[]) => void;
 }
+
+/**
+ * Applies the given visibility option to the draw pile by setting `isRevealed: true`
+ * on applicable cards (single source of truth for face up orientation):
+ * - 'current': No additional cards revealed in draw pile
+ * - 'next': Top card (index 0) of draw pile is marked `isRevealed: true`
+ * - 'all': All cards in draw pile are marked `isRevealed: true`
+ *
+ * @param drawPile - Array of cards in the draw pile
+ * @param visibilityOption - The active visibility configuration ('current' | 'next' | 'all')
+ * @returns Updated array of cards with `isRevealed` applied
+ */
+const applyVisibility = (drawPile: Card[], visibilityOption: VisibilityOption): Card[] => {
+  let newPile = [...drawPile];
+  if (visibilityOption === 'next' && newPile.length > 0) {
+    newPile[0] = { ...newPile[0], isRevealed: true };
+  } else if (visibilityOption === 'all') {
+    newPile = newPile.map(c => ({ ...c, isRevealed: true }));
+  }
+  return newPile;
+};
 
 /**
  * Zustand game store with localStorage persistence and Zod schema validation.
@@ -111,7 +158,6 @@ export const useGameStore = create<GameState>()(
       
       drawPile: [],
       discardPile: [],
-      currentTurn: null,
       roundNumber: 0,
 
       setPlayerCount: (count) => set({ playerCount: count }),
@@ -121,13 +167,14 @@ export const useGameStore = create<GameState>()(
       startGame: () => {
         const state = get();
         const initialDeck = generateDeck(state.playerCount);
-        const shuffled = shuffleDeck(initialDeck, state.allowConsecutiveNemesis, null);
+        let shuffled = shuffleDeck(initialDeck, state.allowConsecutiveNemesis, null);
+        
+        shuffled = applyVisibility(shuffled, state.visibilityOption);
         
         set({
           isPlaying: true,
           drawPile: shuffled,
           discardPile: [],
-          currentTurn: null,
           roundNumber: 1,
         });
       },
@@ -135,31 +182,38 @@ export const useGameStore = create<GameState>()(
       nextTurn: () => {
         const state = get();
         let newDiscard = [...state.discardPile];
-        if (state.currentTurn) {
-          newDiscard.push(state.currentTurn);
-        }
 
         let newDrawPile = [...state.drawPile];
         let nextCard = null;
 
         if (newDrawPile.length > 0) {
           nextCard = newDrawPile.shift() || null;
+          if (nextCard) {
+            nextCard = { ...nextCard, isRevealed: true };
+            newDiscard.push(nextCard);
+          }
+          
+          newDrawPile = applyVisibility(newDrawPile, state.visibilityOption);
+
           set({
             discardPile: newDiscard,
-            currentTurn: nextCard,
             drawPile: newDrawPile,
           });
         } else {
           // Deck is empty, start new round
           const initialDeck = generateDeck(state.playerCount);
-          const lastTurnType = state.currentTurn ? state.currentTurn.type : null;
-          const shuffled = shuffleDeck(initialDeck, state.allowConsecutiveNemesis, lastTurnType);
+          const lastTurnType = state.discardPile.length > 0 ? state.discardPile[state.discardPile.length - 1].type : null;
+          let shuffled = shuffleDeck(initialDeck, state.allowConsecutiveNemesis, lastTurnType);
           
           nextCard = shuffled.shift() || null;
+          if (nextCard) {
+            nextCard = { ...nextCard, isRevealed: true };
+          }
+          
+          shuffled = applyVisibility(shuffled, state.visibilityOption);
           
           set({
-            discardPile: [],
-            currentTurn: nextCard,
+            discardPile: nextCard ? [nextCard] : [],
             drawPile: shuffled,
             roundNumber: state.roundNumber + 1,
           });
@@ -171,9 +225,17 @@ export const useGameStore = create<GameState>()(
           isPlaying: false,
           drawPile: [],
           discardPile: [],
-          currentTurn: null,
           roundNumber: 0,
         });
+      },
+
+      revealTopCard: () => {
+        const state = get();
+        if (state.drawPile.length > 0) {
+          const newDrawPile = [...state.drawPile];
+          newDrawPile[0] = { ...newDrawPile[0], isRevealed: true };
+          set({ drawPile: newDrawPile });
+        }
       },
 
       shuffleDrawPile: () => {
@@ -181,9 +243,11 @@ export const useGameStore = create<GameState>()(
         // Disregard shuffle requests when draw pile is empty or has only a single card
         if (state.drawPile.length <= 1) return;
         
-        const lastTurnType = state.currentTurn ? state.currentTurn.type : null;
-        const newDrawPile = shuffleDeck([...state.drawPile], state.allowConsecutiveNemesis, lastTurnType);
+        const lastTurnType = state.discardPile.length > 0 ? state.discardPile[state.discardPile.length - 1].type : null;
+        let newDrawPile = shuffleDeck([...state.drawPile], state.allowConsecutiveNemesis, lastTurnType);
         
+        newDrawPile = applyVisibility(newDrawPile, state.visibilityOption);
+
         set({ drawPile: newDrawPile });
       },
 
@@ -220,16 +284,33 @@ export const useGameStore = create<GameState>()(
           } else if (position === 'shuffled') {
             drawPile.push(cardToMove);
             // Re-shuffle the draw pile while preserving consecutive Nemesis constraints
-            const lastTurnType = state.currentTurn ? state.currentTurn.type : null;
+            const lastTurnType = discardPile.length > 0 ? discardPile[discardPile.length - 1].type : null;
             drawPile = shuffleDeck(drawPile, state.allowConsecutiveNemesis, lastTurnType);
           }
+          drawPile = applyVisibility(drawPile, state.visibilityOption);
         } else if (destination === 'discard') {
           // Cards moved to discard are appended to the discard history
+          cardToMove = { ...cardToMove, isRevealed: true };
           discardPile.push(cardToMove);
         }
 
         // Update state without modifying round counter or triggering round advances
         set({ drawPile, discardPile });
+      },
+
+      setPiles: (newDrawPile, newDiscardPile) => {
+        const state = get();
+        const currentTotal = state.drawPile.length + state.discardPile.length;
+        const newTotal = newDrawPile.length + newDiscardPile.length;
+        if (currentTotal !== newTotal) {
+          console.warn('Cheating detected: card count mismatch');
+          return;
+        }
+        
+        newDiscardPile = newDiscardPile.map(c => ({ ...c, isRevealed: true }));
+        newDrawPile = applyVisibility(newDrawPile, state.visibilityOption);
+
+        set({ drawPile: newDrawPile, discardPile: newDiscardPile });
       },
     }),
     {

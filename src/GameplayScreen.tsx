@@ -2,29 +2,42 @@ import { useState } from 'react';
 import { useGameStore } from './store';
 import { CARD_BACK_URL } from './deckEngine';
 import { CustomActionsModal } from './CustomActionsModal';
+import { EditModeController } from './EditModeController';
 
 /**
  * Gameplay Screen Component.
  *
  * Displays the active game state with a mobile-optimized layout:
- * - Top Section (Discard Pile): Horizontal scroll of up to 6 previously played cards in the active round
- * - Center Section (Current Turn): Prominent active card display with official artwork and turn designation banner
- * - Middle Section (Custom Actions): Action trigger to open the Custom Actions modal for shuffling or moving cards
- * - Bottom Section (Draw Pile): Horizontal preview of upcoming cards (face-down or revealed based on visibility settings)
+ * - Top Section (Discard Pile): Horizontal scroll of up to 6 previously played cards in the active round (rendered face-up with card.isRevealed)
+ * - Center Section (Current Turn): Prominent active card display (derived from top card of the discard pile) with official artwork and turn designation banner
+ * - Middle Section (Custom Actions): Action trigger to open the Custom Actions modal for shuffling, manual reveal, or entering Edit Mode
+ * - Bottom Section (Draw Pile): Horizontal preview of upcoming cards (face-up or face-down determined solely by each card's `isRevealed` property)
  * - Action Button: Large tap target for advancing turns ("NEXT TURN") or cycling to the next round ("START NEW ROUND")
  * - Header: Round tracker and "End Game" reset control
+ * - Edit Mode: Renders inline drag-and-drop EditModeController when "Move Cards" is triggered
  */
 const GameplayScreen: React.FC = () => {
   const [isCustomActionsOpen, setIsCustomActionsOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
   const {
-    currentTurn,
     drawPile,
     discardPile,
     roundNumber,
-    visibilityOption,
     nextTurn,
     endGame
   } = useGameStore();
+
+  // The active turn is represented by the top card of the discard pile
+  const currentTurn = discardPile.length > 0 ? discardPile[discardPile.length - 1] : null;
+
+  if (isEditMode) {
+    return (
+      <EditModeController 
+        onCancel={() => setIsEditMode(false)}
+        onSave={() => setIsEditMode(false)}
+      />
+    );
+  }
 
   const handleNextTurn = () => {
     nextTurn();
@@ -39,10 +52,18 @@ const GameplayScreen: React.FC = () => {
 
       {/* Discard Pile */}
       <div style={{ height: '80px', display: 'flex', gap: '5px', overflowX: 'auto', alignItems: 'center', backgroundColor: '#222', padding: '5px', borderRadius: '8px' }}>
-        {([...discardPile, currentTurn].filter(c => c !== null) as typeof discardPile).slice(-6).map((card, idx) => (
-          <img key={idx} src={card.imageFaceUrl} alt={card.type} style={{ flex: '0 0 calc((100% - 25px) / 6)', height: '100%', objectFit: 'contain' }} />
-        ))}
-        {discardPile.length === 0 && !currentTurn && <span style={{ color: '#888', margin: 'auto' }}>Discard Pile</span>}
+        {discardPile.slice(-6).map((card, idx) => {
+          const showFace = !!card.isRevealed;
+          return (
+            <img 
+              key={idx} 
+              src={showFace ? card.imageFaceUrl : CARD_BACK_URL} 
+              alt={showFace ? card.type : 'Card Back'} 
+              style={{ flex: '0 0 calc((100% - 25px) / 6)', height: '100%', objectFit: 'contain' }} 
+            />
+          );
+        })}
+        {discardPile.length === 0 && <span style={{ color: '#888', margin: 'auto' }}>Discard Pile</span>}
       </div>
 
       {/* Current Turn */}
@@ -79,9 +100,7 @@ const GameplayScreen: React.FC = () => {
       {/* Draw Pile Preview */}
       <div style={{ height: '80px', display: 'flex', gap: '5px', overflowX: 'auto', alignItems: 'center', backgroundColor: '#222', padding: '5px', borderRadius: '8px', marginBottom: '20px' }}>
         {drawPile.map((card, idx) => {
-          let showFace = false;
-          if (visibilityOption === 'all') showFace = true;
-          if (visibilityOption === 'next' && idx === 0) showFace = true;
+          const showFace = !!card.isRevealed;
 
           return (
             <img 
@@ -114,7 +133,8 @@ const GameplayScreen: React.FC = () => {
 
       <CustomActionsModal 
         isOpen={isCustomActionsOpen} 
-        onClose={() => setIsCustomActionsOpen(false)} 
+        onClose={() => setIsCustomActionsOpen(false)}
+        onEnterEditMode={() => setIsEditMode(true)}
       />
     </div>
   );

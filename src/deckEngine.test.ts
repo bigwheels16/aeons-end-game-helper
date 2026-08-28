@@ -55,4 +55,15 @@ describe('deckEngine', () => {
     const shuffled = shuffleDeck(deck, false, 'Nemesis');
     expect(shuffled.length).toBe(2);
   });
+
+  it('should strip isRevealed from all cards when shuffling', () => {
+    const deck = generateDeck(1);
+    deck[0].isRevealed = true;
+    deck[2].isRevealed = true;
+    const shuffled = shuffleDeck(deck, true, null);
+    
+    for (const card of shuffled) {
+      expect(card).not.toHaveProperty('isRevealed');
+    }
+  });
 });

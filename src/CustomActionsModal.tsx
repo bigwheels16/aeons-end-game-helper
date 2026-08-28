@@ -1,159 +1,52 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useGameStore } from './store';
 
 /**
- * Step identifiers for the Custom Actions multi-step wizard:
- * - `menu`: Main action selection screen (Shuffle vs. Move Cards)
- * - `move_source`: Selection of pile from which to take a card (Draw or Discard)
- * - `move_card`: Selection of specific card from the chosen source pile
- * - `move_dest`: Selection of destination placement ('Top', 'Bottom', or 'Shuffled' in Draw Pile, or Discard)
- */
-type WizardStep = 'menu' | 'move_source' | 'move_card' | 'move_dest';
-
-/**
- * Props for the CustomActionsModal component.
+ * Properties for the CustomActionsModal component.
  */
 interface CustomActionsModalProps {
-  /** Whether the modal dialog is currently visible. */
+  /** Whether the modal is currently open and visible */
   isOpen: boolean;
-  /** Callback invoked when closing or dismissing the modal dialog. */
+  /** Callback to close the modal */
   onClose: () => void;
+  /** Callback to transition the application into drag-and-drop Edit Mode */
+  onEnterEditMode: () => void;
 }
 
 /**
  * Custom Actions Modal Component.
  *
- * Provides a guided interface for in-game turn order deck manipulation:
- * 1. Shuffling the remaining cards in the Draw Pile.
- * 2. Moving cards between the Draw Pile and Discard Pile with position targeting (Top, Bottom, Shuffled).
+ * Provides mid-round deck manipulation options:
+ * - "Shuffle Draw Pile": Triggers a re-shuffle of remaining cards in the active draw pile
+ *   (disabled if 1 or fewer cards remain). Resets reveals and reapplies current visibility options.
+ * - "Move Cards": Enters inline drag-and-drop Edit Mode to reorder and transfer cards
+ *   between the Draw and Discard piles.
+ * - "Reveal top card of Draw Pile": Manually sets `isRevealed: true` on the top card of the draw pile
+ *   (disabled if the draw pile is empty, the top card is already revealed, or global visibility already shows the top card).
  */
-export const CustomActionsModal: React.FC<CustomActionsModalProps> = ({ isOpen, onClose }) => {
-  const { shuffleDrawPile, moveCard, drawPile, discardPile } = useGameStore();
-  const [step, setStep] = useState<WizardStep>('menu');
-  const [selectedSource, setSelectedSource] = useState<'draw' | 'discard' | null>(null);
-  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+export const CustomActionsModal: React.FC<CustomActionsModalProps> = ({ isOpen, onClose, onEnterEditMode }) => {
+  const { shuffleDrawPile, drawPile, visibilityOption, revealTopCard } = useGameStore();
 
   if (!isOpen) return null;
 
-  /**
-   * Resets wizard selection state back to the initial step and closes the modal.
-   */
-  const resetAndClose = () => {
-    setStep('menu');
-    setSelectedSource(null);
-    setSelectedCardId(null);
+  const handleShuffle = () => {
+    shuffleDrawPile();
     onClose();
   };
 
-  /**
-   * Triggers draw pile shuffle and closes the modal.
-   */
-  const handleShuffle = () => {
-    shuffleDrawPile();
-    resetAndClose();
+  const handleMoveCards = () => {
+    onEnterEditMode();
+    onClose();
   };
 
-  /**
-   * Sets the chosen source pile and navigates to card selection.
-   */
-  const handleSourceSelect = (source: 'draw' | 'discard') => {
-    setSelectedSource(source);
-    setStep('move_card');
+  const handleRevealTopCard = () => {
+    revealTopCard();
+    onClose();
   };
 
-  /**
-   * Sets the selected card and advances to destination/position selection.
-   */
-  const handleCardSelect = (cardId: string) => {
-    setSelectedCardId(cardId);
-    setStep('move_dest');
-  };
+  const isRevealDisabled = drawPile.length === 0 || visibilityOption === 'next' || visibilityOption === 'all' || drawPile[0]?.isRevealed;
 
-  /**
-   * Finalizes the move operation and closes the modal dialog.
-   */
-  const handleDestSelect = (dest: 'draw' | 'discard', position: 'top' | 'bottom' | 'shuffled') => {
-    if (selectedSource && selectedCardId) {
-      moveCard(selectedSource, selectedCardId, dest, position);
-    }
-    resetAndClose();
-  };
-
-  const renderMenu = () => (
-    <>
-      <button 
-        onClick={handleShuffle}
-        disabled={drawPile.length <= 1}
-        style={{ width: '100%', padding: '15px', marginBottom: '10px', fontSize: '18px', opacity: drawPile.length <= 1 ? 0.5 : 1 }}
-      >
-        Shuffle Draw Pile
-      </button>
-      <button 
-        onClick={() => setStep('move_source')}
-        style={{ width: '100%', padding: '15px', fontSize: '18px' }}
-      >
-        Move Cards
-      </button>
-    </>
-  );
-
-  const renderMoveSource = () => (
-    <>
-      <h3 style={{ marginTop: 0 }}>Select Source Pile</h3>
-      <button 
-        onClick={() => handleSourceSelect('draw')}
-        disabled={drawPile.length === 0}
-        style={{ width: '100%', padding: '15px', marginBottom: '10px', fontSize: '18px', opacity: drawPile.length === 0 ? 0.5 : 1 }}
-      >
-        Draw Pile
-      </button>
-      <button 
-        onClick={() => handleSourceSelect('discard')}
-        disabled={discardPile.length === 0}
-        style={{ width: '100%', padding: '15px', fontSize: '18px', opacity: discardPile.length === 0 ? 0.5 : 1 }}
-      >
-        Discard Pile
-      </button>
-    </>
-  );
-
-  const renderMoveCard = () => {
-    const cards = selectedSource === 'draw' ? drawPile : discardPile;
-    return (
-      <>
-        <h3 style={{ marginTop: 0 }}>Select Card</h3>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', maxHeight: '50vh', overflowY: 'auto' }}>
-          {cards.map(card => (
-            <img 
-              key={card.id} 
-              src={card.imageFaceUrl} 
-              alt={card.type} 
-              onClick={() => handleCardSelect(card.id)}
-              style={{ width: '80px', objectFit: 'contain', cursor: 'pointer', border: '2px solid transparent' }} 
-            />
-          ))}
-        </div>
-      </>
-    );
-  };
-
-  const renderMoveDest = () => {
-    const dest = selectedSource === 'draw' ? 'discard' : 'draw';
-    return (
-      <>
-        <h3 style={{ marginTop: 0 }}>Select Destination Position</h3>
-        {dest === 'draw' ? (
-          <>
-            <button onClick={() => handleDestSelect('draw', 'top')} style={{ width: '100%', padding: '15px', marginBottom: '10px' }}>Top of Draw Pile</button>
-            <button onClick={() => handleDestSelect('draw', 'bottom')} style={{ width: '100%', padding: '15px', marginBottom: '10px' }}>Bottom of Draw Pile</button>
-            <button onClick={() => handleDestSelect('draw', 'shuffled')} style={{ width: '100%', padding: '15px', marginBottom: '10px' }}>Shuffled in Draw Pile</button>
-          </>
-        ) : (
-          <button onClick={() => handleDestSelect('discard', 'top')} style={{ width: '100%', padding: '15px', marginBottom: '10px' }}>To Discard Pile</button>
-        )}
-      </>
-    );
-  };
+  const isShuffleDisabled = drawPile.length <= 1;
 
   return (
     <div style={{
@@ -165,18 +58,36 @@ export const CustomActionsModal: React.FC<CustomActionsModalProps> = ({ isOpen, 
         backgroundColor: '#333', padding: '20px', borderRadius: '8px', 
         width: '90%', maxWidth: '400px', display: 'flex', flexDirection: 'column'
       }}>
-        {step === 'menu' && renderMenu()}
-        {step === 'move_source' && renderMoveSource()}
-        {step === 'move_card' && renderMoveCard()}
-        {step === 'move_dest' && renderMoveDest()}
+        <button 
+          onClick={handleShuffle}
+          disabled={isShuffleDisabled}
+          style={{ width: '100%', padding: '15px', marginBottom: '10px', fontSize: '18px', opacity: isShuffleDisabled ? 0.5 : 1 }}
+        >
+          Shuffle Draw Pile
+        </button>
+        <button 
+          onClick={handleMoveCards}
+          style={{ width: '100%', padding: '15px', marginBottom: '10px', fontSize: '18px' }}
+        >
+          Move Cards
+        </button>
+
+        <button 
+          onClick={handleRevealTopCard}
+          disabled={isRevealDisabled}
+          style={{ width: '100%', padding: '15px', fontSize: '18px', opacity: isRevealDisabled ? 0.5 : 1 }}
+        >
+          Reveal top card of Draw Pile
+        </button>
         
         <button 
-          onClick={step === 'menu' ? resetAndClose : () => setStep('menu')}
+          onClick={onClose}
           style={{ marginTop: '20px', padding: '10px', backgroundColor: '#555', color: 'white', border: 'none' }}
         >
-          {step === 'menu' ? 'Cancel' : 'Back'}
+          Cancel
         </button>
       </div>
     </div>
   );
 };
+

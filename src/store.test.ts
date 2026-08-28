@@ -11,7 +11,6 @@ describe('useGameStore custom actions', () => {
       isPlaying: false,
       drawPile: [],
       discardPile: [],
-      currentTurn: null,
       roundNumber: 0,
     });
   });
@@ -76,5 +75,62 @@ describe('useGameStore custom actions', () => {
     
     const state = useGameStore.getState();
     expect(state.drawPile.length).toBe(5);
+  });
+
+  it('should reveal the top card of the draw pile', () => {
+    const deck = generateDeck(1);
+    useGameStore.setState({ drawPile: deck });
+    
+    useGameStore.getState().revealTopCard();
+    
+    const state = useGameStore.getState();
+    expect(state.drawPile[0].isRevealed).toBe(true);
+    expect(state.drawPile[1].isRevealed).toBeUndefined();
+  });
+
+  it('should explicitly set isRevealed to true on the card when moving to discardPile in nextTurn', () => {
+    const deck = generateDeck(1);
+    useGameStore.setState({ drawPile: deck, discardPile: [] });
+    
+    useGameStore.getState().nextTurn();
+    
+    const state = useGameStore.getState();
+    expect(state.discardPile.length).toBe(1);
+    expect(state.discardPile[0].isRevealed).toBe(true);
+  });
+
+  describe('setPiles (Edit Mode)', () => {
+    it('should overwrite draw and discard piles if total count is the same', () => {
+      const deck = generateDeck(1); // 5 cards
+      useGameStore.setState({ drawPile: deck, discardPile: [] });
+
+      const newDraw = deck.slice(0, 3);
+      const newDiscard = deck.slice(3, 5);
+      
+      useGameStore.getState().setPiles(newDraw, newDiscard);
+      
+      const state = useGameStore.getState();
+      expect(state.drawPile.length).toBe(3);
+      expect(state.discardPile.length).toBe(2);
+      expect(state.drawPile).toEqual(newDraw);
+      expect(state.discardPile).toEqual(newDiscard.map(c => ({ ...c, isRevealed: true })));
+    });
+
+    it('should reject changes if total count does not match (anti-cheating)', () => {
+      const deck = generateDeck(1); // 5 cards
+      useGameStore.setState({ drawPile: deck, discardPile: [] });
+
+      const newDraw = deck.slice(0, 3);
+      // Omit discard pile cards, making the total count 3 instead of 5
+      const newDiscard: typeof deck = [];
+      
+      useGameStore.getState().setPiles(newDraw, newDiscard);
+      
+      const state = useGameStore.getState();
+      // Should remain unchanged
+      expect(state.drawPile.length).toBe(5);
+      expect(state.discardPile.length).toBe(0);
+      expect(state.drawPile).toEqual(deck);
+    });
   });
 });

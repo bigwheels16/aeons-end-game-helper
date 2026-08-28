@@ -13,7 +13,6 @@ describe('App Integration', () => {
       isPlaying: false,
       drawPile: [],
       discardPile: [],
-      currentTurn: null,
       roundNumber: 0,
     });
   });
@@ -37,7 +36,7 @@ describe('App Integration', () => {
     expect(screen.queryByText("Aeon's End Setup")).toBeNull();
     expect(useGameStore.getState().isPlaying).toBe(true);
     expect(useGameStore.getState().roundNumber).toBe(1);
-    expect(useGameStore.getState().currentTurn).not.toBeNull();
+    expect(useGameStore.getState().discardPile.length).toBeGreaterThan(0);
     
     // There should be a NEXT TURN button
     expect(screen.getByText('NEXT TURN')).toBeDefined();
