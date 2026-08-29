@@ -19,7 +19,7 @@ describe('deckEngine', () => {
 
   it('should shuffle without consecutive nemesis cards if not allowed', () => {
     const deck = generateDeck(1);
-    const shuffled = shuffleDeck(deck, false, null);
+    const shuffled = shuffleDeck(deck, false, true, null);
     
     let hasConsecutive = false;
     for (let i = 0; i < shuffled.length - 1; i++) {
@@ -32,7 +32,7 @@ describe('deckEngine', () => {
 
   it('should allow consecutive nemesis if specified', () => {
     const deck = generateDeck(1);
-    const shuffled = shuffleDeck(deck, true, null);
+    const shuffled = shuffleDeck(deck, true, true, null);
     expect(shuffled.length).toBe(deck.length);
   });
 
@@ -41,7 +41,7 @@ describe('deckEngine', () => {
       { id: '1', type: 'Nemesis', imageFaceUrl: '' },
       { id: '2', type: 'Nemesis', imageFaceUrl: '' }
     ];
-    const shuffled = shuffleDeck(deck, false, null);
+    const shuffled = shuffleDeck(deck, false, true, null);
     expect(shuffled.length).toBe(2);
     expect(shuffled[0].type).toBe('Nemesis');
     expect(shuffled[1].type).toBe('Nemesis');
@@ -52,7 +52,7 @@ describe('deckEngine', () => {
       { id: '1', type: 'Nemesis', imageFaceUrl: '' },
       { id: '2', type: 'Nemesis', imageFaceUrl: '' }
     ];
-    const shuffled = shuffleDeck(deck, false, 'Nemesis');
+    const shuffled = shuffleDeck(deck, false, true, 'Nemesis');
     expect(shuffled.length).toBe(2);
   });
 
@@ -60,10 +60,23 @@ describe('deckEngine', () => {
     const deck = generateDeck(1);
     deck[0].isRevealed = true;
     deck[2].isRevealed = true;
-    const shuffled = shuffleDeck(deck, true, null);
+    const shuffled = shuffleDeck(deck, true, true, null);
     
     for (const card of shuffled) {
       expect(card).not.toHaveProperty('isRevealed');
     }
+  });
+
+  it('should shuffle without consecutive player cards if not allowed', () => {
+    const deck = generateDeck(2); // 2 players: 2x Player 1, 2x Player 2, 2x Nemesis
+    const shuffled = shuffleDeck(deck, true, false, null);
+    
+    let hasConsecutive = false;
+    for (let i = 0; i < shuffled.length - 1; i++) {
+      if (shuffled[i].type.startsWith('Player') && shuffled[i].type === shuffled[i + 1].type) {
+        hasConsecutive = true;
+      }
+    }
+    expect(hasConsecutive).toBe(false);
   });
 });

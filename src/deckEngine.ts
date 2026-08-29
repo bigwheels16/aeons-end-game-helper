@@ -96,6 +96,7 @@ export function generateDeck(playerCount: number): Card[] {
 export function shuffleDeck(
   deck: Card[],
   allowConsecutiveNemesis: boolean,
+  allowConsecutivePlayer: boolean,
   lastTurnType: CardType | null
 ): Card[] {
   let shuffled = deck.map(c => {
@@ -105,16 +106,11 @@ export function shuffleDeck(
   let valid = false;
   let attempts = 0;
 
-  // Unavoidable case check: if all remaining cards are Nemesis, consecutive is unavoidable
-  const allNemesis = deck.every(c => c.type === 'Nemesis');
-  if (allNemesis || allowConsecutiveNemesis) {
-    // Fisher-Yates shuffle
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-  }
+  const isPlayerCard = (type: CardType) => type.startsWith('Player');
+
+  // We will just try 100 times. If it fails, it returns the last attempt.
+  // This handles both unavoidable cases (returns whatever it gets) and
+  // allows us to reuse the same logic for all scenarios.
 
   while (!valid && attempts < 100) {
     // Fisher-Yates shuffle
@@ -126,13 +122,20 @@ export function shuffleDeck(
     valid = true;
     
     // Check first card against last turn of previous round
-    if (lastTurnType === 'Nemesis' && shuffled[0].type === 'Nemesis') {
+    if (!allowConsecutiveNemesis && lastTurnType === 'Nemesis' && shuffled[0].type === 'Nemesis') {
+      valid = false;
+    }
+    if (!allowConsecutivePlayer && lastTurnType && isPlayerCard(lastTurnType) && shuffled[0].type === lastTurnType) {
       valid = false;
     }
 
-    // Check consecutive Nemesis cards in the new deck
+    // Check consecutive cards in the new deck
     for (let i = 0; i < shuffled.length - 1; i++) {
-      if (shuffled[i].type === 'Nemesis' && shuffled[i + 1].type === 'Nemesis') {
+      if (!allowConsecutiveNemesis && shuffled[i].type === 'Nemesis' && shuffled[i + 1].type === 'Nemesis') {
+        valid = false;
+        break;
+      }
+      if (!allowConsecutivePlayer && isPlayerCard(shuffled[i].type) && shuffled[i].type === shuffled[i + 1].type) {
         valid = false;
         break;
       }

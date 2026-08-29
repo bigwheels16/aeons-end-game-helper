@@ -20,6 +20,7 @@ const VisibilityOptionSchema = z.enum(['current', 'next', 'all']);
 const GameStateSchema = z.object({
   playerCount: z.number().min(1).max(4),
   allowConsecutiveNemesis: z.boolean(),
+  allowConsecutivePlayer: z.boolean().default(true),
   visibilityOption: VisibilityOptionSchema,
   isPlaying: z.boolean(),
   drawPile: z.array(CardSchema),
@@ -30,9 +31,11 @@ const GameStateSchema = z.object({
 export interface ConfigSlice {
   playerCount: number;
   allowConsecutiveNemesis: boolean;
+  allowConsecutivePlayer: boolean;
   visibilityOption: VisibilityOption;
   setPlayerCount: (count: number) => void;
   setAllowConsecutiveNemesis: (allow: boolean) => void;
+  setAllowConsecutivePlayer: (allow: boolean) => void;
   setVisibilityOption: (opt: VisibilityOption) => void;
 }
 
@@ -70,9 +73,11 @@ const applyVisibility = (drawPile: Card[], visibilityOption: VisibilityOption): 
 const createConfigSlice: StateCreator<GameState, [], [], ConfigSlice> = (set) => ({
   playerCount: 1,
   allowConsecutiveNemesis: true,
+  allowConsecutivePlayer: true,
   visibilityOption: 'current',
   setPlayerCount: (count) => set({ playerCount: count }),
   setAllowConsecutiveNemesis: (allow) => set({ allowConsecutiveNemesis: allow }),
+  setAllowConsecutivePlayer: (allow) => set({ allowConsecutivePlayer: allow }),
   setVisibilityOption: (opt) => set({ visibilityOption: opt }),
 });
 
@@ -85,7 +90,7 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
   startGame: () => {
     const state = get();
     const initialDeck = generateDeck(state.playerCount);
-    let shuffled = shuffleDeck(initialDeck, state.allowConsecutiveNemesis, null);
+    let shuffled = shuffleDeck(initialDeck, state.allowConsecutiveNemesis, state.allowConsecutivePlayer, null);
     
     shuffled = applyVisibility(shuffled, state.visibilityOption);
     
@@ -120,7 +125,7 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
     } else {
       const initialDeck = generateDeck(state.playerCount);
       const lastTurnType = state.discardPile.length > 0 ? state.discardPile[state.discardPile.length - 1].type : null;
-      let shuffled = shuffleDeck(initialDeck, state.allowConsecutiveNemesis, lastTurnType);
+      let shuffled = shuffleDeck(initialDeck, state.allowConsecutiveNemesis, state.allowConsecutivePlayer, lastTurnType);
       
       nextCard = shuffled.shift() || null;
       if (nextCard) {
@@ -164,7 +169,7 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
     if (state.drawPile.length <= 1) return;
     
     const lastTurnType = state.discardPile.length > 0 ? state.discardPile[state.discardPile.length - 1].type : null;
-    let newDrawPile = shuffleDeck([...state.drawPile], state.allowConsecutiveNemesis, lastTurnType);
+    let newDrawPile = shuffleDeck([...state.drawPile], state.allowConsecutiveNemesis, state.allowConsecutivePlayer, lastTurnType);
     
     newDrawPile = applyVisibility(newDrawPile, state.visibilityOption);
 
@@ -201,7 +206,7 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
       } else if (position === 'shuffled') {
         drawPile.push(cardToMove);
         const lastTurnType = discardPile.length > 0 ? discardPile[discardPile.length - 1].type : null;
-        drawPile = shuffleDeck(drawPile, state.allowConsecutiveNemesis, lastTurnType);
+        drawPile = shuffleDeck(drawPile, state.allowConsecutiveNemesis, state.allowConsecutivePlayer, lastTurnType);
       }
       drawPile = applyVisibility(drawPile, state.visibilityOption);
     } else if (destination === 'discard') {

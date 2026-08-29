@@ -15,6 +15,8 @@ const ConfigScreen: React.FC = () => {
     setPlayerCount,
     allowConsecutiveNemesis,
     setAllowConsecutiveNemesis,
+    allowConsecutivePlayer,
+    setAllowConsecutivePlayer,
     visibilityOption,
     setVisibilityOption,
     startGame,
@@ -54,8 +56,8 @@ const ConfigScreen: React.FC = () => {
       </div>
 
       <div style={{ marginBottom: '20px' }}>
-        <h3>Nemesis Rules</h3>
-        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '16px' }}>
+        <h3>Game Options</h3>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '16px', marginBottom: '10px' }}>
           <input
             type="checkbox"
             checked={allowConsecutiveNemesis}
@@ -63,6 +65,15 @@ const ConfigScreen: React.FC = () => {
             style={{ width: '20px', height: '20px' }}
           />
           Allow consecutive Nemesis turns
+        </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '16px' }}>
+          <input
+            type="checkbox"
+            checked={allowConsecutivePlayer}
+            onChange={(e) => setAllowConsecutivePlayer(e.target.checked)}
+            style={{ width: '20px', height: '20px' }}
+          />
+          Allow consecutive turns of same player
         </label>
       </div>
 
@@ -75,7 +86,7 @@ const ConfigScreen: React.FC = () => {
         >
           <option value="current">Show only current turn</option>
           <option value="next">Show current and next turn</option>
-          <option value="all">Show all following turns</option>
+          <option value="all">Show all turns</option>
         </select>
       </div>
 

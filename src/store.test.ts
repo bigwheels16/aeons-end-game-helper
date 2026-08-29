@@ -7,6 +7,7 @@ describe('useGameStore custom actions', () => {
     useGameStore.setState({
       playerCount: 1,
       allowConsecutiveNemesis: false,
+      allowConsecutivePlayer: true,
       visibilityOption: 'current',
       isPlaying: false,
       drawPile: [],
