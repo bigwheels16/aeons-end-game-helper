@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGameStore, VisibilityOption } from './store';
+import { useGameStore } from './store';
 import { GameOptionsForm, GameOptionsData } from './GameOptionsForm';
 
 /**
