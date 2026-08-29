@@ -8,9 +8,10 @@ interface CustomActionsModalProps {
   onClose: () => void;
   onEnterEditMode: () => void;
   onEnterRevealMode?: () => void;
+  onOpenGameOptions?: () => void;
 }
 
-export const CustomActionsModal: React.FC<CustomActionsModalProps> = ({ isOpen, onClose, onEnterEditMode, onEnterRevealMode }) => {
+export const CustomActionsModal: React.FC<CustomActionsModalProps> = ({ isOpen, onClose, onEnterEditMode, onEnterRevealMode, onOpenGameOptions }) => {
   const { shuffleDrawPile, drawPile } = useGameStore();
 
   if (!isOpen) return null;
@@ -46,6 +47,9 @@ export const CustomActionsModal: React.FC<CustomActionsModalProps> = ({ isOpen, 
       </ModalButton>
       <ModalButton onClick={handleRevealClick} disabled={isRevealDisabled} style={{ width: '100%', marginBottom: '20px' }}>
         Reveal Cards
+      </ModalButton>
+      <ModalButton onClick={() => { if (onOpenGameOptions) onOpenGameOptions(); onClose(); }} style={{ width: '100%', marginBottom: '20px' }}>
+        Update Game Options
       </ModalButton>
       <ModalButton onClick={onClose} style={{ width: '100%' }}>
         Cancel

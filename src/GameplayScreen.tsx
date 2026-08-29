@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { useGameStore } from './store';
 import { CARD_BACK_URL, Card } from './deckEngine';
 import { CustomActionsModal } from './CustomActionsModal';
+import { GameOptionsModal } from './GameOptionsModal';
 import { Modal, ModalButton } from './Modal';
 import styles from './GameplayScreen.module.css';
 
@@ -171,6 +172,7 @@ const CurrentTurnDisplay = ({ currentTurn }: { currentTurn: Card | null }) => {
 const GameplayScreen: React.FC = () => {
   const [isCustomActionsOpen, setIsCustomActionsOpen] = useState(false);
   const [isEndGameModalOpen, setIsEndGameModalOpen] = useState(false);
+  const [isGameOptionsModalOpen, setIsGameOptionsModalOpen] = useState(false);
   const {
     drawPile,
     discardPile,
@@ -487,6 +489,12 @@ const GameplayScreen: React.FC = () => {
         onClose={() => setIsCustomActionsOpen(false)}
         onEnterEditMode={enterMoveMode}
         onEnterRevealMode={enterRevealMode}
+        onOpenGameOptions={() => setIsGameOptionsModalOpen(true)}
+      />
+
+      <GameOptionsModal 
+        isOpen={isGameOptionsModalOpen} 
+        onClose={() => setIsGameOptionsModalOpen(false)} 
       />
 
       <Modal isOpen={isEndGameModalOpen} title="End Game?">

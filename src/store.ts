@@ -61,7 +61,7 @@ export interface PlaySlice {
 type GameState = ConfigSlice & PlaySlice;
 
 const applyVisibility = (drawPile: Card[], visibilityOption: VisibilityOption): Card[] => {
-  let newPile = [...drawPile];
+  let newPile = drawPile.map(c => ({ ...c, isRevealed: !!c.isRevealed }));
   if (visibilityOption === 'next' && newPile.length > 0) {
     newPile[0] = { ...newPile[0], isRevealed: true };
   } else if (visibilityOption === 'all') {
@@ -70,7 +70,7 @@ const applyVisibility = (drawPile: Card[], visibilityOption: VisibilityOption): 
   return newPile;
 };
 
-const createConfigSlice: StateCreator<GameState, [], [], ConfigSlice> = (set) => ({
+const createConfigSlice: StateCreator<GameState, [], [], ConfigSlice> = (set, get) => ({
   playerCount: 1,
   allowConsecutiveNemesis: true,
   allowConsecutivePlayer: true,
@@ -78,7 +78,11 @@ const createConfigSlice: StateCreator<GameState, [], [], ConfigSlice> = (set) =>
   setPlayerCount: (count) => set({ playerCount: count }),
   setAllowConsecutiveNemesis: (allow) => set({ allowConsecutiveNemesis: allow }),
   setAllowConsecutivePlayer: (allow) => set({ allowConsecutivePlayer: allow }),
-  setVisibilityOption: (opt) => set({ visibilityOption: opt }),
+  setVisibilityOption: (opt) => {
+    const currentDrawPile = get().drawPile || [];
+    const newDrawPile = currentDrawPile.length > 0 ? applyVisibility(currentDrawPile, opt) : [];
+    set({ visibilityOption: opt, drawPile: newDrawPile });
+  },
 });
 
 const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) => ({
