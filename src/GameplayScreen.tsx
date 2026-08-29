@@ -402,7 +402,7 @@ const GameplayScreen: React.FC = () => {
                 onClick={() => setIsCustomActionsOpen(true)}
                 className={styles.customActionsBtn}
               >
-                Custom Actions
+                Special Actions
               </button>
               <button 
                 onClick={() => setIsEndGameModalOpen(true)} 

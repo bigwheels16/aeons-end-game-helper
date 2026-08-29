@@ -37,7 +37,7 @@ export const CustomActionsModal: React.FC<CustomActionsModalProps> = ({ isOpen, 
   const isShuffleDisabled = drawPile.length <= 1;
 
   return (
-    <Modal isOpen={isOpen} title="Custom Actions">
+    <Modal isOpen={isOpen} title="Special Actions">
       <ModalButton onClick={handleShuffle} disabled={isShuffleDisabled} style={{ width: '100%', marginBottom: '10px' }}>
         Shuffle Draw Pile
       </ModalButton>
