@@ -39,7 +39,7 @@ export const GameOptionsForm: React.FC<GameOptionsFormProps> = ({ options, onCha
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', textAlign: 'left' }}>
       <div>
         <h4 style={{ margin: '0 0 10px 0', color: 'inherit' }}>Player Count</h4>
         <div style={{ display: 'flex', gap: '10px' }}>
