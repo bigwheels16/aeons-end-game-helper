@@ -1,0 +1,8 @@
+FROM node:18-slim
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+
+# The rest of the files will be mounted via volume in docker run
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5173"]
