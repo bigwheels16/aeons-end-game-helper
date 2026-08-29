@@ -3,6 +3,8 @@ import { useGameStore } from './store';
 import ConfigScreen from './ConfigScreen';
 import GameplayScreen from './GameplayScreen';
 
+import { useEffect } from 'react';
+
 /**
  * Root Application Component.
  *
@@ -11,6 +13,36 @@ import GameplayScreen from './GameplayScreen';
  */
 function App() {
   const isPlaying = useGameStore((state) => state.isPlaying);
+
+  useEffect(() => {
+    let wakeLock: any = null;
+
+    const requestWakeLock = async () => {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await navigator.wakeLock.request('screen');
+        }
+      } catch (err) {
+        console.warn('Wake Lock request failed:', err);
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        requestWakeLock();
+      }
+    };
+
+    requestWakeLock();
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (wakeLock) {
+        wakeLock.release().catch(() => {});
+      }
+    };
+  }, []);
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
