@@ -40,7 +40,7 @@ describe('App Integration', () => {
     
     // There should be a NEXT TURN button
     expect(screen.getByText('NEXT TURN')).toBeDefined();
-    expect(screen.getByText('Custom Actions')).toBeDefined();
+    expect(screen.getByText('Special Actions')).toBeDefined();
     expect(screen.getByText('End Game')).toBeDefined();
   });
 });
