@@ -15,7 +15,15 @@ function App() {
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
       {!isPlaying ? <ConfigScreen /> : <GameplayScreen />}
-      <Toaster position="bottom-center" toastOptions={{ duration: 3000 }} />
+      <Toaster 
+        position="top-center" 
+        toastOptions={{ duration: 3000 }} 
+        containerStyle={{
+          top: '50%',
+          bottom: 'auto',
+          transform: 'translateY(-50%)'
+        }}
+      />
     </div>
   );
 }
