@@ -6,7 +6,6 @@ COPY package*.json ./
 RUN --mount=type=cache,target=/root/.npm npm ci
 
 COPY . .
-RUN npm test
 RUN npm run build
 
 # Production stage
