@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useGameStore } from './store';
 import { RevealModal } from './RevealModal';
+import { Modal, ModalButton } from './Modal';
 
 /**
  * Properties for the CustomActionsModal component.
@@ -74,45 +75,20 @@ export const CustomActionsModal: React.FC<CustomActionsModalProps> = ({ isOpen, 
   }
 
   return (
-    <div style={{
-      position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', 
-      backgroundColor: 'rgba(0,0,0,0.7)', zIndex: 1000, 
-      display: 'flex', justifyContent: 'center', alignItems: 'center'
-    }}>
-      <div style={{
-        backgroundColor: '#333', padding: '20px', borderRadius: '8px', 
-        width: '90%', maxWidth: '400px', display: 'flex', flexDirection: 'column'
-      }}>
-        <button 
-          onClick={handleShuffle}
-          disabled={isShuffleDisabled}
-          style={{ width: '100%', padding: '15px', marginBottom: '10px', fontSize: '18px', opacity: isShuffleDisabled ? 0.5 : 1 }}
-        >
-          Shuffle Draw Pile
-        </button>
-        <button 
-          onClick={handleMoveCards}
-          style={{ width: '100%', padding: '15px', marginBottom: '10px', fontSize: '18px' }}
-        >
-          Move Cards
-        </button>
-
-        <button 
-          onClick={handleRevealClick}
-          disabled={isRevealDisabled}
-          style={{ width: '100%', padding: '15px', fontSize: '18px', opacity: isRevealDisabled ? 0.5 : 1 }}
-        >
-          Reveal cards from Draw Pile
-        </button>
-        
-        <button 
-          onClick={onClose}
-          style={{ marginTop: '20px', padding: '10px', backgroundColor: '#555', color: 'white', border: 'none' }}
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
+    <Modal isOpen={isOpen} title="Custom Actions">
+      <ModalButton onClick={handleShuffle} disabled={isShuffleDisabled} style={{ width: '100%', marginBottom: '10px' }}>
+        Shuffle Draw Pile
+      </ModalButton>
+      <ModalButton onClick={handleMoveCards} style={{ width: '100%', marginBottom: '10px' }}>
+        Move Cards
+      </ModalButton>
+      <ModalButton onClick={handleRevealClick} disabled={isRevealDisabled} style={{ width: '100%', marginBottom: '20px' }}>
+        Reveal cards from Draw Pile
+      </ModalButton>
+      <ModalButton onClick={onClose} style={{ width: '100%' }}>
+        Cancel
+      </ModalButton>
+    </Modal>
   );
 };
 

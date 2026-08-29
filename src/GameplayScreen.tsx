@@ -4,6 +4,7 @@ import { useGameStore } from './store';
 import { CARD_BACK_URL, Card } from './deckEngine';
 import { CustomActionsModal } from './CustomActionsModal';
 import { EditModeController } from './EditModeController';
+import { Modal, ModalButton } from './Modal';
 import styles from './GameplayScreen.module.css';
 
 /**
@@ -90,6 +91,7 @@ const CurrentTurnDisplay = ({ currentTurn }: { currentTurn: Card | null }) => (
 const GameplayScreen: React.FC = () => {
   const [isCustomActionsOpen, setIsCustomActionsOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isEndGameModalOpen, setIsEndGameModalOpen] = useState(false);
   const {
     drawPile,
     discardPile,
@@ -132,7 +134,7 @@ const GameplayScreen: React.FC = () => {
             Custom Actions
           </button>
           <button 
-            onClick={endGame} 
+            onClick={() => setIsEndGameModalOpen(true)} 
             className={styles.endGameBtn}
           >
             End Game
@@ -158,6 +160,25 @@ const GameplayScreen: React.FC = () => {
         onClose={() => setIsCustomActionsOpen(false)}
         onEnterEditMode={() => setIsEditMode(true)}
       />
+
+      <Modal isOpen={isEndGameModalOpen} title="End Game?">
+        <p style={{ color: '#ccc', marginBottom: '20px' }}>Are you sure you want to end the game?</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px' }}>
+          <ModalButton onClick={() => setIsEndGameModalOpen(false)} style={{ flex: 1 }}>
+            Cancel
+          </ModalButton>
+          <ModalButton 
+            variant="danger" 
+            onClick={() => {
+              setIsEndGameModalOpen(false);
+              endGame();
+            }} 
+            style={{ flex: 1 }}
+          >
+            OK
+          </ModalButton>
+        </div>
+      </Modal>
     </div>
   );
 };
