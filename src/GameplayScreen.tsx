@@ -54,7 +54,6 @@ const CurrentTurnDisplay = ({ currentTurn }: { currentTurn: any }) => (
     {currentTurn ? (
       <>
         <img src={currentTurn.imageFaceUrl} alt={currentTurn.type} className={styles.currentTurnImage} />
-        <h2 className={styles.currentTurnTitle}>{currentTurn.type === 'Wild' ? 'WILD TURN - Players Decide' : currentTurn.type}</h2>
       </>
     ) : (
       <h2>Round Over</h2>
