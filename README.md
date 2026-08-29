@@ -28,15 +28,14 @@ Decks are constructed according to official Aeon's End rules:
 - **Unavoidable Case Fallback:** If the remaining cards in a deck are all Nemesis cards, the rule is gracefully suspended.
 
 ### 4. Interactive Gameplay Screen
+- **Header & Navigation (Top):** Header bar displaying the current round number alongside top-level controls:
+  - **Custom Actions:** Opens the mid-round deck manipulation modal (Shuffle Draw Pile, Edit Mode, Reveal Cards). Positioned directly in the top header adjacent to End Game for immediate accessibility without obstructing turn cards.
+  - **End Game:** Resets the session and returns to setup configuration at any time.
 - **Discard Pile (Top):** Horizontal scrolling display showing up to 6 previously played cards in the active round. All cards in the discard pile are rendered face-up with their official artwork (`isRevealed: true`).
 - **Current Turn (Center):** Prominent display featuring official game artwork for the active card face (Player 1–4, Nemesis, or Wild), with a clear decision banner for Wild turns. The active turn is directly represented by the top card of the discard pile (`discardPile[discardPile.length - 1]`), rather than a separate disconnected state, enabling it to be moved or rearranged manually if needed.
-- **Custom Actions (Middle):** Dedicated button opening a modal for mid-round deck manipulation:
-  - **Shuffle Draw Pile:** Re-shuffles remaining unplayed cards in the draw pile while preserving consecutive Nemesis rules (gracefully disabled when 1 or 0 cards remain). Resets individual reveal states and re-applies the configured visibility setting. Displays a success notification upon completion.
-  - **Move Cards (Edit Mode):** Enters an inline, interactive drag-and-drop Edit Mode to freely rearrange cards within or across the Draw Pile and Discard Pile. Displays a notification upon successful or failed save.
-  - **Reveal Cards from Draw Pile:** Opens a visual selection modal displaying the current draw pile cards, allowing users to select specific card(s) to reveal or cancel without modifying card visibility. Displays a success notification upon completion.
 - **Draw Queue (Bottom):** Horizontal queue showing upcoming cards. Face orientation (face-up artwork vs card back) is governed directly and solely by each card's `isRevealed` property, populated dynamically based on the configured visibility option or manual reveals.
 - **Next Turn / New Round:** Large, thumb-friendly tap target to advance turns or seamlessly shuffle a new deck for the next round. When a card is drawn, it is moved to the discard pile with `isRevealed: true`.
-- **End Game Control:** Reset the session and return to configuration at any time.
+- **Mobile Viewport Optimization:** Styled with dynamic viewport units (`100dvh`) and flex layout constraints to guarantee that all gameplay elements—including header controls, discard pile, active turn card, draw queue, and the Next Turn button—fit completely within mobile screens without requiring page scrolling.
 
 ### 5. Custom Actions & Deck Manipulation
 Supports card abilities, player relics/spells, and Nemesis effects that manipulate turn order cards during active gameplay:

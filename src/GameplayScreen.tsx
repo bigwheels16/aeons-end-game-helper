@@ -4,18 +4,73 @@ import { useGameStore } from './store';
 import { CARD_BACK_URL } from './deckEngine';
 import { CustomActionsModal } from './CustomActionsModal';
 import { EditModeController } from './EditModeController';
+import styles from './GameplayScreen.module.css';
+
+/**
+ * Renders the played cards in the discard pile.
+ */
+const DiscardPile = ({ cards }: { cards: any[] }) => (
+  <div className={styles.pileContainer}>
+    {cards.slice(-6).map((card, idx) => {
+      const showFace = !!card.isRevealed;
+      return (
+        <img 
+          key={idx} 
+          src={showFace ? card.imageFaceUrl : CARD_BACK_URL} 
+          alt={showFace ? card.type : 'Card Back'} 
+          className={styles.cardImage} 
+        />
+      );
+    })}
+    {cards.length === 0 && <span className={styles.emptyText}>Discard Pile</span>}
+  </div>
+);
+
+/**
+ * Renders a preview of upcoming cards in the draw pile based on visibility rules.
+ */
+const DrawPilePreview = ({ cards }: { cards: any[] }) => (
+  <div className={`${styles.pileContainer} ${styles.pileContainerBottom}`}>
+    {cards.map((card, idx) => {
+      const showFace = !!card.isRevealed;
+      return (
+        <img 
+          key={idx} 
+          src={showFace ? card.imageFaceUrl : CARD_BACK_URL} 
+          alt={showFace ? card.type : 'Card Back'} 
+          className={styles.cardImage} 
+        />
+      );
+    })}
+    {cards.length === 0 && <span className={styles.emptyText}>Draw Pile Empty</span>}
+  </div>
+);
+
+/**
+ * Displays the active turn card and its corresponding player or Nemesis title.
+ */
+const CurrentTurnDisplay = ({ currentTurn }: { currentTurn: any }) => (
+  <div className={styles.currentTurnContainer}>
+    {currentTurn ? (
+      <>
+        <img src={currentTurn.imageFaceUrl} alt={currentTurn.type} className={styles.currentTurnImage} />
+        <h2 className={styles.currentTurnTitle}>{currentTurn.type === 'Wild' ? 'WILD TURN - Players Decide' : currentTurn.type}</h2>
+      </>
+    ) : (
+      <h2>Round Over</h2>
+    )}
+  </div>
+);
 
 /**
  * Gameplay Screen Component.
  *
- * Displays the active game state with a mobile-optimized layout:
- * - Top Section (Discard Pile): Horizontal scroll of up to 6 previously played cards in the active round (rendered face-up with card.isRevealed)
- * - Center Section (Current Turn): Prominent active card display (derived from top card of the discard pile) with official artwork and turn designation banner
- * - Middle Section (Custom Actions): Action trigger to open the Custom Actions modal for shuffling, manual reveal, or entering Edit Mode
- * - Bottom Section (Draw Pile): Horizontal preview of upcoming cards (face-up or face-down determined solely by each card's `isRevealed` property)
- * - Action Button: Large tap target for advancing turns ("NEXT TURN") or cycling to the next round ("START NEW ROUND")
- * - Header: Round tracker and "End Game" reset control
- * - Edit Mode: Renders inline drag-and-drop EditModeController when "Move Cards" is triggered
+ * Renders the main turn management interface formatted for mobile screens without vertical scroll:
+ * - Header bar displaying the round number and top-level action buttons ("Custom Actions" and "End Game")
+ * - Discard pile queue (top)
+ * - Prominent current turn card display (center)
+ * - Upcoming draw pile preview (bottom)
+ * - Full-width "Next Turn" / "Start New Round" action button
  */
 const GameplayScreen: React.FC = () => {
   const [isCustomActionsOpen, setIsCustomActionsOpen] = useState(false);
@@ -28,7 +83,6 @@ const GameplayScreen: React.FC = () => {
     endGame
   } = useGameStore();
 
-  // The active turn is represented by the top card of the discard pile
   const currentTurn = discardPile.length > 0 ? discardPile[discardPile.length - 1] : null;
 
   if (isEditMode) {
@@ -52,89 +106,34 @@ const GameplayScreen: React.FC = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '10px', boxSizing: 'border-box' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-        <h2 style={{ margin: 0 }}>Round {roundNumber}</h2>
-        <button onClick={endGame} style={{ padding: '8px 12px', backgroundColor: '#f44336', color: 'white', border: 'none', borderRadius: '4px' }}>End Game</button>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h2 className={styles.roundText}>Round {roundNumber}</h2>
+        <div className={styles.buttonGroup}>
+          <button
+            onClick={() => setIsCustomActionsOpen(true)}
+            className={styles.customActionsBtn}
+          >
+            Custom Actions
+          </button>
+          <button 
+            onClick={endGame} 
+            className={styles.endGameBtn}
+          >
+            End Game
+          </button>
+        </div>
       </div>
 
-      {/* Discard Pile */}
-      <div style={{ height: '80px', display: 'flex', gap: '5px', overflowX: 'auto', alignItems: 'center', backgroundColor: '#222', padding: '5px', borderRadius: '8px' }}>
-        {discardPile.slice(-6).map((card, idx) => {
-          const showFace = !!card.isRevealed;
-          return (
-            <img 
-              key={idx} 
-              src={showFace ? card.imageFaceUrl : CARD_BACK_URL} 
-              alt={showFace ? card.type : 'Card Back'} 
-              style={{ flex: '0 0 calc((100% - 25px) / 6)', height: '100%', objectFit: 'contain' }} 
-            />
-          );
-        })}
-        {discardPile.length === 0 && <span style={{ color: '#888', margin: 'auto' }}>Discard Pile</span>}
-      </div>
+      <DiscardPile cards={discardPile} />
+      
+      <CurrentTurnDisplay currentTurn={currentTurn} />
 
-      {/* Current Turn */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: '20px 0' }}>
-        {currentTurn ? (
-          <>
-            <img src={currentTurn.imageFaceUrl} alt={currentTurn.type} style={{ maxHeight: '40vh', maxWidth: '100%', objectFit: 'contain' }} />
-            <h2 style={{ marginTop: '10px' }}>{currentTurn.type === 'Wild' ? 'WILD TURN - Players Decide' : currentTurn.type}</h2>
-          </>
-        ) : (
-          <h2>Round Over</h2>
-        )}
-      </div>
-
-      {/* Custom Actions Button */}
-      <div style={{ padding: '0 20px', marginBottom: '10px' }}>
-        <button
-          onClick={() => setIsCustomActionsOpen(true)}
-          style={{
-            width: '100%',
-            padding: '10px',
-            backgroundColor: '#3f51b5',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: '16px',
-            fontWeight: 'bold',
-          }}
-        >
-          Custom Actions
-        </button>
-      </div>
-
-      {/* Draw Pile Preview */}
-      <div style={{ height: '80px', display: 'flex', gap: '5px', overflowX: 'auto', alignItems: 'center', backgroundColor: '#222', padding: '5px', borderRadius: '8px', marginBottom: '20px' }}>
-        {drawPile.map((card, idx) => {
-          const showFace = !!card.isRevealed;
-
-          return (
-            <img 
-              key={idx} 
-              src={showFace ? card.imageFaceUrl : CARD_BACK_URL} 
-              alt={showFace ? card.type : 'Card Back'} 
-              style={{ flex: '0 0 calc((100% - 25px) / 6)', height: '100%', objectFit: 'contain' }} 
-            />
-          );
-        })}
-        {drawPile.length === 0 && <span style={{ color: '#888', margin: 'auto' }}>Draw Pile Empty</span>}
-      </div>
+      <DrawPilePreview cards={drawPile} />
 
       <button
         onClick={handleNextTurn}
-        style={{
-          width: '100%',
-          padding: '20px',
-          backgroundColor: '#4CAF50',
-          color: 'white',
-          border: 'none',
-          borderRadius: '8px',
-          fontSize: '24px',
-          fontWeight: 'bold',
-          marginBottom: '20px'
-        }}
+        className={styles.nextTurnBtn}
       >
         {drawPile.length > 0 ? 'NEXT TURN' : 'START NEW ROUND'}
       </button>
