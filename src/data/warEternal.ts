@@ -28,7 +28,7 @@ const warEternalData = {
     },
     {
       expansion: 'WE',
-      name: 'Magus Of Cloaks',
+      name: 'Magus of Cloaks',
       id: 'MagusOfCloaks',
       health: 35,
       difficulty: 7,

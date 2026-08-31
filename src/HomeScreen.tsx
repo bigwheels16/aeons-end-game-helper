@@ -76,6 +76,25 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectTool }) => {
         >
           Mage Search
         </button>
+        <button
+          onClick={() => onSelectTool('nemesis-search')}
+          style={{
+            padding: '1.5rem 2rem',
+            fontSize: '1.25rem',
+            backgroundColor: '#2b6cb0',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            transition: 'transform 0.1s ease-in-out',
+          }}
+          onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.98)')}
+          onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+          onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+        >
+          Nemesis Search
+        </button>
       </div>
     </div>
   );

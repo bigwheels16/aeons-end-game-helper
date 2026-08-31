@@ -38,6 +38,10 @@ const GameStateSchema = z.object({
     mageQuery: z.string(),
     selectedMageExpansions: z.array(z.string()),
   }).optional(),
+  nemesisSearchFilters: z.object({
+    nemesisQuery: z.string(),
+    selectedNemesisExpansions: z.array(z.string()),
+  }).optional(),
 });
 
 export interface ConfigSlice {
@@ -93,6 +97,11 @@ export interface MageSearchFilters {
   selectedMageExpansions: string[];
 }
 
+export interface NemesisSearchFilters {
+  nemesisQuery: string;
+  selectedNemesisExpansions: string[];
+}
+
 /**
  * Zustand slice managing card search filter state.
  */
@@ -105,6 +114,10 @@ export interface SearchSlice {
   mageSearchFilters: MageSearchFilters;
   /** Updates the active mage search filter parameters */
   setMageSearchFilters: (filters: Partial<MageSearchFilters>) => void;
+  /** Persisted nemesis search filter criteria */
+  nemesisSearchFilters: NemesisSearchFilters;
+  /** Updates the active nemesis search filter parameters */
+  setNemesisSearchFilters: (filters: Partial<NemesisSearchFilters>) => void;
 }
 
 type GameState = ConfigSlice & PlaySlice & SearchSlice;
@@ -308,6 +321,13 @@ const createSearchSlice: StateCreator<GameState, [], [], SearchSlice> = (set) =>
   },
   setMageSearchFilters: (filters) => set((state) => ({
     mageSearchFilters: { ...state.mageSearchFilters, ...filters }
+  })),
+  nemesisSearchFilters: {
+    nemesisQuery: '',
+    selectedNemesisExpansions: [],
+  },
+  setNemesisSearchFilters: (filters) => set((state) => ({
+    nemesisSearchFilters: { ...state.nemesisSearchFilters, ...filters }
   })),
 });
 

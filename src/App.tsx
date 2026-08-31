@@ -5,6 +5,7 @@ import GameplayScreen from './GameplayScreen';
 import HomeScreen from './HomeScreen';
 import CardSearchScreen from './CardSearchScreen';
 import MageSearchScreen from './MageSearchScreen';
+import NemesisSearchScreen from './NemesisSearchScreen';
 
 import { useEffect, useState } from 'react';
 
@@ -58,6 +59,8 @@ function App() {
     content = <CardSearchScreen />;
   } else if (activeTool === 'mage-search') {
     content = <MageSearchScreen />;
+  } else if (activeTool === 'nemesis-search') {
+    content = <NemesisSearchScreen />;
   } else {
     content = <div>Unknown tool selected</div>;
   }
