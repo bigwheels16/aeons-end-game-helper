@@ -17,7 +17,7 @@ export default function CardSearchScreen() {
   const searchFilters = useGameStore((state) => state.searchFilters);
   const setSearchFilters = useGameStore((state) => state.setSearchFilters);
 
-  const { nameQuery, effectQuery, selectedExpansions, selectedTypes, costRange } = searchFilters;
+  const { nameQuery, effectQuery, selectedExpansions, selectedTypes, costRange, showImages } = searchFilters;
   
   // Use debounced values for search
   const [debouncedName, setDebouncedName] = useState('');
@@ -62,7 +62,8 @@ export default function CardSearchScreen() {
       effectQuery: '',
       selectedExpansions: [],
       selectedTypes: [],
-      costRange: [0, 10]
+      costRange: [0, 10],
+      showImages: false
     });
     setDebouncedName('');
     setDebouncedEffect('');
@@ -212,20 +213,31 @@ export default function CardSearchScreen() {
           </div>
         </div>
         
-        <button 
-          onClick={clearFilters} 
-          style={{ 
-            padding: '0.5rem 1rem', 
-            cursor: 'pointer', 
-            backgroundColor: '#f44336', 
-            color: 'white', 
-            border: 'none', 
-            borderRadius: '4px',
-            fontWeight: 'bold'
-          }}
-        >
-          Clear All Filters
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <button 
+            onClick={clearFilters} 
+            style={{ 
+              padding: '0.5rem 1rem', 
+              cursor: 'pointer', 
+              backgroundColor: '#f44336', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: '4px',
+              fontWeight: 'bold'
+            }}
+          >
+            Clear All Filters
+          </button>
+          <label style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+            <input 
+              type="checkbox" 
+              checked={showImages} 
+              onChange={e => setSearchFilters({ showImages: e.target.checked })} 
+              style={{ width: '1.2rem', height: '1.2rem', cursor: 'pointer' }}
+            />
+            Show Card Images Only
+          </label>
+        </div>
       </div>
 
       <div style={{ padding: '1rem', backgroundColor: '#1a1a1a' }}>
@@ -250,25 +262,42 @@ export default function CardSearchScreen() {
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
-            {filteredCards.slice(0, 100).map((card, idx) => (
-              <div key={card.id || idx} style={{ backgroundColor: '#222', padding: '1rem', borderRadius: '8px', border: '1px solid #444', color: 'white' }}>
-                <h3 style={{ margin: '0 0 0.5rem 0' }}>{card.name}</h3>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: '#aaa', marginBottom: '0.5rem' }}>
-                  <span>{card.type} | {card.expansion}</span>
-                  <span>Cost: {card.cost}</span>
-                </div>
-                <div 
-                  style={{ fontSize: '0.9rem', color: '#ddd' }}
-                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(card.effect || '') }} 
-                />
+            {filteredCards.map((card, idx) => (
+              <div key={card.id || idx} style={{ backgroundColor: '#222', padding: showImages ? '0' : '1rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
+                {showImages ? (
+                  <a href={`https://aeonsend.wiki.gg/wiki/${card.name.replace(/ /g, '_')}`} target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
+                    <img 
+                      src={`https://aeonsend.wiki.gg/images/${card.name.replace(/ /g, '_')}.jpg`} 
+                      alt={card.name}
+                      loading="lazy"
+                      style={{ width: '100%', height: 'auto', display: 'block' }} 
+                    />
+                  </a>
+                ) : (
+                  <>
+                    <h3 style={{ margin: '0 0 0.5rem 0' }}>
+                      <a 
+                        href={`https://aeonsend.wiki.gg/wiki/${card.name.replace(/ /g, '_')}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        style={{ color: '#4CAF50', textDecoration: 'none' }}
+                      >
+                        {card.name}
+                      </a>
+                    </h3>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: '#aaa', marginBottom: '0.5rem' }}>
+                      <span>{card.type} | {card.expansion}</span>
+                      <span>Cost: {card.cost}</span>
+                    </div>
+                    <div 
+                      style={{ fontSize: '0.9rem', color: '#ddd' }}
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(card.effect || '') }} 
+                    />
+                  </>
+                )}
               </div>
             ))}
           </div>
-        )}
-        {filteredCards.length > 100 && (
-          <p style={{ textAlign: 'center', marginTop: '1rem', color: '#aaa' }}>
-            Showing top 100 results out of {filteredCards.length}. Refine your search for more specific results.
-          </p>
         )}
       </div>
     </div>
