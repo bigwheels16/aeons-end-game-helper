@@ -2,7 +2,7 @@
 import { create, StateCreator } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { z } from 'zod';
-import { Card, generateDeck, shuffleDeck } from './deckEngine';
+import { Card, CardType, generateDeck, shuffleDeck } from './deckEngine';
 
 export type VisibilityOption = 'current' | 'next' | 'all';
 
