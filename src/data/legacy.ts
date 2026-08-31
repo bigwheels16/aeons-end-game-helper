@@ -67,7 +67,7 @@ const legacyData = {
     },
   ],
   mages: [
-    {
+    /*{
       expansion: 'Legacy',
       name: 'Legacy Green',
       id: 'LegacyGreen',
@@ -102,7 +102,7 @@ const legacyData = {
       numberOfCharges: 'Custom',
       uniqueStarters: [],
       mageTitle: 'Custom',
-    },
+    },*/
   ],
   cards: [
     {
