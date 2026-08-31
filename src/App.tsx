@@ -6,6 +6,7 @@ import HomeScreen from './HomeScreen';
 import CardSearchScreen from './CardSearchScreen';
 import MageSearchScreen from './MageSearchScreen';
 import NemesisSearchScreen from './NemesisSearchScreen';
+import CustomDeckBuilder from './CustomDeckBuilder';
 
 import { useEffect, useState } from 'react';
 
@@ -70,6 +71,8 @@ function App() {
     content = !isPlaying ? <ConfigScreen /> : <GameplayScreen />;
   } else if (activeTool === 'card-search') {
     content = <CardSearchScreen />;
+  } else if (activeTool === 'custom-deck-builder') {
+    content = <CustomDeckBuilder />;
   } else if (activeTool === 'mage-search') {
     content = <MageSearchScreen />;
   } else if (activeTool === 'nemesis-search') {

@@ -18,7 +18,8 @@ const CardSchema = z.object({
 const VisibilityOptionSchema = z.enum(['current', 'next', 'all']);
 
 const GameStateSchema = z.object({
-  playerCount: z.number().min(1).max(4),
+  playerCount: z.union([z.number().min(1).max(4), z.literal('custom')]),
+  customDeck: z.array(CardTypeSchema).default([]),
   allowConsecutiveNemesis: z.boolean(),
   allowConsecutivePlayer: z.boolean().default(true),
   visibilityOption: VisibilityOptionSchema,
@@ -44,14 +45,29 @@ const GameStateSchema = z.object({
   }).optional(),
 });
 
+/**
+ * Zustand slice managing game setup and configuration parameters.
+ */
 export interface ConfigSlice {
-  playerCount: number;
+  /** Configured player count (1-4) or 'custom' for custom deck builder */
+  playerCount: number | 'custom';
+  /** Array of card types selected in the custom deck builder */
+  customDeck: CardType[];
+  /** Whether consecutive Nemesis turns are allowed */
   allowConsecutiveNemesis: boolean;
+  /** Whether consecutive player turns are allowed */
   allowConsecutivePlayer: boolean;
+  /** Active draw pile visibility setting */
   visibilityOption: VisibilityOption;
-  setPlayerCount: (count: number) => void;
+  /** Updates configured player count */
+  setPlayerCount: (count: number | 'custom') => void;
+  /** Updates custom turn order deck card pool */
+  setCustomDeck: (deck: CardType[]) => void;
+  /** Toggles consecutive Nemesis rule */
   setAllowConsecutiveNemesis: (allow: boolean) => void;
+  /** Toggles consecutive player rule */
   setAllowConsecutivePlayer: (allow: boolean) => void;
+  /** Sets draw pile visibility option */
   setVisibilityOption: (opt: VisibilityOption) => void;
 }
 
@@ -134,10 +150,12 @@ const applyVisibility = (drawPile: Card[], visibilityOption: VisibilityOption): 
 
 const createConfigSlice: StateCreator<GameState, [], [], ConfigSlice> = (set, get) => ({
   playerCount: 1,
+  customDeck: [],
   allowConsecutiveNemesis: true,
   allowConsecutivePlayer: true,
   visibilityOption: 'current',
   setPlayerCount: (count) => set({ playerCount: count }),
+  setCustomDeck: (deck) => set({ customDeck: deck }),
   setAllowConsecutiveNemesis: (allow) => set({ allowConsecutiveNemesis: allow }),
   setAllowConsecutivePlayer: (allow) => set({ allowConsecutivePlayer: allow }),
   setVisibilityOption: (opt) => {
@@ -155,7 +173,7 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
 
   startGame: () => {
     const state = get();
-    const initialDeck = generateDeck(state.playerCount);
+    const initialDeck = generateDeck(state.playerCount, state.customDeck);
     let shuffled = shuffleDeck(initialDeck, state.allowConsecutiveNemesis, state.allowConsecutivePlayer, null);
     
     shuffled = applyVisibility(shuffled, state.visibilityOption);
@@ -189,7 +207,7 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
         drawPile: newDrawPile,
       });
     } else {
-      const initialDeck = generateDeck(state.playerCount);
+      const initialDeck = generateDeck(state.playerCount, state.customDeck);
       const lastTurnType = state.discardPile.length > 0 ? state.discardPile[state.discardPile.length - 1].type : null;
       let shuffled = shuffleDeck(initialDeck, state.allowConsecutiveNemesis, state.allowConsecutivePlayer, lastTurnType);
       

@@ -47,20 +47,24 @@ export const CARD_IMAGES: Record<CardType, string> = {
 export const CARD_BACK_URL = '/assets/images/Card_Back.svg';
 
 /**
- * Generates the standard Aeon's End turn order deck based on player count.
+ * Generates the Aeon's End turn order deck based on player count or custom deck configuration.
  *
  * Card distribution rules:
  * - 1 Player: 3x Player 1, 2x Nemesis (5 cards total)
  * - 2 Players: 2x Player 1, 2x Player 2, 2x Nemesis (6 cards total)
  * - 3 Players: 1x Player 1, 1x Player 2, 1x Player 3, 1x Wild, 2x Nemesis (6 cards total)
  * - 4 Players: 1x Player 1, 1x Player 2, 1x Player 3, 1x Player 4, 2x Nemesis (6 cards total)
+ * - Custom: Custom card array supplied via `customDeck`
  *
- * @param playerCount - Number of players (1 to 4)
+ * @param playerCount - Number of players (1 to 4) or 'custom'
+ * @param customDeck - Optional array of CardType for custom deck mode (defaults to empty array)
  * @returns Array of Card objects representing the initial round deck
  */
-export function generateDeck(playerCount: number): Card[] {
-  const cards: CardType[] = [];
-  if (playerCount === 1) {
+export function generateDeck(playerCount: number | 'custom', customDeck: CardType[] = []): Card[] {
+  let cards: CardType[] = [];
+  if (playerCount === 'custom') {
+    cards = [...customDeck];
+  } else if (playerCount === 1) {
     cards.push('Player 1', 'Player 1', 'Player 1', 'Nemesis', 'Nemesis');
   } else if (playerCount === 2) {
     cards.push('Player 1', 'Player 1', 'Player 2', 'Player 2', 'Nemesis', 'Nemesis');

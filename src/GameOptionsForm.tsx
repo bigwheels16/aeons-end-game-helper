@@ -22,7 +22,7 @@ export const OptionCard: React.FC<{ title: string; active: boolean; onClick: () 
 );
 
 export interface GameOptionsData {
-  playerCount: number;
+  playerCount: number | 'custom';
   allowConsecutiveNemesis: boolean;
   allowConsecutivePlayer: boolean;
   visibilityOption: VisibilityOption;
@@ -43,12 +43,19 @@ export const GameOptionsForm: React.FC<GameOptionsFormProps> = ({ options, onCha
       <div>
         <h4 style={{ margin: '0 0 10px 0', color: 'inherit' }}>Player Count</h4>
         <div style={{ display: 'flex', gap: '10px' }}>
-          {[1, 2, 3, 4].map(num => (
+          {([1, 2, 3, 4, 'Custom'] as const).map(opt => (
             <OptionCard 
-              key={num} 
-              title={`${num}`} 
-              active={options.playerCount === num} 
-              onClick={() => updateOption('playerCount', num)} 
+              key={opt} 
+              title={`${opt}`} 
+              active={options.playerCount === (opt === 'Custom' ? 'custom' : opt)} 
+              onClick={() => {
+                if (opt === 'Custom') {
+                  updateOption('playerCount', 'custom');
+                  window.location.hash = 'custom-deck-builder';
+                } else {
+                  updateOption('playerCount', opt);
+                }
+              }} 
             />
           ))}
         </div>
@@ -73,22 +80,22 @@ export const GameOptionsForm: React.FC<GameOptionsFormProps> = ({ options, onCha
       </div>
 
       <div>
-        <h4 style={{ margin: '0 0 10px 0', color: 'inherit' }} title="Control how many upcoming turn cards are revealed to the players in advance.">
-          Visibility Option <span style={{ fontSize: '0.8em', color: '#888', cursor: 'help' }}>ⓘ</span>
+        <h4 style={{ margin: '0 0 10px 0', color: 'inherit' }} title="Control which upcoming turn cards are revealed to the players.">
+          Card Visibility <span style={{ fontSize: '0.8em', color: '#888', cursor: 'help' }}>ⓘ</span>
         </h4>
         <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
           <OptionCard 
-            title="Show only current turn" 
+            title="Current turn" 
             active={options.visibilityOption === 'current'} 
             onClick={() => updateOption('visibilityOption', 'current')} 
           />
           <OptionCard 
-            title="Show current and next turn" 
+            title="Current and next turn" 
             active={options.visibilityOption === 'next'} 
             onClick={() => updateOption('visibilityOption', 'next')} 
           />
           <OptionCard 
-            title="Show all turns" 
+            title="All turns" 
             active={options.visibilityOption === 'all'} 
             onClick={() => updateOption('visibilityOption', 'all')} 
           />

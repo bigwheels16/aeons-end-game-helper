@@ -20,20 +20,26 @@ The application opens into a centralized **Tools Home Screen** allowing players 
 ### 1. Turn Order Helper
 
 #### Game Setup & Configuration
-- **Player Count:** Supports 1 to 4 players with official card distributions.
+- **Player Count:** Supports standard 1 to 4 player counts with official card distributions, as well as a **Custom** option for constructing user-defined turn order decks.
+- **Custom Deck Builder:** Selecting "Custom" navigates to an interactive deck builder interface:
+  - *Card Pool:* Displays all available turn order cards (Player 1–4, Nemesis, Wild) in a scrollable horizontal tray.
+  - *Direct Manipulation Adding:* Tapping any available card adds a copy to the custom deck at the bottom; tap multiple times to add multiple copies.
+  - *Direct Manipulation Removing:* Tapping any card in the current deck view removes that specific card from the deck.
+  - *Validation & Save:* Requires at least one card in the deck before proceeding. Tapping "DONE" saves the deck configuration to persistent store and returns to Turn Order setup with "Custom" selected.
 - **Nemesis Rules:** Option to allow or prevent consecutive Nemesis turns.
 - **Visibility Options:**
-  - *Current only:* Displays only the current turn card face; all draw pile cards are shown face-down.
-  - *Current + Next:* Shows the current turn card and reveals the next upcoming card in the draw pile.
-  - *All following:* Reveals all upcoming turn cards in the round.
-- **Start Game:** Instantly initializes the deck, applies shuffling rules, and launches Round 1.
+  - *Current turn:* Displays only the current turn card face; all draw pile cards are shown face-down.
+  - *Current and next turn:* Shows the current turn card and reveals the next upcoming card in the draw pile.
+  - *All turns:* Reveals all upcoming turn cards in the round.
+- **Start Game:** Instantly initializes the deck (using standard distributions or the configured custom deck), applies shuffling rules, and launches Round 1.
 
 #### Turn Order Deck Logic
-Decks are constructed according to official Aeon's End rules:
+Decks are constructed according to official Aeon's End rules or custom configuration:
 - **1 Player:** 3x Player 1, 2x Nemesis (5 cards total)
 - **2 Players:** 2x Player 1, 2x Player 2, 2x Nemesis (6 cards total)
 - **3 Players:** 1x Player 1, 1x Player 2, 1x Player 3, 1x Wild, 2x Nemesis (6 cards total)
 - **4 Players:** 1x Player 1, 1x Player 2, 1x Player 3, 1x Player 4, 2x Nemesis (6 cards total)
+- **Custom:** User-defined list of turn order card types configured via the Custom Deck Builder
 
 #### Nemesis Turn Rules & Shuffling Logic
 - **Consecutive Nemesis Prevention:** When disabled, the deck engine ensures no two Nemesis cards appear consecutively within a round.
@@ -186,7 +192,8 @@ The core game state is managed via Zustand (`src/store.ts`) with client-side loc
 
 | Property / Method | Type / Signature | Description |
 |---|---|---|
-| `playerCount` | `number` (1–4) | Number of players in the session |
+| `playerCount` | `number \| 'custom'` | Configured player count (1–4) or `'custom'` for custom deck mode |
+| `customDeck` | `CardType[]` | Array of card types forming the custom turn order deck pool |
 | `allowConsecutiveNemesis` | `boolean` | Whether consecutive Nemesis turns are allowed |
 | `allowConsecutivePlayer` | `boolean` | Whether consecutive player turns are allowed |
 | `visibilityOption` | `'current' \| 'next' \| 'all'` | Draw pile card preview configuration |
@@ -195,12 +202,13 @@ The core game state is managed via Zustand (`src/store.ts`) with client-side loc
 | `discardPile` | `Card[]` | Cards played/discarded during the current round with `isRevealed: true` (the top card, `discardPile[discardPile.length - 1]`, represents the active turn) |
 | `roundNumber` | `number` | Current round index (1-based during play) |
 | `searchFilters` | `SearchFilters` | Active search filter criteria persisted across tool navigation and sessions (`nameQuery`, `effectQuery`, `selectedExpansions`, `selectedTypes`, `costRange`) |
-| `setPlayerCount(count)` | `(count: number) => void` | Updates configured player count |
+| `setPlayerCount(count)` | `(count: number \| 'custom') => void` | Updates configured player count |
+| `setCustomDeck(deck)` | `(deck: CardType[]) => void` | Sets the custom turn order deck card types |
 | `setAllowConsecutiveNemesis(allow)` | `(allow: boolean) => void` | Toggles consecutive Nemesis rule |
 | `setAllowConsecutivePlayer(allow)` | `(allow: boolean) => void` | Toggles consecutive player rule |
 | `setVisibilityOption(opt)` | `(opt: VisibilityOption) => void` | Sets draw pile visibility option |
 | `setSearchFilters(filters)` | `(filters: Partial<SearchFilters>) => void` | Updates active card search filters partially or fully |
-| `startGame()` | `() => void` | Generates initial deck, applies shuffle, sets `isRevealed` based on visibility settings, and begins Round 1 |
+| `startGame()` | `() => void` | Generates initial deck (standard or custom), applies shuffle, sets `isRevealed` based on visibility settings, and begins Round 1 |
 | `nextTurn()` | `() => void` | Advances turn or starts a new round when draw pile is exhausted, marking drawn cards with `isRevealed: true` |
 | `endGame()` | `() => void` | Resets game state and returns to setup screen |
 | `shuffleDrawPile()` | `() => void` | Re-shuffles remaining draw pile cards, clearing reveals and reapplying visibility settings |
