@@ -15,6 +15,7 @@ describe('App Integration', () => {
       discardPile: [],
       roundNumber: 0,
     });
+    window.location.hash = '';
   });
 
   it('should start at config screen, allow config, and start game', () => {

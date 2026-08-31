@@ -18,7 +18,20 @@ import { useEffect, useState } from 'react';
  */
 function App() {
   const isPlaying = useGameStore((state) => state.isPlaying);
-  const [activeTool, setActiveTool] = useState<string | null>(null);
+  
+  const getToolFromHash = () => window.location.hash.replace(/^#/, '') || null;
+  const [activeTool, setActiveToolState] = useState<string | null>(getToolFromHash());
+
+  useEffect(() => {
+    const handleHashChange = () => setActiveToolState(getToolFromHash());
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  const setActiveTool = (tool: string | null) => {
+    window.location.hash = tool || '';
+    setActiveToolState(tool);
+  };
 
   useEffect(() => {
     let wakeLock: any = null;
