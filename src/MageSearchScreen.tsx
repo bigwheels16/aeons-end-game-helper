@@ -1,0 +1,240 @@
+import { useState, useMemo, useEffect } from 'react';
+import DOMPurify from 'dompurify';
+import { allMages } from './data/allMages';
+import { useGameStore } from './store';
+
+export default function MageSearchScreen() {
+  const mageSearchFilters = useGameStore((state) => state.mageSearchFilters);
+  const setMageSearchFilters = useGameStore((state) => state.setMageSearchFilters);
+  const [showImages, setShowImages] = useState(false);
+
+  const { mageQuery, selectedMageExpansions } = mageSearchFilters;
+  
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(mageQuery);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [mageQuery]);
+
+  const allExpansions = useMemo(() => {
+    const exps = new Set<string>();
+    allMages.forEach(m => {
+      if (m.expansion) exps.add(m.expansion);
+    });
+    return Array.from(exps).sort();
+  }, []);
+
+  const toggleExpansion = (exp: string) => {
+    setMageSearchFilters({
+      selectedMageExpansions: selectedMageExpansions.includes(exp)
+        ? selectedMageExpansions.filter(e => e !== exp)
+        : [...selectedMageExpansions, exp]
+    });
+  };
+
+  const clearFilters = () => {
+    setMageSearchFilters({
+      mageQuery: '',
+      selectedMageExpansions: [],
+    });
+    setDebouncedQuery('');
+    setShowImages(false);
+  };
+
+  const stripHtml = (html: string) => {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || '';
+  };
+
+  const filteredMages = useMemo(() => {
+    return allMages.filter(mage => {
+      if (!mage) return false;
+
+      if (debouncedQuery) {
+        const terms = debouncedQuery.toLowerCase().split(/\s+/).filter(Boolean);
+        const searchableText = [
+          mage.name,
+          mage.mageTitle,
+          mage.abilityName,
+          mage.abilityActivation,
+          mage.abilityEffect ? stripHtml(mage.abilityEffect) : ''
+        ].join(' ').toLowerCase();
+        
+        if (!terms.every(term => searchableText.includes(term))) {
+          return false;
+        }
+      }
+
+      if (selectedMageExpansions.length > 0 && (!mage.expansion || !selectedMageExpansions.includes(mage.expansion))) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [debouncedQuery, selectedMageExpansions]);
+
+  return (
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto', backgroundColor: '#1a1a1a' }}>
+      <div style={{ padding: '1rem', borderBottom: '1px solid #555' }}>
+        <h2 style={{ marginTop: 0, color: 'white' }}>Mage Search ({filteredMages.length} results)</h2>
+        
+        <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '1rem' }}>
+          <label style={{ color: '#ccc', marginBottom: '4px' }}>Search (Name, Title, Ability)</label>
+          <input 
+            type="text" 
+            value={mageQuery} 
+            onChange={e => setMageSearchFilters({ mageQuery: e.target.value })} 
+            placeholder="Search mages..."
+            style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white' }}
+          />
+        </div>
+
+        <div style={{ marginBottom: '1rem' }}>
+          <strong style={{ color: '#ccc' }}>Expansions:</strong>
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
+            {allExpansions.map(exp => (
+              <button
+                key={exp}
+                onClick={() => toggleExpansion(exp)}
+                style={{
+                  padding: '0.25rem 0.75rem',
+                  borderRadius: '16px',
+                  border: selectedMageExpansions.includes(exp) ? '1px solid #4CAF50' : '1px solid #555',
+                  backgroundColor: selectedMageExpansions.includes(exp) ? 'rgba(76, 175, 80, 0.2)' : '#222',
+                  color: selectedMageExpansions.includes(exp) ? '#fff' : '#ccc',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+              >
+                {exp}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <button 
+            onClick={clearFilters} 
+            style={{ 
+              padding: '0.5rem 1rem', 
+              cursor: 'pointer', 
+              backgroundColor: '#f44336', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: '4px',
+              fontWeight: 'bold'
+            }}
+          >
+            Clear All Filters
+          </button>
+          <label style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+            <input 
+              type="checkbox" 
+              checked={showImages} 
+              onChange={e => setShowImages(e.target.checked)} 
+              style={{ width: '1.2rem', height: '1.2rem', cursor: 'pointer' }}
+            />
+            Show Mage Mats (Images Only)
+          </label>
+        </div>
+      </div>
+
+      <div style={{ padding: '1rem', backgroundColor: '#1a1a1a' }}>
+        {filteredMages.length === 0 ? (
+          <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+            <p style={{ fontSize: '1.25rem', color: '#ccc' }}>No matching mages found.</p>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: showImages ? 'repeat(auto-fill, minmax(400px, 1fr))' : 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem' }}>
+            {filteredMages.map((mage, idx) => (
+              <div key={mage.id || idx} style={{ backgroundColor: '#222', padding: showImages ? '0' : '1.5rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
+                {showImages ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+                    <a href={`https://aeonsend.wiki.gg/wiki/${mage.name.replace(/ /g, '_')}`} target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
+                      <img 
+                        src={`https://aeonsend.wiki.gg/images/${mage.name.replace(/ /g, '_')}_Front.jpg`} 
+                        alt={`${mage.name} Front`}
+                        loading="lazy"
+                        style={{ width: '100%', height: 'auto', display: 'block' }} 
+                      />
+                    </a>
+                    <a href={`https://aeonsend.wiki.gg/wiki/${mage.name.replace(/ /g, '_')}`} target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
+                      <img 
+                        src={`https://aeonsend.wiki.gg/images/${mage.name.replace(/ /g, '_')}_Back.jpg`} 
+                        alt={`${mage.name} Back`}
+                        loading="lazy"
+                        style={{ width: '100%', height: 'auto', display: 'block', marginTop: '4px' }} 
+                      />
+                    </a>
+                    {mage.uniqueStarters && mage.uniqueStarters.length > 0 && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '4px' }}>
+                        {mage.uniqueStarters.map((starter, sIdx) => (
+                          <a key={sIdx} href={`https://aeonsend.wiki.gg/wiki/${starter.name.replace(/ /g, '_')}`} target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
+                            <img 
+                              src={`https://aeonsend.wiki.gg/images/${starter.name.replace(/ /g, '_')}.jpg`} 
+                              alt={starter.name}
+                              loading="lazy"
+                              style={{ width: '100%', height: 'auto', display: 'block' }} 
+                            />
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <>
+                    <h2 style={{ margin: '0 0 0.25rem 0' }}>
+                      <a 
+                        href={`https://aeonsend.wiki.gg/wiki/${mage.name.replace(/ /g, '_')}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        style={{ color: '#4CAF50', textDecoration: 'none' }}
+                      >
+                        {mage.name}
+                      </a>
+                    </h2>
+                    <h4 style={{ margin: '0 0 1rem 0', color: '#aaa', fontWeight: 'normal', fontStyle: 'italic' }}>
+                      {mage.mageTitle} | {mage.expansion}
+                    </h4>
+
+                    <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: '#1a1a1a', borderRadius: '4px', borderLeft: '4px solid #4CAF50' }}>
+                      <h4 style={{ margin: '0 0 0.5rem 0', color: '#fff' }}>{mage.abilityName} ({mage.numberOfCharges} Charges)</h4>
+                      <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.85rem', color: '#bbb' }}><em>{mage.abilityActivation}</em></p>
+                      <div 
+                        style={{ fontSize: '0.9rem', color: '#ddd' }}
+                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(mage.abilityEffect || '') }} 
+                      />
+                    </div>
+
+                    {mage.uniqueStarters && mage.uniqueStarters.length > 0 && (
+                      <div>
+                        <strong style={{ color: '#ccc', display: 'block', marginBottom: '0.5rem' }}>Unique Starters:</strong>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                          {mage.uniqueStarters.map((starter, sIdx) => (
+                            <div key={sIdx} style={{ backgroundColor: '#333', padding: '0.75rem', borderRadius: '4px', border: '1px solid #444' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+                                <strong style={{ color: '#fff' }}>{starter.name}</strong>
+                                <span style={{ fontSize: '0.8rem', color: '#aaa' }}>{starter.type}</span>
+                              </div>
+                              <div 
+                                style={{ fontSize: '0.85rem', color: '#ddd' }}
+                                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(starter.effect || '') }} 
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

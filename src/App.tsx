@@ -4,6 +4,7 @@ import ConfigScreen from './ConfigScreen';
 import GameplayScreen from './GameplayScreen';
 import HomeScreen from './HomeScreen';
 import CardSearchScreen from './CardSearchScreen';
+import MageSearchScreen from './MageSearchScreen';
 
 import { useEffect, useState } from 'react';
 
@@ -55,6 +56,8 @@ function App() {
     content = !isPlaying ? <ConfigScreen /> : <GameplayScreen />;
   } else if (activeTool === 'card-search') {
     content = <CardSearchScreen />;
+  } else if (activeTool === 'mage-search') {
+    content = <MageSearchScreen />;
   } else {
     content = <div>Unknown tool selected</div>;
   }

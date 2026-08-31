@@ -34,6 +34,10 @@ const GameStateSchema = z.object({
     costRange: z.tuple([z.number(), z.number()]),
     showImages: z.boolean().default(false),
   }).optional(),
+  mageSearchFilters: z.object({
+    mageQuery: z.string(),
+    selectedMageExpansions: z.array(z.string()),
+  }).optional(),
 });
 
 export interface ConfigSlice {
@@ -84,6 +88,11 @@ export interface SearchFilters {
   showImages: boolean;
 }
 
+export interface MageSearchFilters {
+  mageQuery: string;
+  selectedMageExpansions: string[];
+}
+
 /**
  * Zustand slice managing card search filter state.
  */
@@ -92,6 +101,10 @@ export interface SearchSlice {
   searchFilters: SearchFilters;
   /** Updates the active search filter parameters */
   setSearchFilters: (filters: Partial<SearchFilters>) => void;
+  /** Persisted mage search filter criteria */
+  mageSearchFilters: MageSearchFilters;
+  /** Updates the active mage search filter parameters */
+  setMageSearchFilters: (filters: Partial<MageSearchFilters>) => void;
 }
 
 type GameState = ConfigSlice & PlaySlice & SearchSlice;
@@ -288,6 +301,13 @@ const createSearchSlice: StateCreator<GameState, [], [], SearchSlice> = (set) =>
   },
   setSearchFilters: (filters) => set((state) => ({
     searchFilters: { ...state.searchFilters, ...filters }
+  })),
+  mageSearchFilters: {
+    mageQuery: '',
+    selectedMageExpansions: [],
+  },
+  setMageSearchFilters: (filters) => set((state) => ({
+    mageSearchFilters: { ...state.mageSearchFilters, ...filters }
   })),
 });
 
