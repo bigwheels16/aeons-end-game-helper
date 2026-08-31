@@ -114,7 +114,7 @@ describe('useGameStore custom actions', () => {
       const state = useGameStore.getState();
       expect(state.drawPile.length).toBe(3);
       expect(state.discardPile.length).toBe(2);
-      expect(state.drawPile).toEqual(newDraw);
+      expect(state.drawPile).toEqual(newDraw.map(c => ({ ...c, isRevealed: false })));
       expect(state.discardPile).toEqual(newDiscard.map(c => ({ ...c, isRevealed: true })));
     });
 
@@ -133,6 +133,37 @@ describe('useGameStore custom actions', () => {
       expect(state.drawPile.length).toBe(5);
       expect(state.discardPile.length).toBe(0);
       expect(state.drawPile).toEqual(deck);
+    });
+  });
+
+  describe('searchFilters', () => {
+    it('should initially have default search filters', () => {
+      const state = useGameStore.getState();
+      expect(state.searchFilters).toEqual({
+        nameQuery: '',
+        effectQuery: '',
+        selectedExpansions: [],
+        selectedTypes: [],
+        costRange: [0, 10],
+      });
+    });
+
+    it('should update search filters partially', () => {
+      useGameStore.getState().setSearchFilters({ nameQuery: 'Diamond' });
+      
+      const state = useGameStore.getState();
+      expect(state.searchFilters.nameQuery).toBe('Diamond');
+      expect(state.searchFilters.effectQuery).toBe('');
+      expect(state.searchFilters.selectedExpansions).toEqual([]);
+      expect(state.searchFilters.selectedTypes).toEqual([]);
+      expect(state.searchFilters.costRange).toEqual([0, 10]);
+
+      useGameStore.getState().setSearchFilters({ costRange: [2, 5], selectedTypes: ['Gem'] });
+      
+      const nextState = useGameStore.getState();
+      expect(nextState.searchFilters.nameQuery).toBe('Diamond');
+      expect(nextState.searchFilters.costRange).toEqual([2, 5]);
+      expect(nextState.searchFilters.selectedTypes).toEqual(['Gem']);
     });
   });
 });

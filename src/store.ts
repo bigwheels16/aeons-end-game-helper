@@ -26,6 +26,13 @@ const GameStateSchema = z.object({
   drawPile: z.array(CardSchema),
   discardPile: z.array(CardSchema),
   roundNumber: z.number().min(0),
+  searchFilters: z.object({
+    nameQuery: z.string(),
+    effectQuery: z.string(),
+    selectedExpansions: z.array(z.string()),
+    selectedTypes: z.array(z.string()),
+    costRange: z.tuple([z.number(), z.number()]),
+  }).optional(),
 });
 
 export interface ConfigSlice {
@@ -58,7 +65,33 @@ export interface PlaySlice {
   setPiles: (newDrawPile: Card[], newDiscardPile: Card[]) => boolean;
 }
 
-type GameState = ConfigSlice & PlaySlice;
+/**
+ * Filter parameters for card search queries.
+ */
+export interface SearchFilters {
+  /** Text query matched against card name (partial match, case-insensitive) */
+  nameQuery: string;
+  /** Text query matched against card rules and effect text */
+  effectQuery: string;
+  /** List of selected expansion acronyms/identifiers to include in results */
+  selectedExpansions: string[];
+  /** List of selected card types ('Gem', 'Relic', 'Spell') to include in results */
+  selectedTypes: string[];
+  /** [minCost, maxCost] Aether cost bounds */
+  costRange: [number, number];
+}
+
+/**
+ * Zustand slice managing card search filter state.
+ */
+export interface SearchSlice {
+  /** Persisted search filter criteria */
+  searchFilters: SearchFilters;
+  /** Updates the active search filter parameters */
+  setSearchFilters: (filters: Partial<SearchFilters>) => void;
+}
+
+type GameState = ConfigSlice & PlaySlice & SearchSlice;
 
 const applyVisibility = (drawPile: Card[], visibilityOption: VisibilityOption): Card[] => {
   let newPile = drawPile.map(c => ({ ...c, isRevealed: !!c.isRevealed }));
@@ -238,11 +271,28 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
   },
 });
 
+/**
+ * Creates the search filter state slice with default initial filter criteria.
+ */
+const createSearchSlice: StateCreator<GameState, [], [], SearchSlice> = (set) => ({
+  searchFilters: {
+    nameQuery: '',
+    effectQuery: '',
+    selectedExpansions: [],
+    selectedTypes: [],
+    costRange: [0, 10],
+  },
+  setSearchFilters: (filters) => set((state) => ({
+    searchFilters: { ...state.searchFilters, ...filters }
+  })),
+});
+
 export const useGameStore = create<GameState>()(
   persist(
     (...a) => ({
       ...createConfigSlice(...a),
-      ...createPlaySlice(...a)
+      ...createPlaySlice(...a),
+      ...createSearchSlice(...a),
     }),
     {
       name: 'aeons-end-game-storage',

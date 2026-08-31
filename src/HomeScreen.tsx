@@ -1,0 +1,65 @@
+import React from 'react';
+
+interface HomeScreenProps {
+  onSelectTool: (tool: string) => void;
+}
+
+/**
+ * Home Screen Component.
+ *
+ * Serves as the central navigation hub for selecting available Aeon's End tools
+ * (Turn Order Helper and Card Search).
+ */
+const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectTool }) => {
+  return (
+    <div style={{ padding: '2rem', textAlign: 'center', fontFamily: 'sans-serif' }}>
+      <h1>Aeon's End Tools</h1>
+      <p style={{ marginBottom: '2rem', color: '#555' }}>
+        Select a tool to use for your game:
+      </p>
+      
+      <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+        <button
+          onClick={() => onSelectTool('turn-order')}
+          style={{
+            padding: '1.5rem 2rem',
+            fontSize: '1.25rem',
+            backgroundColor: '#2b6cb0',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            transition: 'transform 0.1s ease-in-out',
+          }}
+          onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.98)')}
+          onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+          onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+        >
+          Turn Order Helper
+        </button>
+        <button
+          onClick={() => onSelectTool('card-search')}
+          style={{
+            padding: '1.5rem 2rem',
+            fontSize: '1.25rem',
+            backgroundColor: '#2b6cb0',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            transition: 'transform 0.1s ease-in-out',
+          }}
+          onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.98)')}
+          onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+          onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+        >
+          Card Search
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default HomeScreen;

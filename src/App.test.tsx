@@ -20,6 +20,8 @@ describe('App Integration', () => {
   it('should start at config screen, allow config, and start game', () => {
     render(<App />);
 
+    fireEvent.click(screen.getByText('Turn Order Helper'));
+
     // Should see Setup screen
     expect(screen.getByText("Aeon's End Setup")).toBeDefined();
 
@@ -42,5 +44,23 @@ describe('App Integration', () => {
     expect(screen.getByText('NEXT TURN')).toBeDefined();
     expect(screen.getByText('Special Actions')).toBeDefined();
     expect(screen.getByText('End Game')).toBeDefined();
+  });
+
+  it('should allow navigation to Card Search tool and rendering of cards', () => {
+    render(<App />);
+
+    // Click Card Search button on HomeScreen
+    const cardSearchBtn = screen.getByText('Card Search');
+    fireEvent.click(cardSearchBtn);
+
+    // Verify Card Search screen is shown
+    expect(screen.getByPlaceholderText('Search by name...')).toBeDefined();
+    
+    // Check for Back button
+    const backBtn = screen.getByText('← Back to Tools');
+    fireEvent.click(backBtn);
+    
+    // Verify we are back on HomeScreen
+    expect(screen.getByText('Card Search')).toBeDefined();
   });
 });
