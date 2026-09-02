@@ -74,6 +74,21 @@
   margin: auto;
 }
 
+.topCardBadge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #f44336;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 2px 4px;
+  border-radius: 4px;
+  z-index: 10;
+  pointer-events: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
 .currentTurnContainer {
   flex: 1;
   display: flex;

@@ -38,7 +38,7 @@ interface SortableCardProps {
   isSelected?: boolean;
   isDimmed?: boolean;
   interactive?: boolean;
-  onClick?: () => void;
+  isTopCard?: boolean;
 }
 
 const SortableCard = (props: SortableCardProps) => {
@@ -63,17 +63,10 @@ const SortableCard = (props: SortableCardProps) => {
   if (props.isDimmed) cardClasses += ` ${styles.cardDimmed}`;
   
   return (
-    <img 
-      ref={setNodeRef}
-      style={{...style, touchAction: 'none'}}
-      {...attributes}
-      {...listeners}
-      src={props.showFace ? props.card.imageFaceUrl : CARD_BACK_URL} 
-      alt={props.showFace ? props.card.type : 'Card Back'} 
-      className={cardClasses}
-      aria-selected={props.isSelected}
-      draggable={false}
-    />
+    <div ref={setNodeRef} style={{...style, position: 'relative', height: '100%', flex: '0 0 calc((100% - 25px) / 6)', touchAction: 'none'}} {...attributes} {...listeners}>
+      <img src={props.showFace ? props.card.imageFaceUrl : CARD_BACK_URL} alt={props.showFace ? props.card.type : 'Card Back'} className={cardClasses} style={{width: '100%', height: '100%', objectFit: 'contain'}} aria-selected={props.isSelected} />
+      {props.isTopCard && <div className={styles.topCardBadge}>TOP</div>}
+    </div>
   );
 };
 
@@ -113,6 +106,7 @@ const CardPile = ({ cards, limit, emptyText, customClass, onCardClick, selectedI
           const showFace = !!card.isRevealed;
           const isSelected = selectedIndices?.has(actualIdx);
           const isDimmed = dimUnselected && !isSelected && showFace;
+          const isTopCard = (containerId === 'draw-pile-container' && idx === 0) || (containerId === 'discard-pile-container' && idx === displayCards.length - 1);
           
           if (isDragMode) {
             return (
@@ -124,6 +118,7 @@ const CardPile = ({ cards, limit, emptyText, customClass, onCardClick, selectedI
                 isSelected={isSelected}
                 isDimmed={isDimmed}
                 interactive={interactive}
+                isTopCard={isTopCard}
               />
             );
           }
@@ -134,19 +129,22 @@ const CardPile = ({ cards, limit, emptyText, customClass, onCardClick, selectedI
           if (isDimmed) cardClasses += ` ${styles.cardDimmed}`;
           
           return (
-            <img 
-              key={card.id} 
-              src={showFace ? card.imageFaceUrl : CARD_BACK_URL} 
-              alt={showFace ? card.type : 'Card Back'} 
-              className={cardClasses}
-              onClick={() => {
-                if (onCardClick && (!isDimmed || (dimUnselected && !showFace))) {
-                  onCardClick(actualIdx);
-                }
-              }}
-              aria-selected={isSelected}
-              draggable={false}
-            />
+            <div key={card.id} style={{ position: 'relative', height: '100%', flex: '0 0 calc((100% - 25px) / 6)' }}>
+              <img 
+                src={showFace ? card.imageFaceUrl : CARD_BACK_URL} 
+                alt={showFace ? card.type : 'Card Back'} 
+                className={cardClasses}
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                onClick={() => {
+                  if (onCardClick && (!isDimmed || (dimUnselected && !showFace))) {
+                    onCardClick(actualIdx);
+                  }
+                }}
+                aria-selected={isSelected}
+                draggable={false}
+              />
+              {isTopCard && <div className={styles.topCardBadge}>TOP</div>}
+            </div>
           );
         })}
       </SortableContext>
@@ -528,3 +526,4 @@ const GameplayScreen: React.FC = () => {
 };
 
 export default GameplayScreen;
+
