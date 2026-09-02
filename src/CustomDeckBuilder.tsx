@@ -93,23 +93,41 @@ const CustomDeckBuilder: React.FC = () => {
         </div>
       )}
 
-      <button
-        onClick={handleDone}
-        disabled={draftDeck.length === 0}
-        style={{
-          width: '100%',
-          padding: '20px',
-          backgroundColor: draftDeck.length > 0 ? '#4CAF50' : '#555',
-          color: 'white',
-          border: 'none',
-          borderRadius: '8px',
-          fontSize: '20px',
-          fontWeight: 'bold',
-          cursor: draftDeck.length > 0 ? 'pointer' : 'not-allowed'
-        }}
-      >
-        DONE
-      </button>
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <button
+          onClick={() => { window.location.hash = 'turn-order'; }}
+          style={{
+            flex: 1,
+            padding: '20px',
+            backgroundColor: '#f44336',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+          }}
+        >
+          CANCEL
+        </button>
+        <button
+          onClick={handleDone}
+          disabled={draftDeck.length === 0}
+          style={{
+            flex: 1,
+            padding: '20px',
+            backgroundColor: draftDeck.length > 0 ? '#4CAF50' : '#555',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            cursor: draftDeck.length > 0 ? 'pointer' : 'not-allowed'
+          }}
+        >
+          CONFIRM
+        </button>
+      </div>
     </div>
   );
 };
