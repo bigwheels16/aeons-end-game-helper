@@ -55,7 +55,7 @@ describe('App Integration', () => {
     fireEvent.click(cardSearchBtn);
 
     // Verify Card Search screen is shown
-    expect(screen.getByPlaceholderText('Search by name...')).toBeDefined();
+    expect(screen.getByPlaceholderText('Search cards, effects...')).toBeDefined();
     
     // Check for Back button
     const backBtn = screen.getByText('← Back to Tools');

@@ -18,7 +18,7 @@ export default function CardSearchScreen() {
   const searchFilters = useGameStore((state) => state.searchFilters);
   const setSearchFilters = useGameStore((state) => state.setSearchFilters);
 
-  const { nameQuery, effectQuery, selectedExpansions, selectedTypes, costRange } = searchFilters;
+  const { cardQuery, selectedExpansions, selectedTypes, costRange } = searchFilters;
   const [visibleImages, setVisibleImages] = useState<Set<string>>(new Set());
 
   const toggleImage = (id: string) => {
@@ -31,16 +31,14 @@ export default function CardSearchScreen() {
   };
   
   // Use debounced values for search
-  const [debouncedName, setDebouncedName] = useState('');
-  const [debouncedEffect, setDebouncedEffect] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedName(nameQuery);
-      setDebouncedEffect(effectQuery);
+      setDebouncedQuery(cardQuery);
     }, 300);
     return () => clearTimeout(timer);
-  }, [nameQuery, effectQuery]);
+  }, [cardQuery]);
 
   // Extract all available expansions
   const allExpansions = useMemo(() => {
@@ -69,14 +67,12 @@ export default function CardSearchScreen() {
 
   const clearFilters = () => {
     setSearchFilters({
-      nameQuery: '',
-      effectQuery: '',
+      cardQuery: '',
       selectedExpansions: [],
       selectedTypes: [],
       costRange: [0, 10]
     });
-    setDebouncedName('');
-    setDebouncedEffect('');
+    setDebouncedQuery('');
   };
 
   const stripHtml = (html: string) => {
@@ -89,12 +85,15 @@ export default function CardSearchScreen() {
       // Missing data fallback
       if (!card) return false;
 
-      // Name search
-      if (debouncedName) {
-        if (!card.name) return false;
-        const nameLower = card.name.toLowerCase();
-        const terms = debouncedName.toLowerCase().split(/\s+/).filter(Boolean);
-        if (!terms.every(term => nameLower.includes(term))) {
+      // Combined Name & Effect search
+      if (debouncedQuery) {
+        const terms = debouncedQuery.toLowerCase().split(/\s+/).filter(Boolean);
+        const searchableText = [
+          card.name,
+          card.effect ? stripHtml(card.effect) : ''
+        ].join(' ').toLowerCase();
+
+        if (!terms.every(term => searchableText.includes(term))) {
           return false;
         }
       }
@@ -115,23 +114,13 @@ export default function CardSearchScreen() {
         return false;
       }
 
-      // Effect search
-      if (debouncedEffect) {
-        if (!card.effect) return false;
-        const plainText = stripHtml(card.effect).toLowerCase();
-        const terms = debouncedEffect.toLowerCase().split(/\s+/).filter(Boolean);
-        if (!terms.every(term => plainText.includes(term))) {
-          return false;
-        }
-      }
-
       return true;
     }).sort((a, b) => {
       const costA = a.cost !== undefined ? Number(a.cost) : 0;
       const costB = b.cost !== undefined ? Number(b.cost) : 0;
       return costA - costB;
     });
-  }, [debouncedName, debouncedEffect, selectedExpansions, selectedTypes, costRange]);
+  }, [debouncedQuery, selectedExpansions, selectedTypes, costRange]);
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto', backgroundColor: '#1a1a1a' }}>
@@ -140,22 +129,12 @@ export default function CardSearchScreen() {
         
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
           <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: '200px' }}>
-            <label style={{ color: '#ccc', marginBottom: '4px' }}>Name</label>
+            <label style={{ color: '#ccc', marginBottom: '4px' }}>Search (Name, Effect)</label>
             <input 
               type="text" 
-              value={nameQuery} 
-              onChange={e => setSearchFilters({ nameQuery: e.target.value })} 
-              placeholder="Search by name..."
-              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white' }}
-            />
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: '200px' }}>
-            <label style={{ color: '#ccc', marginBottom: '4px' }}>Effect</label>
-            <input 
-              type="text" 
-              value={effectQuery} 
-              onChange={e => setSearchFilters({ effectQuery: e.target.value })} 
-              placeholder="Search by effect..."
+              value={cardQuery} 
+              onChange={e => setSearchFilters({ cardQuery: e.target.value })} 
+              placeholder="Search cards, effects..."
               style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white' }}
             />
           </div>

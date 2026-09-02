@@ -32,12 +32,11 @@ const GameStateSchema = z.object({
     card: CardSchema,
   })).optional().default([]),
   searchFilters: z.object({
-    nameQuery: z.string(),
-    effectQuery: z.string(),
+    cardQuery: z.string().optional().default(''),
     selectedExpansions: z.array(z.string()),
     selectedTypes: z.array(z.string()),
     costRange: z.tuple([z.number(), z.number()]),
-  }).optional(),
+  }).passthrough().optional(),
   mageSearchFilters: z.object({
     mageQuery: z.string(),
     selectedMageExpansions: z.array(z.string()),
@@ -98,10 +97,8 @@ export interface PlaySlice {
  * Filter parameters for card search queries.
  */
 export interface SearchFilters {
-  /** Text query matched against card name (partial match, case-insensitive) */
-  nameQuery: string;
-  /** Text query matched against card rules and effect text */
-  effectQuery: string;
+  /** Text query matched against card name and rules/effect text */
+  cardQuery: string;
   /** List of selected expansion acronyms/identifiers to include in results */
   selectedExpansions: string[];
   /** List of selected card types ('Gem', 'Relic', 'Spell') to include in results */
@@ -342,8 +339,7 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
  */
 const createSearchSlice: StateCreator<GameState, [], [], SearchSlice> = (set) => ({
   searchFilters: {
-    nameQuery: '',
-    effectQuery: '',
+    cardQuery: '',
     selectedExpansions: [],
     selectedTypes: [],
     costRange: [0, 10],

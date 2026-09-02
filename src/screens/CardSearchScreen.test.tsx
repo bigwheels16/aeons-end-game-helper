@@ -44,8 +44,7 @@ vi.mock('../data/allCards', () => ({
 describe('CardSearchScreen', () => {
   beforeEach(() => {
     useGameStore.getState().setSearchFilters({
-      nameQuery: '',
-      effectQuery: '',
+      cardQuery: '',
       selectedExpansions: [],
       selectedTypes: [],
       costRange: [0, 10]
@@ -64,8 +63,8 @@ describe('CardSearchScreen', () => {
   it('filters by name', async () => {
     render(<CardSearchScreen />);
     
-    const nameInput = screen.getByPlaceholderText('Search by name...');
-    fireEvent.change(nameInput, { target: { value: 'Ja' } });
+    const searchInput = screen.getByPlaceholderText('Search cards, effects...');
+    fireEvent.change(searchInput, { target: { value: 'Ja' } });
 
     // Wait for debounce
     await waitFor(() => {
@@ -78,8 +77,8 @@ describe('CardSearchScreen', () => {
   it('filters by effect', async () => {
     render(<CardSearchScreen />);
     
-    const effectInput = screen.getByPlaceholderText('Search by effect...');
-    fireEvent.change(effectInput, { target: { value: 'damage' } });
+    const searchInput = screen.getByPlaceholderText('Search cards, effects...');
+    fireEvent.change(searchInput, { target: { value: 'damage' } });
 
     await waitFor(() => {
       expect(screen.queryByText('Jade')).toBeNull();
