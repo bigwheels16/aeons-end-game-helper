@@ -8,7 +8,7 @@
 /**
  * Valid card types in the Aeon's End turn order deck.
  */
-export type CardType = 'Player 1' | 'Player 2' | 'Player 3' | 'Player 4' | 'Nemesis' | 'Wild';
+export type CardType = 'Player 1' | 'Player 2' | 'Player 3' | 'Player 4' | 'Nemesis' | 'Wild' | 'Player 1/2' | 'Player 3/4';
 
 /**
  * Represents a single turn order card.
@@ -32,12 +32,14 @@ export interface Card {
  * @see https://aeonsend.wiki.gg/wiki/Turn_Order_Deck
  */
 export const CARD_IMAGES: Record<CardType, string> = {
-  'Player 1': '/assets/images/Player_1.jpg',
-  'Player 2': '/assets/images/Player_2.jpg',
-  'Player 3': '/assets/images/Player_3.jpg',
-  'Player 4': '/assets/images/Player_4.jpg',
-  'Nemesis': '/assets/images/Nemesis.jpg',
-  'Wild': '/assets/images/Wild.jpg',
+  'Player 1': 'https://aeonsend.wiki.gg/images/Turn_Order_Card_1.jpg',
+  'Player 2': 'https://aeonsend.wiki.gg/images/Turn_Order_Card_2.jpg',
+  'Player 3': 'https://aeonsend.wiki.gg/images/Turn_Order_Card_3.jpg',
+  'Player 4': 'https://aeonsend.wiki.gg/images/Turn_Order_Card_4.jpg',
+  'Nemesis': 'https://aeonsend.wiki.gg/images/Turn_Order_Card_Nemesis.jpg',
+  'Wild': 'https://aeonsend.wiki.gg/images/Turn_Order_Card_Wild.jpg',
+  'Player 1/2': 'https://aeonsend.wiki.gg/images/Turn_Order_Card_1_2.jpg',
+  'Player 3/4': 'https://aeonsend.wiki.gg/images/Turn_Order_Card_3_4.jpg'
 };
 
 /**

@@ -27,6 +27,10 @@ const GameStateSchema = z.object({
   drawPile: z.array(CardSchema),
   discardPile: z.array(CardSchema),
   roundNumber: z.number().min(0),
+  turnHistory: z.array(z.object({
+    roundNumber: z.number(),
+    card: CardSchema,
+  })).optional().default([]),
   searchFilters: z.object({
     nameQuery: z.string(),
     effectQuery: z.string(),
@@ -76,6 +80,7 @@ export interface PlaySlice {
   drawPile: Card[];
   discardPile: Card[];
   roundNumber: number;
+  turnHistory: { roundNumber: number; card: Card }[];
   startGame: () => void;
   nextTurn: () => void;
   endGame: () => void;
@@ -170,6 +175,7 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
   drawPile: [],
   discardPile: [],
   roundNumber: 0,
+  turnHistory: [],
 
   startGame: () => {
     const state = get();
@@ -183,6 +189,7 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
       drawPile: shuffled,
       discardPile: [],
       roundNumber: 1,
+      turnHistory: [],
     });
   },
 
@@ -202,9 +209,12 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
       
       newDrawPile = applyVisibility(newDrawPile, state.visibilityOption);
 
+      const turnHistory = nextCard ? [...state.turnHistory, { roundNumber: state.roundNumber, card: nextCard }] : state.turnHistory;
+
       set({
         discardPile: newDiscard,
         drawPile: newDrawPile,
+        turnHistory,
       });
     } else {
       const initialDeck = generateDeck(state.playerCount, state.customDeck);
@@ -218,10 +228,13 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
       
       shuffled = applyVisibility(shuffled, state.visibilityOption);
       
+      const turnHistory = nextCard ? [...state.turnHistory, { roundNumber: state.roundNumber + 1, card: nextCard }] : state.turnHistory;
+
       set({
         discardPile: nextCard ? [nextCard] : [],
         drawPile: shuffled,
         roundNumber: state.roundNumber + 1,
+        turnHistory,
       });
     }
   },
@@ -232,6 +245,7 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
       drawPile: [],
       discardPile: [],
       roundNumber: 0,
+      turnHistory: [],
     });
   },
 
@@ -298,7 +312,11 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
       discardPile.push(cardToMove);
     }
 
-    set({ drawPile, discardPile });
+    const prevHistory = state.turnHistory.filter(h => h.roundNumber !== state.roundNumber);
+    const newHistory = discardPile.map(card => ({ roundNumber: state.roundNumber, card }));
+    const turnHistory = [...prevHistory, ...newHistory];
+
+    set({ drawPile, discardPile, turnHistory });
   },
 
   setPiles: (newDrawPile, newDiscardPile) => {
@@ -313,7 +331,11 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
     newDiscardPile = newDiscardPile.map(c => ({ ...c, isRevealed: true }));
     newDrawPile = applyVisibility(newDrawPile, state.visibilityOption);
 
-    set({ drawPile: newDrawPile, discardPile: newDiscardPile });
+    const prevHistory = state.turnHistory.filter(h => h.roundNumber !== state.roundNumber);
+    const newHistory = newDiscardPile.map(card => ({ roundNumber: state.roundNumber, card }));
+    const turnHistory = [...prevHistory, ...newHistory];
+
+    set({ drawPile: newDrawPile, discardPile: newDiscardPile, turnHistory });
     return true;
   },
 });

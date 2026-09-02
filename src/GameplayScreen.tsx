@@ -4,6 +4,7 @@ import { useGameStore } from './store';
 import { CARD_BACK_URL, Card } from './deckEngine';
 import { CustomActionsModal } from './CustomActionsModal';
 import { GameOptionsModal } from './GameOptionsModal';
+import { HistoryModal } from './HistoryModal';
 import { Modal, ModalButton } from './Modal';
 import styles from './GameplayScreen.module.css';
 
@@ -173,6 +174,7 @@ const GameplayScreen: React.FC = () => {
   const [isCustomActionsOpen, setIsCustomActionsOpen] = useState(false);
   const [isEndGameModalOpen, setIsEndGameModalOpen] = useState(false);
   const [isGameOptionsModalOpen, setIsGameOptionsModalOpen] = useState(false);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const {
     drawPile,
     discardPile,
@@ -490,6 +492,12 @@ const GameplayScreen: React.FC = () => {
         onEnterEditMode={enterMoveMode}
         onEnterRevealMode={enterRevealMode}
         onOpenGameOptions={() => setIsGameOptionsModalOpen(true)}
+        onOpenHistory={() => setIsHistoryModalOpen(true)}
+      />
+
+      <HistoryModal
+        isOpen={isHistoryModalOpen}
+        onClose={() => setIsHistoryModalOpen(false)}
       />
 
       <GameOptionsModal 
