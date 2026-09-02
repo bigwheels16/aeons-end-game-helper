@@ -161,7 +161,7 @@ const CurrentTurnDisplay = ({ currentTurn }: { currentTurn: Card | null }) => {
     <div className={styles.currentTurnContainer}>
       {currentTurn ? (
         <>
-          <img src={showFace ? currentTurn.imageFaceUrl : CARD_BACK_URL} alt={showFace ? currentTurn.type : 'Card Back'} className={styles.currentTurnImage} />
+          <img key={currentTurn.id} src={showFace ? currentTurn.imageFaceUrl : CARD_BACK_URL} alt={showFace ? currentTurn.type : 'Card Back'} className={styles.currentTurnImage} />
         </>
       ) : (
         <h2>Round Over</h2>

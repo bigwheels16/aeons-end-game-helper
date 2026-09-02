@@ -30,11 +30,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectTool }) => {
             borderRadius: '8px',
             cursor: 'pointer',
             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            transition: 'transform 0.1s ease-in-out',
+            
           }}
-          onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.98)')}
-          onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-          onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
         >
           Turn Order Helper
         </button>
@@ -49,11 +46,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectTool }) => {
             borderRadius: '8px',
             cursor: 'pointer',
             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            transition: 'transform 0.1s ease-in-out',
+            
           }}
-          onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.98)')}
-          onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-          onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
         >
           Card Search
         </button>
@@ -68,11 +62,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectTool }) => {
             borderRadius: '8px',
             cursor: 'pointer',
             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            transition: 'transform 0.1s ease-in-out',
+            
           }}
-          onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.98)')}
-          onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-          onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
         >
           Mage Search
         </button>
@@ -87,11 +78,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectTool }) => {
             borderRadius: '8px',
             cursor: 'pointer',
             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            transition: 'transform 0.1s ease-in-out',
+            
           }}
-          onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.98)')}
-          onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-          onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
         >
           Nemesis Search
         </button>
@@ -105,3 +93,4 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectTool }) => {
 };
 
 export default HomeScreen;
+

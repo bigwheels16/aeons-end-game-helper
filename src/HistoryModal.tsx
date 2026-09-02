@@ -22,12 +22,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose }) =
     return acc;
   }, {} as Record<number, any[]>);
 
-  const getCardColor = (type: string) => {
-    if (type.includes('Player')) return '#2196F3'; // Blue
-    if (type === 'Nemesis') return '#f44336'; // Red
-    if (type === 'Wild') return '#9C27B0'; // Purple
-    return '#888';
-  };
+
 
   return (
     <Modal isOpen={isOpen} title="Turn History">
@@ -40,19 +35,27 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose }) =
               <h4 style={{ margin: '0 0 10px 0', color: '#fff', borderBottom: '1px solid #444', paddingBottom: '5px' }}>
                 Round {roundNum}
               </h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {[...rounds[Number(roundNum)]].reverse().map((card, idx) => (
-                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#333', padding: '8px', borderRadius: '4px' }}>
-                    <div style={{ 
-                      width: '12px', 
-                      height: '12px', 
-                      borderRadius: '50%', 
-                      backgroundColor: getCardColor(card.type)
-                    }} />
-                    <span style={{ color: '#ddd' }}>
-                      <strong style={{ color: getCardColor(card.type) }}>{card.type}</strong>
-                    </span>
-                  </div>
+              <div style={{ 
+                display: 'flex', 
+                gap: '5px', 
+                overflowX: 'auto', 
+                alignItems: 'center', 
+                padding: '5px'
+              }}>
+                {rounds[Number(roundNum)].map((card, idx) => (
+                  <img 
+                    key={idx} 
+                    src={card.imageFaceUrl} 
+                    alt={card.type} 
+                    title={card.type}
+                    style={{ 
+                      flex: '0 0 calc((100% - 25px) / 6)',
+                      height: '80px',
+                      objectFit: 'contain',
+                      borderRadius: '4px',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                    }} 
+                  />
                 ))}
               </div>
             </div>
