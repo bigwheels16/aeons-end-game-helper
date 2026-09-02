@@ -96,6 +96,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectTool }) => {
           Nemesis Search
         </button>
       </div>
+
+      <div style={{ marginTop: '3rem', fontSize: '0.9rem', color: '#888' }}>
+        Images provided by: <a href="https://aeonsend.wiki.gg/" target="_blank" rel="noopener noreferrer" style={{ color: '#2b6cb0', textDecoration: 'none' }}>https://aeonsend.wiki.gg/</a>
+      </div>
     </div>
   );
 };
