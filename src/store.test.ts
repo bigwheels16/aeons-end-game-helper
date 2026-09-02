@@ -145,7 +145,6 @@ describe('useGameStore custom actions', () => {
         selectedExpansions: [],
         selectedTypes: [],
         costRange: [0, 10],
-        showImages: false,
       });
     });
 
@@ -168,3 +167,4 @@ describe('useGameStore custom actions', () => {
     });
   });
 });
+
