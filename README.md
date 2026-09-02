@@ -62,6 +62,31 @@ Once the tool has been loaded in the browser, no network connection is needed fo
 
 ---
 
+## Supported Sets & Expansions
+
+The database includes cards, mages, and nemeses from **13 sets and expansions**:
+
+### Standalone / Core Boxes
+* **Aeon's End** (Core Set / 2nd Edition)
+* **War Eternal**
+* **Legacy**
+* **The New Age**
+
+### Small Expansions
+* **The Depths**
+* **The Nameless**
+* **The Void**
+* **The Outer Dark**
+* **Buried Secrets**
+* **Into the Wild**
+* **Shattered Dreams**
+* **The Ancients**
+
+### Promotional Content
+* **Promos**
+
+---
+
 ## Tech Stack
 - **Frontend Framework:** React 18, TypeScript, Vite
 - **State Management:** Zustand
