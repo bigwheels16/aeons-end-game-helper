@@ -1,6 +1,6 @@
 # Aeon's End Companion Tools
 
-A mobile-optimized, client-side web application suite designed for the cooperative deck-building board game **Aeon's End**. The suite provides two core tools:
+A mobile-optimized, client-side web application suite designed for the cooperative deck-building board game **Aeon's End**. The suite provides several core tools:
 1. **Turn Order Helper:** Randomizes, tracks, and manipulates turn order decks with official rules, visibility settings, drag-and-drop mid-round edits, and wake lock support.
 2. **Card Search:** A fast, multi-expansion card browser and lookup tool covering Gems, Relics, and Spells across 13 sets with debounced text search, type filters, expansion chips, cost range sliders, and sanitized HTML effect rendering.
 3. **Mage Search:**
