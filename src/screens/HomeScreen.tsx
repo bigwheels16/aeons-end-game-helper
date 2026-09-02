@@ -38,71 +38,44 @@ const formatBuildTime = (isoString?: string): string => {
 
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectTool }) => {
+  const buttonStyle: React.CSSProperties = {
+    padding: '1.5rem 2rem',
+    fontSize: '1.25rem',
+    backgroundColor: '#2b6cb0',
+    color: 'white',
+    border: 'none',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    width: '100%',
+    maxWidth: '280px',
+  };
+
   return (
     <div style={{ padding: '2rem', textAlign: 'center', fontFamily: 'sans-serif' }}>
       <h1>Aeon's End Tools</h1>
-      <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
         <button
           onClick={() => onSelectTool('turn-order')}
-          style={{
-            padding: '1.5rem 2rem',
-            fontSize: '1.25rem',
-            backgroundColor: '#2b6cb0',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            
-          }}
+          style={buttonStyle}
         >
           Turn Order Helper
         </button>
         <button
           onClick={() => onSelectTool('card-search')}
-          style={{
-            padding: '1.5rem 2rem',
-            fontSize: '1.25rem',
-            backgroundColor: '#2b6cb0',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            
-          }}
+          style={buttonStyle}
         >
           Card Search
         </button>
         <button
           onClick={() => onSelectTool('mage-search')}
-          style={{
-            padding: '1.5rem 2rem',
-            fontSize: '1.25rem',
-            backgroundColor: '#2b6cb0',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            
-          }}
+          style={buttonStyle}
         >
           Mage Search
         </button>
         <button
           onClick={() => onSelectTool('nemesis-search')}
-          style={{
-            padding: '1.5rem 2rem',
-            fontSize: '1.25rem',
-            backgroundColor: '#2b6cb0',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            
-          }}
+          style={buttonStyle}
         >
           Nemesis Search
         </button>
