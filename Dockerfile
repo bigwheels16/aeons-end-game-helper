@@ -6,6 +6,8 @@ COPY package*.json ./
 RUN --mount=type=cache,target=/root/.npm npm ci
 
 COPY . .
+ARG VITE_BUILD_TIME
+ENV VITE_BUILD_TIME=$VITE_BUILD_TIME
 RUN npm run build
 
 # Production stage

@@ -4,3 +4,10 @@ declare module "*.module.css" {
   export default classes;
 }
 
+interface ImportMetaEnv {
+  readonly VITE_BUILD_TIME: string
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv
+}
