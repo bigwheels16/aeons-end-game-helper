@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { useGameStore } from './store';
+import { useGameStore } from '../store';
 import { Modal, ModalButton } from './Modal';
 
 interface CustomActionsModalProps {

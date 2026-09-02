@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { useGameStore } from './store';
-import { CARD_BACK_URL, Card } from './deckEngine';
-import { CustomActionsModal } from './CustomActionsModal';
-import { GameOptionsModal } from './GameOptionsModal';
-import { HistoryModal } from './HistoryModal';
-import { Modal, ModalButton } from './Modal';
+import { useGameStore } from '../store';
+import { CARD_BACK_URL, Card } from '../deckEngine';
+import { CustomActionsModal } from '../components/CustomActionsModal';
+import { GameOptionsModal } from '../components/GameOptionsModal';
+import { HistoryModal } from '../components/HistoryModal';
+import { Modal, ModalButton } from '../components/Modal';
 import styles from './GameplayScreen.module.css';
 
 import {

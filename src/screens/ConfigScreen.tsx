@@ -1,6 +1,6 @@
 import React from 'react';
-import { useGameStore } from './store';
-import { GameOptionsForm, GameOptionsData } from './GameOptionsForm';
+import { useGameStore } from '../store';
+import { GameOptionsForm, GameOptionsData } from '../components/GameOptionsForm';
 
 /**
  * Configuration Screen Component.

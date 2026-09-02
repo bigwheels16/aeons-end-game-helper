@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, ModalButton } from './Modal';
-import { useGameStore, VisibilityOption } from './store';
+import { useGameStore, VisibilityOption } from '../store';
 
 interface GameOptionsModalProps {
   isOpen: boolean;

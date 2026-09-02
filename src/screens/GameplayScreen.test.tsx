@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, beforeEach } from 'vitest';
 import GameplayScreen from './GameplayScreen';
-import { useGameStore } from './store';
-import { Card } from './deckEngine';
+import { useGameStore } from '../store';
+import { Card } from '../deckEngine';
 
 describe('GameplayScreen Component', () => {
   beforeEach(() => {

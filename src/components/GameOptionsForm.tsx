@@ -1,5 +1,5 @@
 import React from 'react';
-import { VisibilityOption } from './store';
+import { VisibilityOption } from '../store';
 
 export const OptionCard: React.FC<{ title: string; active: boolean; onClick: () => void }> = ({ title, active, onClick }) => (
   <div onClick={onClick} style={{

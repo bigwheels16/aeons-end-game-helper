@@ -1,8 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import DOMPurify from 'dompurify';
-import { allNemeses } from './data/allNemeses';
-import { useGameStore } from './store';
-import ExpansionFilter from './components/ExpansionFilter';
+import { allNemeses } from '../data/allNemeses';
+import { useGameStore } from '../store';
+import ExpansionFilter from '../components/ExpansionFilter';
 
 export default function NemesisSearchScreen() {
   const nemesisSearchFilters = useGameStore((state) => state.nemesisSearchFilters);
@@ -203,6 +203,7 @@ export default function NemesisSearchScreen() {
   );
 
 }
+
 
 
 

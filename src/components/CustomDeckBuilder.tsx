@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useGameStore } from './store';
-import { CardType, CARD_IMAGES } from './deckEngine';
+import { useGameStore } from '../store';
+import { CardType, CARD_IMAGES } from '../deckEngine';
 
 /**
  * CustomDeckBuilder Component.

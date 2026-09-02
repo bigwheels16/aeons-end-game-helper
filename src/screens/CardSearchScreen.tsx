@@ -1,8 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import DOMPurify from 'dompurify';
-import { allCards } from './data/allCards';
-import { useGameStore } from './store';
-import ExpansionFilter from './components/ExpansionFilter';
+import { allCards } from '../data/allCards';
+import { useGameStore } from '../store';
+import ExpansionFilter from '../components/ExpansionFilter';
 
 /**
  * Card Search Screen Component.
@@ -297,6 +297,7 @@ export default function CardSearchScreen() {
     </div>
   );
 }
+
 
 
 

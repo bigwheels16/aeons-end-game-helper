@@ -1,10 +1,10 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import CardSearchScreen from './CardSearchScreen';
-import { useGameStore } from './store';
+import { useGameStore } from '../store';
 
 // Mock the cards data to keep the test predictable and fast
-vi.mock('./data/allCards', () => ({
+vi.mock('../data/allCards', () => ({
   allCards: [
     {
       id: 'Jade',
@@ -134,3 +134,4 @@ describe('CardSearchScreen', () => {
     });
   });
 });
+

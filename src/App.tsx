@@ -1,12 +1,12 @@
 import { Toaster } from 'react-hot-toast';
 import { useGameStore } from './store';
-import ConfigScreen from './ConfigScreen';
-import GameplayScreen from './GameplayScreen';
-import HomeScreen from './HomeScreen';
-import CardSearchScreen from './CardSearchScreen';
-import MageSearchScreen from './MageSearchScreen';
-import NemesisSearchScreen from './NemesisSearchScreen';
-import CustomDeckBuilder from './CustomDeckBuilder';
+import ConfigScreen from './screens/ConfigScreen';
+import GameplayScreen from './screens/GameplayScreen';
+import HomeScreen from './screens/HomeScreen';
+import CardSearchScreen from './screens/CardSearchScreen';
+import MageSearchScreen from './screens/MageSearchScreen';
+import NemesisSearchScreen from './screens/NemesisSearchScreen';
+import CustomDeckBuilder from './components/CustomDeckBuilder';
 
 import { useEffect, useState } from 'react';
 

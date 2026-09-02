@@ -21,8 +21,8 @@ import {
   useSortable
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Card, CARD_BACK_URL } from './deckEngine';
-import { useGameStore } from './store';
+import { Card, CARD_BACK_URL } from '../deckEngine';
+import { useGameStore } from '../store';
 
 /**
  * Properties for the EditModeController component.

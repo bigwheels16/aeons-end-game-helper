@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CARD_BACK_URL } from './deckEngine';
+import { Card, CARD_BACK_URL } from '../deckEngine';
 import { Modal, ModalButton } from './Modal';
 
 /**

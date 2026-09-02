@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, ModalButton } from './Modal';
-import { useGameStore } from './store';
+import { useGameStore } from '../store';
 
 
 interface HistoryModalProps {

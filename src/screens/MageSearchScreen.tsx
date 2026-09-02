@@ -1,8 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import DOMPurify from 'dompurify';
-import { allMages } from './data/allMages';
-import { useGameStore } from './store';
-import ExpansionFilter from './components/ExpansionFilter';
+import { allMages } from '../data/allMages';
+import { useGameStore } from '../store';
+import ExpansionFilter from '../components/ExpansionFilter';
 
 export default function MageSearchScreen() {
   const mageSearchFilters = useGameStore((state) => state.mageSearchFilters);
@@ -240,6 +240,7 @@ export default function MageSearchScreen() {
     </div>
   );
 }
+
 
 
 
