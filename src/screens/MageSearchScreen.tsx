@@ -75,12 +75,16 @@ export default function MageSearchScreen() {
 
       if (debouncedQuery) {
         const terms = debouncedQuery.toLowerCase().split(/\s+/).filter(Boolean);
+        const startersText = (mage.uniqueStarters || [])
+          .map(s => `${s.name} ${s.effect ? stripHtml(s.effect) : ''}`)
+          .join(' ');
+
         const searchableText = [
           mage.name,
-          mage.mageTitle,
           mage.abilityName,
           mage.abilityActivation,
-          mage.abilityEffect ? stripHtml(mage.abilityEffect) : ''
+          mage.abilityEffect ? stripHtml(mage.abilityEffect) : '',
+          startersText
         ].join(' ').toLowerCase();
         
         if (!terms.every(term => searchableText.includes(term))) {
@@ -101,15 +105,17 @@ export default function MageSearchScreen() {
       <div style={{ padding: '1rem', borderBottom: '1px solid #555' }}>
         <h2 style={{ marginTop: 0, color: 'white' }}>Mage Search ({filteredMages.length} results)</h2>
         
-        <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '1rem' }}>
-          <label style={{ color: '#ccc', marginBottom: '4px' }}>Search (Name, Title, Ability)</label>
-          <input 
-            type="text" 
-            value={mageQuery} 
-            onChange={e => setMageSearchFilters({ mageQuery: e.target.value })} 
-            placeholder="Search mages..."
-            style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white' }}
-          />
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: '200px' }}>
+            <label style={{ color: '#ccc', marginBottom: '4px' }}>Search (Name, Ability, Unique Starters)</label>
+            <input 
+              type="text" 
+              value={mageQuery} 
+              onChange={e => setMageSearchFilters({ mageQuery: e.target.value })} 
+              placeholder="Search mages, abilities, starters..."
+              style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white' }}
+            />
+          </div>
         </div>
 
         <ExpansionFilter
