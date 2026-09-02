@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useGameStore } from './store';
 import { CardType, CARD_IMAGES } from './deckEngine';
 
-/** Available turn order card types for custom deck construction */
-const AVAILABLE_CARDS: CardType[] = ['Player 1', 'Player 2', 'Player 3', 'Player 4', 'Nemesis', 'Wild'];
-
 /**
  * CustomDeckBuilder Component.
  *
@@ -47,7 +44,7 @@ const CustomDeckBuilder: React.FC = () => {
       <div style={{ marginBottom: '20px' }}>
         <h3 style={{ marginBottom: '10px' }}>Available Cards (Tap to Add)</h3>
         <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', paddingBottom: '10px' }}>
-          {AVAILABLE_CARDS.map(type => (
+          {(Object.keys(CARD_IMAGES) as CardType[]).map(type => (
             <div 
               key={type} 
               onClick={() => handleAddCard(type)}
@@ -83,6 +80,18 @@ const CustomDeckBuilder: React.FC = () => {
           </div>
         )}
       </div>
+
+      {draftDeck.length > 0 && !draftDeck.includes('Nemesis') && (
+        <div style={{ padding: '10px', backgroundColor: 'rgba(255, 152, 0, 0.2)', color: '#ff9800', borderRadius: '8px', marginBottom: '15px', textAlign: 'center', border: '1px solid #ff9800' }}>
+          Warning: Your deck does not contain any Nemesis cards.
+        </div>
+      )}
+      
+      {draftDeck.length > 0 && !draftDeck.some(c => c !== 'Nemesis') && (
+        <div style={{ padding: '10px', backgroundColor: 'rgba(255, 152, 0, 0.2)', color: '#ff9800', borderRadius: '8px', marginBottom: '15px', textAlign: 'center', border: '1px solid #ff9800' }}>
+          Warning: Your deck only contains Nemesis cards.
+        </div>
+      )}
 
       <button
         onClick={handleDone}
