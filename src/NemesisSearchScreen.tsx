@@ -172,22 +172,26 @@ export default function NemesisSearchScreen() {
                       onClick={() => toggleImage(nemesis.name)}
                       style={{ marginTop: '1rem', background: 'none', border: 'none', color: '#2196F3', cursor: 'pointer', padding: 0, fontSize: '0.875rem' }}
                     >
-                      {visibleImages.has(nemesis.name) ? 'Hide Image' : 'Show Image'}
+                      {visibleImages.has(nemesis.name) ? 'Hide Mat Images' : 'Show Mat Images'}
                     </button>
                     {visibleImages.has(nemesis.name) && (
                       <div style={{ marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                        <img 
-                          src={`https://aeonsend.wiki.gg/images/${nemesis.name.replace(/ /g, '_')}_Front.jpg`} 
-                          alt={`${nemesis.name} Front`}
-                          loading="lazy"
-                          style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
-                        />
-                        <img 
-                          src={`https://aeonsend.wiki.gg/images/${nemesis.name.replace(/ /g, '_')}_Back.jpg`} 
-                          alt={`${nemesis.name} Back`}
-                          loading="lazy"
-                          style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
-                        />
+                        <a href={`https://aeonsend.wiki.gg/images/${nemesis.name.replace(/ /g, '_')}_Front.jpg`} target="_blank" rel="noopener noreferrer">
+                          <img 
+                            src={`https://aeonsend.wiki.gg/images/${nemesis.name.replace(/ /g, '_')}_Front.jpg`} 
+                            alt={`${nemesis.name} Front`}
+                            loading="lazy"
+                            style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
+                          />
+                        </a>
+                        <a href={`https://aeonsend.wiki.gg/images/${nemesis.name.replace(/ /g, '_')}_Back.jpg`} target="_blank" rel="noopener noreferrer">
+                          <img 
+                            src={`https://aeonsend.wiki.gg/images/${nemesis.name.replace(/ /g, '_')}_Back.jpg`} 
+                            alt={`${nemesis.name} Back`}
+                            loading="lazy"
+                            style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
+                          />
+                        </a>
                       </div>
                     )}
                   </div>
@@ -199,5 +203,7 @@ export default function NemesisSearchScreen() {
   );
 
 }
+
+
 
 

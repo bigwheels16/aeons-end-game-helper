@@ -176,18 +176,22 @@ export default function MageSearchScreen() {
                     </button>
                     {visibleMats.has(mage.name) && (
                       <div style={{ marginBottom: '1rem', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                        <img 
-                          src={`https://aeonsend.wiki.gg/images/${mage.name.replace(/ /g, '_')}_Front.jpg`} 
-                          alt={`${mage.name} Front`}
-                          loading="lazy"
-                          style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
-                        />
-                        <img 
-                          src={`https://aeonsend.wiki.gg/images/${mage.name.replace(/ /g, '_')}_Back.jpg`} 
-                          alt={`${mage.name} Back`}
-                          loading="lazy"
-                          style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
-                        />
+                        <a href={`https://aeonsend.wiki.gg/images/${mage.name.replace(/ /g, '_')}_Front.jpg`} target="_blank" rel="noopener noreferrer">
+                            <img 
+                              src={`https://aeonsend.wiki.gg/images/${mage.name.replace(/ /g, '_')}_Front.jpg`} 
+                              alt={`${mage.name} Front`}
+                              loading="lazy"
+                              style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
+                            />
+                          </a>
+                        <a href={`https://aeonsend.wiki.gg/images/${mage.name.replace(/ /g, '_')}_Back.jpg`} target="_blank" rel="noopener noreferrer">
+                            <img 
+                              src={`https://aeonsend.wiki.gg/images/${mage.name.replace(/ /g, '_')}_Back.jpg`} 
+                              alt={`${mage.name} Back`}
+                              loading="lazy"
+                              style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
+                            />
+                          </a>
                       </div>
                     )}
 
@@ -213,12 +217,14 @@ export default function MageSearchScreen() {
                               </button>
                               {visibleStarters.has(starter.name) && (
                                 <div style={{ marginTop: '0.5rem' }}>
-                                  <img 
-                                    src={`https://aeonsend.wiki.gg/images/${starter.name.replace(/ /g, '_')}.jpg`} 
-                                    alt={starter.name}
-                                    loading="lazy"
-                                    style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
-                                  />
+                                  <a href={`https://aeonsend.wiki.gg/images/${starter.name.replace(/ /g, '_')}.jpg`} target="_blank" rel="noopener noreferrer">
+                                    <img 
+                                      src={`https://aeonsend.wiki.gg/images/${starter.name.replace(/ /g, '_')}.jpg`} 
+                                      alt={starter.name}
+                                      loading="lazy"
+                                      style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
+                                    />
+                                  </a>
                                 </div>
                               )}
                             </div>
@@ -234,6 +240,7 @@ export default function MageSearchScreen() {
     </div>
   );
 }
+
 
 
 

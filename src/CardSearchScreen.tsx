@@ -278,12 +278,14 @@ export default function CardSearchScreen() {
                       </button>
                       {visibleImages.has(card.id) && (
                         <div style={{ marginTop: '0.5rem' }}>
-                          <img 
-                            src={`https://aeonsend.wiki.gg/images/${card.name.replace(/ /g, '_')}.jpg`} 
-                            alt={card.name}
-                            loading="lazy"
-                            style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
-                          />
+                          <a href={`https://aeonsend.wiki.gg/images/${card.name.replace(/ /g, '_')}.jpg`} target="_blank" rel="noopener noreferrer">
+                              <img 
+                                src={`https://aeonsend.wiki.gg/images/${card.name.replace(/ /g, '_')}.jpg`} 
+                                alt={card.name}
+                                loading="lazy"
+                                style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
+                              />
+                            </a>
                         </div>
                       )}
                     
@@ -295,6 +297,7 @@ export default function CardSearchScreen() {
     </div>
   );
 }
+
 
 
 
