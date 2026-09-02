@@ -204,9 +204,13 @@ const GameplayScreen: React.FC = () => {
     ? (discardPile.length > 0 ? discardPile[discardPile.length - 1] : null)
     : (localDiscardPile.length > 0 ? localDiscardPile[localDiscardPile.length - 1] : null);
 
+  const [isNextTurnDisabled, setIsNextTurnDisabled] = useState(false);
+
   const handleNextTurn = () => {
-    if (specialMode === 'NONE') {
+    if (specialMode === 'NONE' && !isNextTurnDisabled) {
       nextTurn();
+      setIsNextTurnDisabled(true);
+      setTimeout(() => setIsNextTurnDisabled(false), 1000);
     }
   };
   
@@ -479,6 +483,7 @@ const GameplayScreen: React.FC = () => {
         <button
           onClick={handleNextTurn}
           className={styles.nextTurnBtn}
+          disabled={isNextTurnDisabled}
         >
           {drawPile.length > 0 ? 'NEXT TURN' : 'START NEW ROUND'}
         </button>
