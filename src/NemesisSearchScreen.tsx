@@ -10,6 +10,16 @@ export default function NemesisSearchScreen() {
   const [showImages, setShowImages] = useState(false);
 
   const { nemesisQuery, selectedNemesisExpansions } = nemesisSearchFilters;
+  const [visibleImages, setVisibleImages] = useState<Set<string>>(new Set());
+
+  const toggleImage = (id: string) => {
+    setVisibleImages(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) newSet.delete(id);
+      else newSet.add(id);
+      return newSet;
+    });
+  };
   
   const [debouncedQuery, setDebouncedQuery] = useState('');
 
@@ -190,6 +200,28 @@ export default function NemesisSearchScreen() {
                         />
                       </div>
                     )}
+                    <button 
+                      onClick={() => toggleImage(nemesis.name)}
+                      style={{ marginTop: '1rem', background: 'none', border: 'none', color: '#2196F3', cursor: 'pointer', padding: 0, fontSize: '0.875rem' }}
+                    >
+                      {visibleImages.has(nemesis.name) ? 'Hide Image' : 'Show Image'}
+                    </button>
+                    {visibleImages.has(nemesis.name) && (
+                      <div style={{ marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <img 
+                          src={`https://aeonsend.wiki.gg/images/${nemesis.name.replace(/ /g, '_')}_Front.jpg`} 
+                          alt={`${nemesis.name} Front`}
+                          loading="lazy"
+                          style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
+                        />
+                        <img 
+                          src={`https://aeonsend.wiki.gg/images/${nemesis.name.replace(/ /g, '_')}_Back.jpg`} 
+                          alt={`${nemesis.name} Back`}
+                          loading="lazy"
+                          style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
+                        />
+                      </div>
+                    )}
                   </>
                 )}
               </div>
@@ -199,4 +231,5 @@ export default function NemesisSearchScreen() {
       </div>
     </div>
   );
+
 }

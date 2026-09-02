@@ -11,6 +11,27 @@ export default function MageSearchScreen() {
 
   const { mageQuery, selectedMageExpansions } = mageSearchFilters;
   
+  const [visibleMats, setVisibleMats] = useState<Set<string>>(new Set());
+  const [visibleStarters, setVisibleStarters] = useState<Set<string>>(new Set());
+
+  const toggleMat = (id: string) => {
+    setVisibleMats(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) newSet.delete(id);
+      else newSet.add(id);
+      return newSet;
+    });
+  };
+
+  const toggleStarter = (id: string) => {
+    setVisibleStarters(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) newSet.delete(id);
+      else newSet.add(id);
+      return newSet;
+    });
+  };
+
   const [debouncedQuery, setDebouncedQuery] = useState('');
 
   useEffect(() => {
@@ -193,6 +214,29 @@ export default function MageSearchScreen() {
                       />
                     </div>
 
+                    <button 
+                      onClick={() => toggleMat(mage.name)}
+                      style={{ marginBottom: '1rem', background: 'none', border: 'none', color: '#2196F3', cursor: 'pointer', padding: 0, fontSize: '0.875rem' }}
+                    >
+                      {visibleMats.has(mage.name) ? 'Hide Mat Images' : 'Show Mat Images'}
+                    </button>
+                    {visibleMats.has(mage.name) && (
+                      <div style={{ marginBottom: '1rem', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <img 
+                          src={`https://aeonsend.wiki.gg/images/${mage.name.replace(/ /g, '_')}_Front.jpg`} 
+                          alt={`${mage.name} Front`}
+                          loading="lazy"
+                          style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
+                        />
+                        <img 
+                          src={`https://aeonsend.wiki.gg/images/${mage.name.replace(/ /g, '_')}_Back.jpg`} 
+                          alt={`${mage.name} Back`}
+                          loading="lazy"
+                          style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
+                        />
+                      </div>
+                    )}
+
                     {mage.uniqueStarters && mage.uniqueStarters.length > 0 && (
                       <div>
                         <strong style={{ color: '#ccc', display: 'block', marginBottom: '0.5rem' }}>Unique Starters:</strong>
@@ -207,6 +251,22 @@ export default function MageSearchScreen() {
                                 style={{ fontSize: '0.85rem', color: '#ddd' }}
                                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(starter.effect || '') }} 
                               />
+                              <button 
+                                onClick={() => toggleStarter(starter.name)}
+                                style={{ marginTop: '0.5rem', background: 'none', border: 'none', color: '#2196F3', cursor: 'pointer', padding: 0, fontSize: '0.875rem' }}
+                              >
+                                {visibleStarters.has(starter.name) ? 'Hide Image' : 'Show Image'}
+                              </button>
+                              {visibleStarters.has(starter.name) && (
+                                <div style={{ marginTop: '0.5rem' }}>
+                                  <img 
+                                    src={`https://aeonsend.wiki.gg/images/${starter.name.replace(/ /g, '_')}.jpg`} 
+                                    alt={starter.name}
+                                    loading="lazy"
+                                    style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
+                                  />
+                                </div>
+                              )}
                             </div>
                           ))}
                         </div>
@@ -222,3 +282,4 @@ export default function MageSearchScreen() {
     </div>
   );
 }
+

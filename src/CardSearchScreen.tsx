@@ -19,6 +19,16 @@ export default function CardSearchScreen() {
   const setSearchFilters = useGameStore((state) => state.setSearchFilters);
 
   const { nameQuery, effectQuery, selectedExpansions, selectedTypes, costRange, showImages } = searchFilters;
+  const [visibleImages, setVisibleImages] = useState<Set<string>>(new Set());
+
+  const toggleImage = (id: string) => {
+    setVisibleImages(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) newSet.delete(id);
+      else newSet.add(id);
+      return newSet;
+    });
+  };
   
   // Use debounced values for search
   const [debouncedName, setDebouncedName] = useState('');
@@ -278,11 +288,27 @@ export default function CardSearchScreen() {
                       <span>Cost: {card.cost}</span>
                     </div>
                     <div 
-                      style={{ fontSize: '0.9rem', color: '#ddd' }}
-                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(card.effect || '') }} 
-                    />
-                  </>
-                )}
+                        style={{ fontSize: '0.9rem', color: '#ddd', marginBottom: '0.5rem' }}
+                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(card.effect || '') }} 
+                      />
+                      <button 
+                        onClick={() => toggleImage(card.id)}
+                        style={{ background: 'none', border: 'none', color: '#2196F3', cursor: 'pointer', padding: 0, fontSize: '0.875rem' }}
+                      >
+                        {visibleImages.has(card.id) ? 'Hide Image' : 'Show Image'}
+                      </button>
+                      {visibleImages.has(card.id) && (
+                        <div style={{ marginTop: '0.5rem' }}>
+                          <img 
+                            src={`https://aeonsend.wiki.gg/images/${card.name.replace(/ /g, '_')}.jpg`} 
+                            alt={card.name}
+                            loading="lazy"
+                            style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
+                          />
+                        </div>
+                      )}
+                    </>
+                  )}
               </div>
             ))}
           </div>
@@ -291,4 +317,5 @@ export default function CardSearchScreen() {
     </div>
   );
 }
+
 
