@@ -2,9 +2,9 @@
 
 A mobile-optimized, client-side web application suite designed for the cooperative deck-building board game **Aeon's End**. The suite provides several core tools:
 1. **Turn Order Helper:** Randomizes, tracks, and manipulates turn order decks with official rules, visibility settings, drag-and-drop mid-round edits, and wake lock support.
-2. **Card Search:** A fast, multi-expansion card browser and lookup tool covering Gems, Relics, and Spells across 13 sets with debounced text search, type filters, expansion chips, cost range sliders, and sanitized HTML effect rendering.
-3. **Mage Search:**
-4. **Nemesis Search:**
+2. **Card Search:** A fast, multi-expansion card browser and lookup tool covering Gems, Relics, and Spells.
+3. **Mage Search:** A dedicated database for browsing all playable Mages, their starting abilities, unique starters, and official player mats.
+4. **Nemesis Search:** A quick reference for discovering and reviewing Nemeses and their mats across all expansions.
 
 See a live version here: https://aeons-end.jkbff.com/
 
@@ -37,32 +37,43 @@ Supports card abilities, player relics/spells, and Nemesis effects that manipula
 ---
 
 ### 2. Card Search Tool
-
 The integrated **Card Search** tool allows quick browsing, searching, and filtering of player market cards (Gems, Relics, Spells).
+- **Advanced Filters:** Filter by card name, effect text, cost ranges, specific card types, and desired expansions.
+- **Inline Images:** Expand any card to see its full-resolution artwork, and click any expanded image to open it in a new tab for native zooming.
 
 ---
 
 ### 3. Mage Search Tool
-
-The integrated **Mage Search** tool allows quick browsing, searching, and filtering of mages.
+The integrated **Mage Search** tool allows quick browsing of playable Mages.
+- **Ability Search:** Look up Mages by name or specific ability keywords.
+- **Mage Mats:** Expand to view a Mage's official Front/Back mats and their unique starter cards.
 
 ---
 
 ### 4. Nemesis Search Tool
-
-The integrated **Nemesis Search** tool allows quick browsing, searching, and filtering of Nemesis.
+The integrated **Nemesis Search** tool allows filtering of Nemeses.
+- **Expansion Filtering:** Easily find Nemeses by the box or expansion they came in.
+- **Nemesis Mats:** Instantly expand and view the official Front and Back mats for any Nemesis to review setup or unleash conditions.
 
 ---
 
 ### 5. Offline & Session Persistence
+Once the tool has been loaded in the browser, no network connection is needed for core mechanics. All logic and text data executes locally, while images are lazily loaded on demand to save bandwidth.
 
-Once the tool has been loaded in the browser, no network connection is needed.  All functionality executes locally (except for card and mat images).
+---
+
+## Tech Stack
+- **Frontend Framework:** React 18, TypeScript, Vite
+- **State Management:** Zustand
+- **Drag & Drop Engine:** @dnd-kit (Sortable)
+- **Validation & Sanitization:** Zod, DOMPurify
+- **Testing:** Vitest, React Testing Library
 
 ---
 
 ## Artwork & Assets
 
-Official card faces and card backs for the turn order deck are sourced directly from the [Aeon's End Wiki](https://aeonsend.wiki.gg/wiki/Turn_Order_Deck):
+All card texts, mechanical data, abilities, and image assets (including standard turn order cards, player mats, and nemesis mats) are sourced directly from the official [Aeon's End Wiki on wiki.gg](https://aeonsend.wiki.gg/). 
 
 ---
 
