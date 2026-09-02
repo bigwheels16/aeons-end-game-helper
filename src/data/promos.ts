@@ -7,7 +7,7 @@ const promosData = {
   cards: [
     {
       type: 'Spell',
-      expansion: 'promos',
+      expansion: 'Promos',
       name: 'Drown in Flames',
       id: 'DrownInFlames',
       cost: 6,
@@ -23,7 +23,7 @@ const promosData = {
     },
     {
       type: 'Spell',
-      expansion: 'promos',
+      expansion: 'Promos',
       name: 'Fleeting Vision',
       id: 'FleetingVision',
       cost: 3,
@@ -38,7 +38,7 @@ const promosData = {
     },
     {
       type: 'Spell',
-      expansion: 'promos',
+      expansion: 'Promos',
       name: 'Splinter Missile',
       id: 'SplinterMissile',
       cost: 5,
@@ -54,7 +54,7 @@ const promosData = {
     },
     {
       type: 'Gem',
-      expansion: 'promos',
+      expansion: 'Promos',
       name: 'Echo Stone',
       id: 'EchoStone',
       cost: 4,
@@ -69,7 +69,7 @@ const promosData = {
     },
     {
       type: 'Spell',
-      expansion: 'promos',
+      expansion: 'Promos',
       name: 'Thieving Spirit',
       id: 'ThievingSpirit',
       cost: 5,
@@ -83,7 +83,7 @@ const promosData = {
     },
     {
       type: 'Gem',
-      expansion: 'promos',
+      expansion: 'Promos',
       name: 'Fractured Quartz',
       id: 'FracturedQuartz',
       cost: 4,
@@ -98,7 +98,7 @@ const promosData = {
     },
     {
       type: 'Relic',
-      expansion: 'promos',
+      expansion: 'Promos',
       name: 'Rock Launcher',
       id: 'RockLauncher',
       cost: 3,
@@ -111,7 +111,7 @@ const promosData = {
     },
     {
       type: 'Relic',
-      expansion: 'promos',
+      expansion: 'Promos',
       name: 'Abacus of Ignition',
       id: 'AbacusOfIgnition',
       cost: 4,
@@ -125,7 +125,7 @@ const promosData = {
     },
     {
       type: 'Spell',
-      expansion: 'promos',
+      expansion: 'Promos',
       name: 'Illuminating Flame',
       id: 'IlluminatingFlame',
       cost: 6,
@@ -140,7 +140,7 @@ const promosData = {
     },
     {
       type: 'Spell',
-      expansion: 'promos',
+      expansion: 'Promos',
       name: 'Chronal Arc',
       id: 'ChronalArc',
       cost: 7,
@@ -159,7 +159,7 @@ const promosData = {
     {
       id: 'ReevesRavenShard',
       name: "Reeve's RavenShard",
-      expansion: 'promos',
+      expansion: 'Promos',
       level: 1,
       subtype: 'Gem',
       effect: `
@@ -172,7 +172,7 @@ const promosData = {
     {
       id: 'NymsVision',
       name: "Nym's Vision",
-      expansion: 'promos',
+      expansion: 'Promos',
       level: 1,
       subtype: 'Spell',
       effect: `
@@ -186,7 +186,7 @@ const promosData = {
     {
       id: 'SparrowsAid',
       name: "Sparrow's Aid",
-      expansion: 'promos',
+      expansion: 'Promos',
       level: 1,
       effect: `
       <p>
@@ -198,7 +198,7 @@ const promosData = {
     {
       id: 'WraithsEssence',
       name: "Wraith's Essence",
-      expansion: 'promos',
+      expansion: 'Promos',
       level: 2,
       effect: `
       <p>
@@ -211,7 +211,7 @@ const promosData = {
     {
       id: 'VolatileClasp',
       name: 'Volatile Clasp',
-      expansion: 'promos',
+      expansion: 'Promos',
       level: 3,
       effect: `
       <p>
@@ -223,7 +223,7 @@ const promosData = {
     {
       id: 'BreachStabilizer',
       name: 'Breach Stabilizer',
-      expansion: 'promos',
+      expansion: 'Promos',
       level: 3,
       effect: `
       <p>
@@ -234,7 +234,7 @@ const promosData = {
     {
       id: 'FangedChoker',
       name: 'Fanged Choker',
-      expansion: 'promos',
+      expansion: 'Promos',
       level: 3,
       effect: `
       <p>
@@ -246,7 +246,7 @@ const promosData = {
     {
       id: 'EndlessBandolier',
       name: 'Endless Bandolier',
-      expansion: 'promos',
+      expansion: 'Promos',
       level: 3,
       effect: `
       <p>

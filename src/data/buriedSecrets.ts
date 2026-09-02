@@ -7,7 +7,7 @@ const buriedSecretsData = {
   cards: [
     {
       type: 'Gem',
-      expansion: 'BS',
+      expansion: 'Buried Secrets',
       name: 'Triplite Core',
       id: 'TripliteCore',
       cost: 4,
@@ -21,7 +21,7 @@ const buriedSecretsData = {
     },
     {
       type: 'Spell',
-      expansion: 'BS',
+      expansion: 'Buried Secrets',
       name: 'Nerve Jab',
       id: 'NerveJab',
       cost: 2,
@@ -35,7 +35,7 @@ const buriedSecretsData = {
     },
     {
       type: 'Spell',
-      expansion: 'BS',
+      expansion: 'Buried Secrets',
       name: 'Double Tap',
       id: 'DoubleTap',
       cost: 3,
@@ -50,7 +50,7 @@ const buriedSecretsData = {
     },
     {
       type: 'Gem',
-      expansion: 'BS',
+      expansion: 'Buried Secrets',
       name: 'Oblivium Resin',
       id: 'ObliviumResin',
       cost: 5,
@@ -65,7 +65,7 @@ const buriedSecretsData = {
     },
     {
       type: 'Gem',
-      expansion: 'BS',
+      expansion: 'Buried Secrets',
       name: 'Summonite',
       id: 'Summonite',
       cost: 3,
@@ -81,7 +81,7 @@ const buriedSecretsData = {
     },
     {
       type: 'Relic',
-      expansion: 'BS',
+      expansion: 'Buried Secrets',
       name: 'Manifold Container',
       id: 'ManifoldContainer',
       cost: 4,
@@ -96,7 +96,7 @@ const buriedSecretsData = {
     },
     {
       type: 'Spell',
-      expansion: 'BS',
+      expansion: 'Buried Secrets',
       name: 'Draining Touch',
       id: 'DrainingTouch',
       cost: 2,
@@ -110,7 +110,7 @@ const buriedSecretsData = {
     },
     {
       type: 'Gem',
-      expansion: 'BS',
+      expansion: 'Buried Secrets',
       name: 'Jolting Crust',
       id: 'JoltingCrust',
       cost: 3,
@@ -126,7 +126,7 @@ const buriedSecretsData = {
     },
     {
       type: 'Gem',
-      expansion: 'BS',
+      expansion: 'Buried Secrets',
       name: 'Mentite Chunk',
       id: 'MentiteChunk',
       cost: 5,
@@ -141,7 +141,7 @@ const buriedSecretsData = {
     },
     {
       type: 'Relic',
-      expansion: 'BS',
+      expansion: 'Buried Secrets',
       name: 'Soul Cords',
       id: 'SoulCords',
       cost: 5,
@@ -155,7 +155,7 @@ const buriedSecretsData = {
     },
     {
       type: 'Gem',
-      expansion: 'BS',
+      expansion: 'Buried Secrets',
       name: 'Voidium Spike',
       id: 'VoidiumSpike',
       cost: 3,
@@ -169,7 +169,7 @@ const buriedSecretsData = {
     },
     {
       type: 'Spell',
-      expansion: 'BS',
+      expansion: 'Buried Secrets',
       name: 'Precision Shot',
       id: 'PrecisionShot',
       cost: 3,
@@ -187,7 +187,7 @@ const buriedSecretsData = {
     },
     {
       type: 'Gem',
-      expansion: 'BS',
+      expansion: 'Buried Secrets',
       name: 'Muted Lacosite',
       id: 'MutedLacosite',
       cost: 5,
@@ -201,7 +201,7 @@ const buriedSecretsData = {
     },
     {
       type: 'Spell',
-      expansion: 'BS',
+      expansion: 'Buried Secrets',
       name: 'Blade Of Wisdom',
       id: 'BladeOfWisdom',
       cost: 6,
@@ -216,7 +216,7 @@ const buriedSecretsData = {
     },
     {
       type: 'Spell',
-      expansion: 'BS',
+      expansion: 'Buried Secrets',
       name: 'Stunning Force',
       id: 'StunningForce',
       cost: 5,
@@ -230,7 +230,7 @@ const buriedSecretsData = {
     },
     {
       type: 'Spell',
-      expansion: 'BS',
+      expansion: 'Buried Secrets',
       name: 'Flash Of Intellect',
       id: 'FlashOfIntellect',
       cost: 4,
@@ -249,7 +249,7 @@ const buriedSecretsData = {
     },
     {
       type: 'Relic',
-      expansion: 'BS',
+      expansion: 'Buried Secrets',
       name: 'Scholars Opus',
       id: 'ScholarsOpus',
       cost: 3,
@@ -264,7 +264,7 @@ const buriedSecretsData = {
     },
     {
       type: 'Relic',
-      expansion: 'BS',
+      expansion: 'Buried Secrets',
       name: 'Bottled Star',
       id: 'BottledStar',
       cost: 7,
@@ -277,7 +277,7 @@ const buriedSecretsData = {
     },
     {
       type: 'Spell',
-      expansion: 'BS',
+      expansion: 'Buried Secrets',
       name: 'Burning Current',
       id: 'BurningCurrent',
       cost: 3,
@@ -293,7 +293,7 @@ const buriedSecretsData = {
     },
     {
       type: 'Spell',
-      expansion: 'BS',
+      expansion: 'Buried Secrets',
       name: 'Psychic Eruption',
       id: 'PsychicEruption',
       cost: 8,
@@ -307,7 +307,7 @@ const buriedSecretsData = {
     },
     {
       type: 'Relic',
-      expansion: 'BS',
+      expansion: 'Buried Secrets',
       name: 'Living Gauntlet',
       id: 'LivingGauntlet',
       cost: 4,
@@ -322,7 +322,7 @@ const buriedSecretsData = {
     },
     {
       type: 'Gem',
-      expansion: 'BS',
+      expansion: 'Buried Secrets',
       name: 'Shining Tetrite',
       id: 'ShiningTetrite',
       cost: 6,

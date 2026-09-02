@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import { allCards } from './data/allCards';
 import { useGameStore } from './store';
+import ExpansionFilter from './components/ExpansionFilter';
 
 /**
  * Card Search Screen Component.
@@ -116,6 +117,10 @@ export default function CardSearchScreen() {
       }
 
       return true;
+    }).sort((a, b) => {
+      const costA = a.cost !== undefined ? Number(a.cost) : 0;
+      const costB = b.cost !== undefined ? Number(b.cost) : 0;
+      return costA - costB;
     });
   }, [debouncedName, debouncedEffect, selectedExpansions, selectedTypes, costRange]);
 
@@ -147,28 +152,11 @@ export default function CardSearchScreen() {
           </div>
         </div>
 
-        <div style={{ marginBottom: '1rem' }}>
-          <strong style={{ color: '#ccc' }}>Expansions:</strong>
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
-            {allExpansions.map(exp => (
-              <button
-                key={exp}
-                onClick={() => toggleExpansion(exp)}
-                style={{
-                  padding: '0.25rem 0.75rem',
-                  borderRadius: '16px',
-                  border: selectedExpansions.includes(exp) ? '1px solid #4CAF50' : '1px solid #555',
-                  backgroundColor: selectedExpansions.includes(exp) ? 'rgba(76, 175, 80, 0.2)' : '#222',
-                  color: selectedExpansions.includes(exp) ? '#fff' : '#ccc',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s'
-                }}
-              >
-                {exp}
-              </button>
-            ))}
-          </div>
-        </div>
+        <ExpansionFilter
+          allExpansions={allExpansions}
+          selectedExpansions={selectedExpansions}
+          onToggleExpansion={toggleExpansion}
+        />
 
         <div style={{ marginBottom: '1rem' }}>
           <strong style={{ color: '#ccc' }}>Card Type:</strong>

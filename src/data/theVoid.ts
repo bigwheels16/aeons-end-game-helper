@@ -4,7 +4,7 @@ const theVoidData = {
   type: 'mini',
   nemeses: [
     {
-      expansion: 'TV',
+      expansion: 'The Void',
       name: 'Knight Of Shackles',
       id: 'KnightOfShackles',
       health: 70,
@@ -13,7 +13,7 @@ const theVoidData = {
       additionalInfo: '',
     },
     {
-      expansion: 'TV',
+      expansion: 'The Void',
       name: 'Maiden Of Thorns',
       id: 'MaidenOfThorns',
       health: 80,
@@ -24,7 +24,7 @@ const theVoidData = {
   ],
   mages: [
     {
-      expansion: 'TV',
+      expansion: 'The Void',
       name: 'Sparrow',
       id: 'Sparrow',
       mageTitle: 'Breach Mage Soldier',
@@ -40,7 +40,7 @@ const theVoidData = {
         {
           type: 'Spell',
           name: 'Smolder',
-          expansion: 'TV',
+          expansion: 'The Void',
           id: 'Smolder',
           cost: 0,
           effect: `
@@ -54,7 +54,7 @@ const theVoidData = {
       ],
     },
     {
-      expansion: 'TV',
+      expansion: 'The Void',
       name: 'Xaxos',
       id: 'XaxosTV',
       mageTitle: 'Voidbringer',
@@ -69,7 +69,7 @@ const theVoidData = {
         {
           type: 'Spell',
           name: 'Pyre',
-          expansion: 'TV',
+          expansion: 'The Void',
           id: 'Pyre',
           cost: 0,
           effect: `
@@ -87,7 +87,7 @@ const theVoidData = {
   cards: [
     {
       type: 'Gem',
-      expansion: 'TV',
+      expansion: 'The Void',
       name: 'Fossilized Scarab',
       id: 'FossilizedScarab',
       cost: 3,
@@ -102,7 +102,7 @@ const theVoidData = {
     },
     {
       type: 'Spell',
-      expansion: 'TV',
+      expansion: 'The Void',
       name: 'Thermal Dart',
       id: 'ThermalDart',
       cost: 4,
@@ -119,7 +119,7 @@ const theVoidData = {
     },
     {
       type: 'Spell',
-      expansion: 'TV',
+      expansion: 'The Void',
       name: 'Resonate',
       id: 'Resonate',
       cost: 6,
@@ -134,7 +134,7 @@ const theVoidData = {
     },
     {
       type: 'Spell',
-      expansion: 'TV',
+      expansion: 'The Void',
       name: 'Conflagration',
       id: 'Conflagration',
       cost: 3,
@@ -151,7 +151,7 @@ const theVoidData = {
     },
     {
       type: 'Relic',
-      expansion: 'TV',
+      expansion: 'The Void',
       name: 'Dimensional Key',
       id: 'DimensionalKey',
       cost: 8,
@@ -167,7 +167,7 @@ const theVoidData = {
     },
     {
       type: 'Spell',
-      expansion: 'TV',
+      expansion: 'The Void',
       name: 'Inner Fire',
       id: 'InnerFire',
       cost: 2,
@@ -184,7 +184,7 @@ const theVoidData = {
     },
     {
       type: 'Spell',
-      expansion: 'TV',
+      expansion: 'The Void',
       name: 'Fulminate',
       id: 'Fulminate',
       cost: 5,
@@ -202,7 +202,7 @@ const theVoidData = {
     },
     {
       type: 'Relic',
-      expansion: 'TV',
+      expansion: 'The Void',
       name: 'Eternity Charm',
       id: 'EternityCharm',
       cost: 3,

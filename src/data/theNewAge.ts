@@ -4,7 +4,7 @@ const newAgeData = {
   type: 'standalone',
   nemeses: [
     {
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Maggoth',
       id: 'Maggoth',
       health: 45,
@@ -13,7 +13,7 @@ const newAgeData = {
       additionalInfo: '',
     },
     {
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Arachnos',
       id: 'Arachnos',
       health: 70,
@@ -22,7 +22,7 @@ const newAgeData = {
       additionalInfo: '',
     },
     {
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Ageless Walker',
       id: 'AgelessWalker',
       health: 80,
@@ -31,7 +31,7 @@ const newAgeData = {
       additionalInfo: '',
     },
     {
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Fenrix',
       id: 'Fenrix',
       health: 60,
@@ -42,7 +42,7 @@ const newAgeData = {
   ],
   mages: [
     {
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Sahala',
       id: 'Sahala',
       mageTitle: 'Oracle',
@@ -58,7 +58,7 @@ const newAgeData = {
         {
           type: 'Gem',
           name: 'Sparkling Meteorite',
-          expansion: 'NA',
+          expansion: 'The New Age',
           id: 'SparklingMeteorite',
           cost: 0,
           effect: `<p>Gain 1 <span class="aether">&AElig;</span>.
@@ -70,7 +70,7 @@ const newAgeData = {
       complexityRating: 3,
     },
     {
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Gygar',
       id: 'Gygar',
       mageTitle: 'Tide Master',
@@ -85,7 +85,7 @@ const newAgeData = {
         {
           type: 'Spell',
           name: 'Tidal Surge',
-          expansion: 'NA',
+          expansion: 'The New Age',
           id: 'TidalSurge',
           cost: 0,
           effect: `<p><b>Cast:</b> Gain 1 charge.</p>`,
@@ -95,7 +95,7 @@ const newAgeData = {
       complexityRating: 3,
     },
     {
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Soskel',
       id: 'Soskel',
       mageTitle: 'Aristocrat',
@@ -111,7 +111,7 @@ const newAgeData = {
         {
           type: 'Gem',
           name: 'Lucky Coin',
-          expansion: 'NA',
+          expansion: 'The New Age',
           id: 'LuckyCoin',
           cost: 0,
           effect: `<p>Gain 1 <span class="aether">&AElig;</span>.<br/>
@@ -122,7 +122,7 @@ const newAgeData = {
       complexityRating: 4,
     },
     {
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Taqren',
       id: 'Taqren',
       mageTitle: 'The Shield',
@@ -136,7 +136,7 @@ const newAgeData = {
         {
           type: 'Spell',
           name: 'Gift Of Spirit',
-          expansion: 'NA',
+          expansion: 'The New Age',
           id: 'GiftOfSpirit',
           cost: 0,
           effect: `<p><b>Cast:</b> Deal 1 damage.
@@ -148,7 +148,7 @@ const newAgeData = {
       complexityRating: 2,
     },
     {
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Talix',
       id: 'Talix',
       mageTitle: 'The Chain',
@@ -164,7 +164,7 @@ const newAgeData = {
         {
           type: 'Relic',
           name: 'Furnacium',
-          expansion: 'NA',
+          expansion: 'The New Age',
           id: 'Furnacium',
           cost: 0,
           effect: `<p>Gain 1 <span class="aether">&AElig;</span>.<br/>
@@ -177,7 +177,7 @@ const newAgeData = {
       complexityRating: 6,
     },
     {
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Rhia',
       id: 'Rhia',
       mageTitle: 'Relic Hunter',
@@ -195,7 +195,7 @@ const newAgeData = {
         {
           type: 'Gem',
           name: 'Planar Pocket',
-          expansion: 'NA',
+          expansion: 'The New Age',
           id: 'PlanarPocket',
           cost: 0,
           effect: `<p>Gain 1 <span class="aether">&AElig;</span>.<br/>
@@ -206,7 +206,7 @@ const newAgeData = {
       complexityRating: 6,
     },
     {
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Claudia',
       id: 'Claudia',
       mageTitle: 'Prospector',
@@ -223,7 +223,7 @@ const newAgeData = {
         {
           type: 'Gem',
           name: 'Aetherscope',
-          expansion: 'NA',
+          expansion: 'The New Age',
           id: 'Aetherscope',
           cost: 0,
           effect: `<p>Gain 1 <span class="aether">&AElig;</span>.
@@ -235,7 +235,7 @@ const newAgeData = {
       complexityRating: 5,
     },
     {
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Lost',
       id: 'Lost',
       mageTitle: 'Living Forge',
@@ -249,7 +249,7 @@ const newAgeData = {
         {
           type: 'Gem',
           name: 'Heart Forge',
-          expansion: 'NA',
+          expansion: 'The New Age',
           id: 'HeartForge',
           cost: 0,
           effect: `<p>Gain 1 <span class="aether">&AElig;</span>.
@@ -266,7 +266,7 @@ const newAgeData = {
   cards: [
     {
       type: 'Gem',
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Lurking Sionite',
       id: 'LurkingSionite',
       cost: 3,
@@ -281,7 +281,7 @@ const newAgeData = {
     },
     {
       type: 'Gem',
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Unrefined Blaststone',
       id: 'UnrefinedBlaststone',
       cost: 6,
@@ -296,7 +296,7 @@ const newAgeData = {
     },
     {
       type: 'Gem',
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Exogranite',
       id: 'Exogranite',
       cost: 3,
@@ -311,7 +311,7 @@ const newAgeData = {
     },
     {
       type: 'Gem',
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Recurring Jasper',
       id: 'RecurringJasper',
       cost: 4,
@@ -326,7 +326,7 @@ const newAgeData = {
     },
     {
       type: 'Gem',
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Energized Rubidium',
       id: 'EnergizedRubidium',
       cost: 5,
@@ -341,7 +341,7 @@ const newAgeData = {
     },
     {
       type: 'Gem',
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Resonant Pearl',
       id: 'ResonantPearl',
       cost: 3,
@@ -356,7 +356,7 @@ const newAgeData = {
     },
     {
       type: 'Relic',
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Caged Fire',
       id: 'CagedFire',
       cost: 3,
@@ -371,7 +371,7 @@ const newAgeData = {
     },
     {
       type: 'Relic',
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Galvanized Bauble',
       id: 'GalvanizedBauble',
       cost: 3,
@@ -386,7 +386,7 @@ const newAgeData = {
     },
     {
       type: 'Relic',
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Aether Conduit',
       id: 'AetherConduit',
       cost: 4,
@@ -403,7 +403,7 @@ const newAgeData = {
     },
     {
       type: 'Relic',
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Well of Energy',
       id: 'WellOfEnergy',
       cost: 7,
@@ -418,7 +418,7 @@ const newAgeData = {
     },
     {
       type: 'Relic',
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Pain Conduit',
       id: 'PainConduit',
       cost: 3,
@@ -435,7 +435,7 @@ const newAgeData = {
     },
     {
       type: 'Relic',
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Link Conduit',
       id: 'LinkConduit',
       cost: 6,
@@ -451,7 +451,7 @@ const newAgeData = {
     },
     {
       type: 'Relic',
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Marble Galaxy',
       id: 'MarbleGalaxy',
       cost: 2,
@@ -466,7 +466,7 @@ const newAgeData = {
     },
     {
       type: 'Spell',
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Deluge of Power',
       id: 'DelugeOfPower',
       cost: 6,
@@ -481,7 +481,7 @@ const newAgeData = {
     },
     {
       type: 'Spell',
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Reverberating Shock',
       id: 'ReverberatingShock',
       cost: 4,
@@ -499,7 +499,7 @@ const newAgeData = {
     },
     {
       type: 'Spell',
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Fatal Harmony',
       id: 'FatalHarmony',
       cost: 5,
@@ -516,7 +516,7 @@ const newAgeData = {
     },
     {
       type: 'Spell',
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Bouncing Boom',
       id: 'BouncingBoom',
       cost: 6,
@@ -532,7 +532,7 @@ const newAgeData = {
     },
     {
       type: 'Spell',
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Spirit Lift',
       id: 'SpiritLift',
       cost: 8,
@@ -547,7 +547,7 @@ const newAgeData = {
     },
     {
       type: 'Spell',
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Tethered Darts',
       id: 'Tethered Darts',
       cost: 3,
@@ -562,7 +562,7 @@ const newAgeData = {
     },
     {
       type: 'Spell',
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Force Amplifier',
       id: 'ForceAmplifier',
       cost: 4,
@@ -577,7 +577,7 @@ const newAgeData = {
     },
     {
       type: 'Spell',
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Imbued Smash',
       id: 'ImbuedSmash',
       cost: 5,
@@ -593,7 +593,7 @@ const newAgeData = {
     },
     {
       type: 'Spell',
-      expansion: 'NA',
+      expansion: 'The New Age',
       name: 'Pattern Strike',
       id: 'PatternStrike',
       cost: 7,
@@ -611,7 +611,7 @@ const newAgeData = {
     {
       id: 'KadirsEmeraldShard',
       name: "Kadir's Emerald Shard",
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 1,
       subtype: 'Gem',
       effect: `
@@ -625,7 +625,7 @@ const newAgeData = {
     {
       id: 'GexsShatteredGeode',
       name: "Gex's Shattered Geode",
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 1,
       subtype: 'Gem',
       effect: `
@@ -638,7 +638,7 @@ const newAgeData = {
     {
       id: 'JiansMoonstoneShard',
       name: "Jian's Moonstone Shard",
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 1,
       subtype: 'Gem',
       effect: `
@@ -652,7 +652,7 @@ const newAgeData = {
     {
       id: 'LashsQuartzShard',
       name: "Lash's Quartz Shard",
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 1,
       subtype: 'Gem',
       effect: `
@@ -667,7 +667,7 @@ const newAgeData = {
     {
       id: 'XaxosFlare',
       name: "Xaxo's Flare",
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 1,
       subtype: 'Spell',
       effect: `
@@ -681,7 +681,7 @@ const newAgeData = {
     {
       id: 'AdelheimsAmethystShard',
       name: "Adelheim's Amethyst Shard",
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 1,
       subtype: 'Gem',
       effect: `
@@ -694,7 +694,7 @@ const newAgeData = {
     {
       id: 'BramasBuriedLight',
       name: "Brama's Buried Light",
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 1,
       subtype: 'Spell',
       effect: `
@@ -707,7 +707,7 @@ const newAgeData = {
     {
       id: 'GarusTorch',
       name: "Garu's Torch",
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 1,
       subtype: 'Spell',
       effect: `
@@ -721,7 +721,7 @@ const newAgeData = {
     {
       id: 'XaxosPyre',
       name: "Xaxo's Pyre",
-      expansion: 'NA',
+      expansion: 'The New Age',
       subtype: 'Spell',
       level: 1,
       effect: `
@@ -734,7 +734,7 @@ const newAgeData = {
     {
       id: 'MistsGarnetShard',
       name: "Mist's Garnet Shard",
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 1,
       subtype: 'Gem',
       effect: `
@@ -748,7 +748,7 @@ const newAgeData = {
     {
       id: 'ShimmeringCloakOfTheMagus',
       name: 'Shimmering Cloak Of The Magus',
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 2,
       effect: `
       <p>
@@ -759,7 +759,7 @@ const newAgeData = {
     {
       id: 'ImbuedShackles',
       name: 'Imbued Shackles',
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 2,
       effect: `
       <p>
@@ -772,7 +772,7 @@ const newAgeData = {
     {
       id: 'GluttonsTooth',
       name: "Glutton's Tooth",
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 2,
       effect: `
       <p>
@@ -784,7 +784,7 @@ const newAgeData = {
     {
       id: 'CoreOfRage',
       name: 'Core Of Rage',
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 2,
       effect: `
       <p>
@@ -796,7 +796,7 @@ const newAgeData = {
     {
       id: 'CleansingAmulet',
       name: 'Cleansing Amulet',
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 2,
       effect: `
       <p>
@@ -808,7 +808,7 @@ const newAgeData = {
     {
       id: 'CarapaceFragement',
       name: 'Carapace Fragement',
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 2,
       effect: `
       <p>
@@ -821,7 +821,7 @@ const newAgeData = {
     {
       id: 'ThornedWhip',
       name: 'Thorned Whip',
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 2,
       effect: `
       <p>
@@ -832,7 +832,7 @@ const newAgeData = {
     {
       id: 'BonesOfDeathmind',
       name: 'Bones Of Deathmind',
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 2,
       effect: `
       <p>
@@ -846,7 +846,7 @@ const newAgeData = {
     {
       id: 'AcceleratingGauntlets',
       name: 'Accelerating Gauntlets',
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 3,
       effect: `
       <p>
@@ -858,7 +858,7 @@ const newAgeData = {
     {
       id: 'EssenceExtractor',
       name: 'Essence Extractor',
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 3,
       effect: `
       <p>
@@ -870,7 +870,7 @@ const newAgeData = {
     {
       id: 'BroochOfAttunment',
       name: 'Brooch Of Attunment',
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 3,
       effect: `
       <p>
@@ -882,7 +882,7 @@ const newAgeData = {
     {
       id: 'BladedCrystal',
       name: 'Bladed Crystal',
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 3,
       effect: `
       <p>
@@ -894,7 +894,7 @@ const newAgeData = {
     {
       id: 'PrismOfDestruction',
       name: 'Prism Of Destruction',
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 3,
       effect: `
       <p>
@@ -905,7 +905,7 @@ const newAgeData = {
     {
       id: 'ForgottenTrinket',
       name: 'Forgotten Trinket',
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 3,
       effect: `
       <p>
@@ -917,7 +917,7 @@ const newAgeData = {
     {
       id: 'PrecisionMagnifier',
       name: 'Precision Magnifier',
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 3,
       effect: `
       <p>
@@ -929,7 +929,7 @@ const newAgeData = {
     {
       id: 'ShroudOfObfucation',
       name: 'Shroud of Obfucation',
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 3,
       effect: `
       <p>
@@ -941,7 +941,7 @@ const newAgeData = {
     {
       id: 'VerdantStaff',
       name: 'Verdant Staff',
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 3,
       effect: `
       <p>
@@ -952,7 +952,7 @@ const newAgeData = {
     {
       id: 'FlowingMantle',
       name: 'Flowing Mantle',
-      expansion: 'NA',
+      expansion: 'The New Age',
       level: 3,
       effect: `
       <p>
@@ -968,105 +968,105 @@ const newAgeData = {
     {
       id: 'HissingAcid',
       name: 'Hissing Acid',
-      expansion: 'NA',
+      expansion: 'The New Age',
       tier: 1,
       type: 'Power',
     },
     {
       id: 'Wreck',
       name: 'Wreck',
-      expansion: 'NA',
+      expansion: 'The New Age',
       tier: 1,
       type: 'Attack',
     },
     {
       id: 'BaneCommander',
       name: 'Bane Commander',
-      expansion: 'NA',
+      expansion: 'The New Age',
       tier: 1,
       type: 'Minion',
     },
     {
       id: 'SkyTremor',
       name: 'Sky Tremor',
-      expansion: 'NA',
+      expansion: 'The New Age',
       tier: 2,
       type: 'Power',
     },
     {
       id: 'EngulfingMadness',
       name: 'Engulfing Madness',
-      expansion: 'NA',
+      expansion: 'The New Age',
       tier: 2,
       type: 'Power',
     },
     {
       id: 'Separate',
       name: 'Separate',
-      expansion: 'NA',
+      expansion: 'The New Age',
       tier: 2,
       type: 'Attack',
     },
     {
       id: 'NeedleDoom',
       name: 'Needle Doom',
-      expansion: 'NA',
+      expansion: 'The New Age',
       tier: 2,
       type: 'Minion',
     },
     {
       id: 'Marked',
       name: 'Marked',
-      expansion: 'NA',
+      expansion: 'The New Age',
       tier: 2,
       type: 'Attack',
     },
     {
       id: 'Eradicate',
       name: 'Eradicate',
-      expansion: 'NA',
+      expansion: 'The New Age',
       tier: 3,
       type: 'Attack',
     },
     {
       id: 'FlashOfDecay',
       name: 'Flash Of Decay',
-      expansion: 'NA',
+      expansion: 'The New Age',
       tier: 3,
       type: 'Power',
     },
     {
       id: 'Terrify',
       name: 'Terrify',
-      expansion: 'NA',
+      expansion: 'The New Age',
       tier: 3,
       type: 'Attack',
     },
     {
       id: 'RayOfDesolation',
       name: 'Ray Of Desolation',
-      expansion: 'NA',
+      expansion: 'The New Age',
       tier: 3,
       type: 'Power',
     },
     {
       id: 'ThunderousTempest',
       name: 'Thunderous Tempest',
-      expansion: 'NA',
+      expansion: 'The New Age',
       tier: 3,
       type: 'Power',
     },
     {
       id: 'Sacrifice',
       name: 'Sacrifice',
-      expansion: 'NA',
+      expansion: 'The New Age',
       tier: 3,
       type: 'Attack',
     },
     {
       id: 'Burialskulk',
       name: 'Burialskulk',
-      expansion: 'NA',
+      expansion: 'The New Age',
       tier: 3,
       type: 'Minion',
     },

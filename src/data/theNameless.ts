@@ -4,7 +4,7 @@ const theNamelessData = {
   type: 'mini',
   nemeses: [
     {
-      expansion: 'Nameless',
+      expansion: 'The Nameless',
       name: 'Blight Lord',
       id: 'BlightLord',
       health: 70,
@@ -13,7 +13,7 @@ const theNamelessData = {
       additionalInfo: '',
     },
     {
-      expansion: 'Nameless',
+      expansion: 'The Nameless',
       name: 'Wayward One',
       id: 'WaywardOne',
       health: 60,
@@ -24,7 +24,7 @@ const theNamelessData = {
   ],
   mages: [
     {
-      expansion: 'Nameless',
+      expansion: 'The Nameless',
       name: 'Malastar',
       id: 'Malastar',
       mageTitle: 'Breach Mage Mentor',
@@ -39,7 +39,7 @@ const theNamelessData = {
         {
           type: 'Spell',
           name: 'Immolate',
-          expansion: 'Nameless',
+          expansion: 'The Nameless',
           id: 'Immolate',
           cost: 0,
           effect: `
@@ -56,7 +56,7 @@ const theNamelessData = {
   cards: [
     {
       type: 'Relic',
-      expansion: 'Nameless',
+      expansion: 'The Nameless',
       name: 'Molten Hammer',
       id: 'MoltenHammer',
       cost: 5,
@@ -70,7 +70,7 @@ const theNamelessData = {
     },
     {
       type: 'Spell',
-      expansion: 'Nameless',
+      expansion: 'The Nameless',
       name: 'Radiance',
       id: 'Radiance',
       cost: 8,
@@ -84,7 +84,7 @@ const theNamelessData = {
     },
     {
       type: 'Spell',
-      expansion: 'Nameless',
+      expansion: 'The Nameless',
       name: 'Blaze',
       id: 'Blaze',
       cost: 4,
@@ -100,7 +100,7 @@ const theNamelessData = {
     },
     {
       type: 'Spell',
-      expansion: 'Nameless',
+      expansion: 'The Nameless',
       name: 'Scrying Bolt',
       id: 'ScryingBolt',
       cost: 6,
@@ -115,7 +115,7 @@ const theNamelessData = {
     },
     {
       type: 'Spell',
-      expansion: 'Nameless',
+      expansion: 'The Nameless',
       name: 'Sages Brand',
       id: 'SagesBrand',
       cost: 7,
@@ -131,7 +131,7 @@ const theNamelessData = {
     },
     {
       type: 'Gem',
-      expansion: 'Nameless',
+      expansion: 'The Nameless',
       name: 'Leeching Agate',
       id: 'LeechingAgate',
       cost: 3,
@@ -145,7 +145,7 @@ const theNamelessData = {
     },
     {
       type: 'Relic',
-      expansion: 'Nameless',
+      expansion: 'The Nameless',
       name: 'Temporal Helix',
       id: 'TemporalHelix',
       cost: 7,

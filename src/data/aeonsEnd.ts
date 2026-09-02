@@ -4,7 +4,7 @@ const aeonsEndData = {
   type: 'standalone',
   nemeses: [
     {
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Carapace Queen',
       id: 'CarapaceQueen',
       health: 60,
@@ -13,7 +13,7 @@ const aeonsEndData = {
       additionalInfo: '',
     },
     {
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Crooked Mask',
       id: 'CrookedMask',
       health: 70,
@@ -22,7 +22,7 @@ const aeonsEndData = {
       additionalInfo: '',
     },
     {
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Prince Of Gluttons',
       id: 'PrinceOfGluttons',
       health: 70,
@@ -31,7 +31,7 @@ const aeonsEndData = {
       additionalInfo: '',
     },
     {
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Rageborne',
       id: 'Rageborne',
       health: 70,
@@ -42,8 +42,9 @@ const aeonsEndData = {
   ],
   mages: [
     {
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Adelheim',
+      recommendedCards: ['Diamond Cluster', 'Searing Ruby'],
       id: 'Adelheim',
       mageTitle: 'Breach Mage Weaponsmith',
       abilityName: 'Aethereal Ward',
@@ -58,7 +59,7 @@ const aeonsEndData = {
         {
           type: 'Gem',
           name: 'Amethyst Shard',
-          expansion: 'AE',
+          expansion: `Aeon's End (Core Set)`,
           id: 'AmethystShard',
           cost: 0,
           effect: `
@@ -72,8 +73,9 @@ const aeonsEndData = {
       ],
     },
     {
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Brama',
+      recommendedCards: ['Sifters Pearl', 'Bottled Vortex'],
       id: 'Brama',
       mageTitle: 'Breach Mage Elder',
       abilityName: 'Brink Siphon',
@@ -86,7 +88,7 @@ const aeonsEndData = {
         {
           type: 'Spell',
           name: 'Buried Light',
-          expansion: 'AE',
+          expansion: `Aeon's End (Core Set)`,
           id: 'BuriedLight',
           cost: 0,
           effect: `
@@ -100,8 +102,9 @@ const aeonsEndData = {
       ],
     },
     {
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Jian',
+      recommendedCards: ['Chaos Arc', 'Wildfire Whip', 'Lava Tendril'],
       id: 'Jian',
       mageTitle: 'Breach Mage Orphan',
       abilityName: 'Black Mirror',
@@ -116,7 +119,7 @@ const aeonsEndData = {
         {
           type: 'Gem',
           name: 'Moonstone Shard',
-          expansion: 'AE',
+          expansion: `Aeon's End (Core Set)`,
           id: 'MoonstoneShard',
           cost: 0,
           effect: `
@@ -131,8 +134,9 @@ const aeonsEndData = {
       ],
     },
     {
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Kadir',
+      recommendedCards: ['Dark Fire', 'Feral Lightning'],
       id: 'Kadir',
       mageTitle: 'Breach Mage Delver',
       abilityName: 'Otherworldly Gate',
@@ -147,7 +151,7 @@ const aeonsEndData = {
         {
           type: 'Gem',
           name: 'Emerald Shard',
-          expansion: 'AE',
+          expansion: `Aeon's End (Core Set)`,
           id: 'EmeraldShard',
           cost: 0,
           effect: `
@@ -162,8 +166,9 @@ const aeonsEndData = {
       ],
     },
     {
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Lash',
+      recommendedCards: ['Clouded Sapphire', 'Focusing Orb'],
       id: 'Lash',
       mageTitle: 'Breach Mage Scout',
       abilityName: 'Quicken Thought',
@@ -178,7 +183,7 @@ const aeonsEndData = {
         {
           type: 'Gem',
           name: 'Quartz Shard',
-          expansion: 'AE',
+          expansion: `Aeon's End (Core Set)`,
           id: 'QuartzShard',
           cost: 0,
           effect: `
@@ -194,8 +199,9 @@ const aeonsEndData = {
       ],
     },
     {
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Mist',
+      recommendedCards: ['Burning Opal', 'Amplify Vision'],
       id: 'Mist',
       mageTitle: 'Dagger Captain',
       abilityName: 'Divine Augury',
@@ -208,7 +214,7 @@ const aeonsEndData = {
         {
           type: 'Gem',
           name: 'Garnet Shard',
-          expansion: 'AE',
+          expansion: `Aeon's End (Core Set)`,
           id: 'Garnet Shard',
           cost: 0,
           effect: `
@@ -223,8 +229,9 @@ const aeonsEndData = {
       ],
     },
     {
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Phaedraxa',
+      recommendedCards: ['Consuming Void', 'Essence Theft'],
       id: 'Phaedraxa',
       mageTitle: 'Breach Mage Seer',
       abilityName: 'Auspex Rune',
@@ -237,7 +244,7 @@ const aeonsEndData = {
         {
           type: 'Gem',
           name: 'Tourmaline Shard',
-          expansion: 'AE',
+          expansion: `Aeon's End (Core Set)`,
           id: 'TourmalineShard',
           cost: 0,
           effect: `
@@ -251,8 +258,9 @@ const aeonsEndData = {
       ],
     },
     {
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Xaxos',
+      recommendedCards: ['Mages Talisman', 'Flexing Dagger'],
       id: 'Xaxos',
       mageTitle: 'Breach Mage Adept',
       abilityName: `Metaphysical Link`,
@@ -266,7 +274,7 @@ const aeonsEndData = {
         {
           type: 'Spell',
           name: 'Flare',
-          expansion: 'AE',
+          expansion: `Aeon's End (Core Set)`,
           id: 'Flare',
           cost: 0,
           effect: `
@@ -285,7 +293,7 @@ const aeonsEndData = {
   cards: [
     {
       type: 'Gem',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Diamond Cluster',
       id: 'DiamondCluster',
       cost: 4,
@@ -300,7 +308,7 @@ const aeonsEndData = {
     },
     {
       type: 'Spell',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Chaos Arc',
       id: 'ChaosArc',
       cost: 6,
@@ -314,7 +322,7 @@ const aeonsEndData = {
     },
     {
       type: 'Spell',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Ignite',
       id: 'Ignite',
       cost: 4,
@@ -328,7 +336,7 @@ const aeonsEndData = {
     },
     {
       type: 'Spell',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Essence Theft',
       id: 'EssenceTheft',
       cost: 5,
@@ -342,7 +350,7 @@ const aeonsEndData = {
     },
     {
       type: 'Gem',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Searing Ruby',
       id: 'SearingRuby',
       cost: 4,
@@ -357,7 +365,7 @@ const aeonsEndData = {
     },
     {
       type: 'Spell',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Feral Lightning',
       id: 'FeralLightning',
       cost: 5,
@@ -371,7 +379,7 @@ const aeonsEndData = {
     },
     {
       type: 'Spell',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Planar Insight',
       id: 'PlanarInsight',
       cost: 6,
@@ -385,7 +393,7 @@ const aeonsEndData = {
     },
     {
       type: 'Spell',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Spectral Echo',
       id: 'SpectralEcho',
       cost: 3,
@@ -399,7 +407,7 @@ const aeonsEndData = {
     },
     {
       type: 'Gem',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Burning Opal',
       id: 'BurningOpal',
       cost: 5,
@@ -413,7 +421,7 @@ const aeonsEndData = {
     },
     {
       type: 'Spell',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Consuming Void',
       id: 'ConsumingVoid',
       cost: 7,
@@ -427,7 +435,7 @@ const aeonsEndData = {
     },
     {
       type: 'Relic',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Unstable Prism',
       id: 'UnstablePrism',
       cost: 3,
@@ -442,7 +450,7 @@ const aeonsEndData = {
     },
     {
       type: 'Gem',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Clouded Sapphire',
       id: 'CloudedSapphire',
       cost: 6,
@@ -457,7 +465,7 @@ const aeonsEndData = {
     },
     {
       type: 'Relic',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Mages Talisman',
       id: 'MagesTalisman',
       cost: 5,
@@ -471,7 +479,7 @@ const aeonsEndData = {
     },
     {
       type: 'Relic',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Flexing Dagger',
       id: 'FlexingDagger',
       cost: 2,
@@ -487,7 +495,7 @@ const aeonsEndData = {
     },
     {
       type: 'Spell',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Lava Tendril',
       id: 'LavaTendril',
       cost: 4,
@@ -501,7 +509,7 @@ const aeonsEndData = {
     },
     {
       type: 'Relic',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Bottled Vortex',
       id: 'BottledVortex',
       cost: 3,
@@ -516,7 +524,7 @@ const aeonsEndData = {
     },
     {
       type: 'Spell',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Arcane Nexus',
       id: 'ArcaneNexus',
       cost: 7,
@@ -531,7 +539,7 @@ const aeonsEndData = {
     },
     {
       type: 'Spell',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Dark Fire',
       id: 'DarkFire',
       cost: 5,
@@ -545,7 +553,7 @@ const aeonsEndData = {
     },
     {
       type: 'Spell',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Phoenix Flame',
       id: 'PhoenixFlame',
       cost: 3,
@@ -559,7 +567,7 @@ const aeonsEndData = {
     },
     {
       type: 'Gem',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Jade',
       id: 'Jade',
       cost: 2,
@@ -572,7 +580,7 @@ const aeonsEndData = {
     },
     {
       type: 'Spell',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Amplify Vision',
       id: 'AmplifyVision',
       cost: 4,
@@ -587,7 +595,7 @@ const aeonsEndData = {
     },
     {
       type: 'Gem',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Vriswood Amber',
       id: 'VriswoodAmber',
       cost: 3,
@@ -601,7 +609,7 @@ const aeonsEndData = {
     },
     {
       type: 'Relic',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Blasting Staff',
       id: 'BlastingStaff',
       cost: 4,
@@ -615,7 +623,7 @@ const aeonsEndData = {
     },
     {
       type: 'Gem',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Sifters Pearl',
       id: 'SiftersPearl',
       cost: 3,
@@ -630,7 +638,7 @@ const aeonsEndData = {
     },
     {
       type: 'Spell',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Wildfire Whip',
       id: 'WildfireWhip',
       cost: 6,
@@ -645,7 +653,7 @@ const aeonsEndData = {
     },
     {
       type: 'Relic',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Focusing Orb',
       id: 'FocusingOrb',
       cost: 4,
@@ -660,7 +668,7 @@ const aeonsEndData = {
     },
     {
       type: 'Spell',
-      expansion: 'AE',
+      expansion: `Aeon's End (Core Set)`,
       name: 'Oblivion Swell',
       id: 'OblivionSwell',
       cost: 5,

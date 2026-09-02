@@ -4,7 +4,7 @@ const outerDarkData = {
   type: 'mini',
   nemeses: [
     {
-      expansion: 'OD',
+      expansion: 'The Outer Dark',
       name: 'Thrice Dead Prophet',
       id: 'ThriceDeadProphet',
       health: 40,
@@ -13,7 +13,7 @@ const outerDarkData = {
       additionalInfo: '',
     },
     {
-      expansion: 'OD',
+      expansion: 'The Outer Dark',
       name: 'Wraithmonger',
       id: 'Wraithmonger',
       health: 70,
@@ -24,7 +24,7 @@ const outerDarkData = {
   ],
   mages: [
     {
-      expansion: 'OD',
+      expansion: 'The Outer Dark',
       name: 'Indira',
       id: 'Indira',
       mageTitle: 'Breach Apprentice',
@@ -40,7 +40,7 @@ const outerDarkData = {
         {
           type: 'Gem',
           name: 'Twin Opal',
-          expansion: 'OD',
+          expansion: 'The Outer Dark',
           id: 'TwinOpal',
           cost: 0,
           effect: `
@@ -54,7 +54,7 @@ const outerDarkData = {
       ],
     },
     {
-      expansion: 'OD',
+      expansion: 'The Outer Dark',
       name: 'Remnant',
       id: 'Remnant',
       mageTitle: 'Aethereal Entity',
@@ -70,7 +70,7 @@ const outerDarkData = {
         {
           type: 'Gem',
           name: 'Void Shard',
-          expansion: 'OD',
+          expansion: 'The Outer Dark',
           id: 'VoidShard',
           cost: 0,
           effect: `
@@ -88,7 +88,7 @@ const outerDarkData = {
   cards: [
     {
       type: 'Spell',
-      expansion: 'OD',
+      expansion: 'The Outer Dark',
       name: 'Char',
       id: 'Char',
       cost: 8,
@@ -102,7 +102,7 @@ const outerDarkData = {
     },
     {
       type: 'Gem',
-      expansion: 'OD',
+      expansion: 'The Outer Dark',
       name: 'Alien Element',
       id: 'AlienElement',
       cost: 4,
@@ -117,7 +117,7 @@ const outerDarkData = {
     },
     {
       type: 'Spell',
-      expansion: 'OD',
+      expansion: 'The Outer Dark',
       name: 'Scorch',
       id: 'Scorch',
       cost: 5,
@@ -132,7 +132,7 @@ const outerDarkData = {
     },
     {
       type: 'Spell',
-      expansion: 'OD',
+      expansion: 'The Outer Dark',
       name: 'Pyromancy',
       id: 'Pyromancy',
       cost: 7,
@@ -145,7 +145,7 @@ const outerDarkData = {
     },
     {
       type: 'Spell',
-      expansion: 'OD',
+      expansion: 'The Outer Dark',
       name: 'Feedback Aura',
       id: 'FeedbackAura',
       cost: 5,
@@ -159,7 +159,7 @@ const outerDarkData = {
     },
     {
       type: 'Spell',
-      expansion: 'OD',
+      expansion: 'The Outer Dark',
       name: 'Catalyst',
       id: 'Catalyst',
       cost: 6,
@@ -173,7 +173,7 @@ const outerDarkData = {
     },
     {
       type: 'Gem',
-      expansion: 'OD',
+      expansion: 'The Outer Dark',
       name: 'Pain Stone',
       id: 'PainStone',
       cost: 6,
@@ -188,7 +188,7 @@ const outerDarkData = {
     },
     {
       type: 'Relic',
-      expansion: 'OD',
+      expansion: 'The Outer Dark',
       name: 'Astral Cube',
       id: 'AstralCube',
       cost: 5,
@@ -203,7 +203,7 @@ const outerDarkData = {
     },
     {
       type: 'Relic',
-      expansion: 'OD',
+      expansion: 'The Outer Dark',
       name: 'Riddle Sphere',
       id: 'RiddleSphere',
       cost: 3,
@@ -218,7 +218,7 @@ const outerDarkData = {
     },
     {
       type: 'Spell',
-      expansion: 'OD',
+      expansion: 'The Outer Dark',
       name: 'Nether Conduit',
       id: 'NetherConduit',
       cost: 7,
@@ -235,7 +235,7 @@ const outerDarkData = {
     },
     {
       type: 'Gem',
-      expansion: 'OD',
+      expansion: 'The Outer Dark',
       name: 'Haunted Berylite',
       id: 'HauntedBerylite',
       cost: 3,

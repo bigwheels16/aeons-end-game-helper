@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import { allNemeses } from './data/allNemeses';
 import { useGameStore } from './store';
+import ExpansionFilter from './components/ExpansionFilter';
 
 export default function NemesisSearchScreen() {
   const nemesisSearchFilters = useGameStore((state) => state.nemesisSearchFilters);
@@ -70,6 +71,10 @@ export default function NemesisSearchScreen() {
       }
 
       return true;
+    }).sort((a, b) => {
+      const diffA = a.difficulty !== undefined ? Number(a.difficulty) : 0;
+      const diffB = b.difficulty !== undefined ? Number(b.difficulty) : 0;
+      return diffA - diffB;
     });
   }, [debouncedQuery, selectedNemesisExpansions]);
 
@@ -89,28 +94,11 @@ export default function NemesisSearchScreen() {
           />
         </div>
 
-        <div style={{ marginBottom: '1rem' }}>
-          <strong style={{ color: '#ccc' }}>Expansions:</strong>
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
-            {allExpansions.map(exp => (
-              <button
-                key={exp}
-                onClick={() => toggleExpansion(exp)}
-                style={{
-                  padding: '0.25rem 0.75rem',
-                  borderRadius: '16px',
-                  border: selectedNemesisExpansions.includes(exp) ? '1px solid #4CAF50' : '1px solid #555',
-                  backgroundColor: selectedNemesisExpansions.includes(exp) ? 'rgba(76, 175, 80, 0.2)' : '#222',
-                  color: selectedNemesisExpansions.includes(exp) ? '#fff' : '#ccc',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s'
-                }}
-              >
-                {exp}
-              </button>
-            ))}
-          </div>
-        </div>
+        <ExpansionFilter
+          allExpansions={allExpansions}
+          selectedExpansions={selectedNemesisExpansions}
+          onToggleExpansion={toggleExpansion}
+        />
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <button 

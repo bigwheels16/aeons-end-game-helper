@@ -4,7 +4,7 @@ const theDepthsData = {
   type: 'mini',
   nemeses: [
     {
-      expansion: 'Depths',
+      expansion: 'The Depths',
       name: 'Horde-Crone',
       id: 'HordeCrone',
       health: 60,
@@ -15,7 +15,7 @@ const theDepthsData = {
   ],
   mages: [
     {
-      expansion: 'Depths',
+      expansion: 'The Depths',
       name: 'Nym',
       id: 'Nym',
       mageTitle: 'Breach Mage Apprentice',
@@ -30,7 +30,7 @@ const theDepthsData = {
         {
           type: 'Spell',
           name: 'Cinder',
-          expansion: 'Depths',
+          expansion: 'The Depths',
           id: 'Cinder',
           cost: 0,
           effect: `
@@ -45,7 +45,7 @@ const theDepthsData = {
       ],
     },
     {
-      expansion: 'Depths',
+      expansion: 'The Depths',
       name: 'Reeve',
       id: 'Reeve',
       mageTitle: 'Breach Mage Elite',
@@ -60,7 +60,7 @@ const theDepthsData = {
         {
           type: 'Gem',
           name: 'Obsidian Shard',
-          expansion: 'Depths',
+          expansion: 'The Depths',
           id: 'ObsidianShard',
           cost: 0,
           effect: `
@@ -74,7 +74,7 @@ const theDepthsData = {
       ],
     },
     {
-      expansion: 'Depths',
+      expansion: 'The Depths',
       name: "Z'hana",
       id: 'Zhana',
       mageTitle: 'Breach Mage Renegade',
@@ -88,7 +88,7 @@ const theDepthsData = {
         {
           type: 'Spell',
           name: 'Eternal Ember',
-          expansion: 'Depths',
+          expansion: 'The Depths',
           id: 'EternalEmber',
           cost: 0,
           effect: `
@@ -107,7 +107,7 @@ const theDepthsData = {
   cards: [
     {
       type: 'Spell',
-      expansion: 'Depths',
+      expansion: 'The Depths',
       name: 'Void Bond',
       id: 'VoidBond',
       cost: 4,
@@ -121,7 +121,7 @@ const theDepthsData = {
     },
     {
       type: 'Spell',
-      expansion: 'Depths',
+      expansion: 'The Depths',
       name: 'Combustion',
       id: 'Combustion',
       cost: 5,
@@ -138,7 +138,7 @@ const theDepthsData = {
     },
     {
       type: 'Relic',
-      expansion: 'Depths',
+      expansion: 'The Depths',
       name: 'Vim Dynamo',
       id: 'VimDynamo',
       cost: 4,
@@ -153,7 +153,7 @@ const theDepthsData = {
     },
     {
       type: 'Spell',
-      expansion: 'Depths',
+      expansion: 'The Depths',
       name: 'Disintegrating Scythe',
       id: 'DisintegratingScythe',
       cost: 7,
@@ -168,7 +168,7 @@ const theDepthsData = {
     },
     {
       type: 'Spell',
-      expansion: 'Depths',
+      expansion: 'The Depths',
       name: 'Monstrous Inferno',
       id: 'MonstrousInferno',
       cost: 8,
@@ -184,7 +184,7 @@ const theDepthsData = {
     },
     {
       type: 'Spell',
-      expansion: 'Depths',
+      expansion: 'The Depths',
       name: 'Devouring Shadow',
       id: 'DevouringShadow',
       cost: 6,
@@ -199,7 +199,7 @@ const theDepthsData = {
     },
     {
       type: 'Gem',
-      expansion: 'Depths',
+      expansion: 'The Depths',
       name: 'Banishing Topaz',
       id: 'BanishingTopaz',
       cost: 5,
@@ -214,7 +214,7 @@ const theDepthsData = {
     },
     {
       type: 'Relic',
-      expansion: 'Depths',
+      expansion: 'The Depths',
       name: 'Transmogrifier',
       id: 'Transmogrifier',
       cost: 4,

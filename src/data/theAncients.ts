@@ -4,7 +4,7 @@ const theAncientsData = {
   type: 'mini',
   nemeses: [
     {
-      expansion: 'TA',
+      expansion: 'The Ancients',
       name: 'The Wanderer',
       id: 'TheWanderer',
       health: 40,
@@ -15,7 +15,7 @@ const theAncientsData = {
   ],
   mages: [
     {
-      expansion: 'TA',
+      expansion: 'The Ancients',
       name: 'Mazra',
       id: 'Mazra',
       mageTitle: 'The Reader',
@@ -34,7 +34,7 @@ const theAncientsData = {
         {
           type: 'Spell',
           name: "Mazra's Studies",
-          expansion: 'TA',
+          expansion: 'The Ancients',
           id: 'MazrasStudies',
           cost: 0,
           effect: `<p><b>Cast:</b> Deal 1 damage.
@@ -46,7 +46,7 @@ const theAncientsData = {
       complexityRating: 6,
     },
     {
-      expansion: 'TA',
+      expansion: 'The Ancients',
       name: 'Qu',
       id: 'Qu',
       mageTitle: 'Builder And Destroyer',
@@ -62,7 +62,7 @@ const theAncientsData = {
         {
           type: 'Relic',
           name: 'Change Form',
-          expansion: 'TA',
+          expansion: 'The Ancients',
           id: 'ChangeForm',
           cost: 0,
           effect: `<p>Qu flips over the Form token.</p>`,
@@ -71,7 +71,7 @@ const theAncientsData = {
         {
           type: 'Gem',
           name: 'Melded Radite',
-          expansion: 'TA',
+          expansion: 'The Ancients',
           id: 'MeldedRadite',
           cost: 0,
           effect: `<p>Gain 0 <span class="aether">&AElig;</span>.<br/>
@@ -85,7 +85,7 @@ const theAncientsData = {
   cards: [
     {
       type: 'Gem',
-      expansion: 'TA',
+      expansion: 'The Ancients',
       name: 'Shining Fluorite',
       id: 'ShiningFluorite',
       cost: 7,
@@ -99,7 +99,7 @@ const theAncientsData = {
     },
     {
       type: 'Relic',
-      expansion: 'TA',
+      expansion: 'The Ancients',
       name: 'Polyphase Turbine',
       id: 'PolyphaseTurbine',
       cost: 3,
@@ -114,7 +114,7 @@ const theAncientsData = {
     },
     {
       type: 'Relic',
-      expansion: 'TA',
+      expansion: 'The Ancients',
       name: 'Breach Extractor',
       id: 'BreachExtractor',
       cost: 5,
@@ -129,7 +129,7 @@ const theAncientsData = {
     },
     {
       type: 'Relic',
-      expansion: 'TA',
+      expansion: 'The Ancients',
       name: 'Focusing Conduit',
       id: 'FocusingConduit',
       cost: 5,
@@ -146,7 +146,7 @@ const theAncientsData = {
     },
     {
       type: 'Spell',
-      expansion: 'TA',
+      expansion: 'The Ancients',
       name: 'Dual Flash',
       id: 'DualFlash',
       cost: 3,
@@ -162,7 +162,7 @@ const theAncientsData = {
     },
     {
       type: 'Spell',
-      expansion: 'TA',
+      expansion: 'The Ancients',
       name: 'Dust Caller',
       id: 'DustCaller',
       cost: 5,
@@ -177,7 +177,7 @@ const theAncientsData = {
     },
     {
       type: 'Spell',
-      expansion: 'TA',
+      expansion: 'The Ancients',
       name: 'Symbiotic Synapse',
       id: 'SymbioticSynapse',
       cost: 7,
@@ -197,7 +197,7 @@ const theAncientsData = {
     {
       id: 'RemnantsVoidShard',
       name: "Remnant's Void Shard",
-      expansion: 'TA',
+      expansion: 'The Ancients',
       level: 1,
       subtype: 'Gem',
       effect: `
@@ -211,7 +211,7 @@ const theAncientsData = {
     {
       id: 'QuiliussErasure',
       name: "Quilius's Erasure",
-      expansion: 'TA',
+      expansion: 'The Ancients',
       level: 1,
       subtype: 'Spell',
       effect: `
@@ -224,7 +224,7 @@ const theAncientsData = {
     {
       id: 'ZhanasFleetingEmber',
       name: "Z'hana's Fleeting Ember",
-      expansion: 'TA',
+      expansion: 'The Ancients',
       level: 1,
       subtype: 'Spell',
       effect: `
@@ -239,7 +239,7 @@ const theAncientsData = {
     {
       id: 'BlightedRootClump',
       name: 'Blighted Root Clump',
-      expansion: 'TA',
+      expansion: 'The Ancients',
       level: 2,
       effect: `
       <p>
@@ -251,7 +251,7 @@ const theAncientsData = {
     {
       id: 'PetrifiedWitchFinger',
       name: 'Petrified Witch Finger',
-      expansion: 'TA',
+      expansion: 'The Ancients',
       level: 2,
       effect: `
       <p>
@@ -263,7 +263,7 @@ const theAncientsData = {
     {
       id: 'WaywardScraps',
       name: 'Wayward Scraps',
-      expansion: 'TA',
+      expansion: 'The Ancients',
       level: 2,
       effect: `
       <p>
@@ -275,7 +275,7 @@ const theAncientsData = {
     {
       id: 'TrueSightMonocle',
       name: 'True Sight Monocle',
-      expansion: 'TA',
+      expansion: 'The Ancients',
       level: 3,
       effect: `
       <p>
@@ -287,7 +287,7 @@ const theAncientsData = {
     {
       id: 'EntwinedAetherStrands',
       name: 'Entwined Aether Strands',
-      expansion: 'TA',
+      expansion: 'The Ancients',
       level: 3,
       effect: `
       <p>
@@ -299,7 +299,7 @@ const theAncientsData = {
     {
       id: 'SiphoningBlade',
       name: 'Siphoning Blade',
-      expansion: 'TA',
+      expansion: 'The Ancients',
       level: 3,
       effect: `
       <p>
@@ -310,7 +310,7 @@ const theAncientsData = {
     {
       id: 'GemEncrustedAnklet',
       name: 'Gem Encrusted Anklet',
-      expansion: 'TA',
+      expansion: 'The Ancients',
       level: 3,
       effect: `
       <p>
@@ -323,28 +323,28 @@ const theAncientsData = {
     {
       id: 'Rupture',
       name: 'Rupture',
-      expansion: 'TA',
+      expansion: 'The Ancients',
       tier: 1,
       type: 'Attack',
     },
     {
       id: 'FurrowOfDestruction',
       name: 'Furrow Of Destruction',
-      expansion: 'TA',
+      expansion: 'The Ancients',
       tier: 1,
       type: 'Power',
     },
     {
       id: 'Mangle',
       name: 'Mangle',
-      expansion: 'TA',
+      expansion: 'The Ancients',
       tier: 2,
       type: 'Attack',
     },
     {
       id: 'HowlingSlayer',
       name: 'Howling Slayer',
-      expansion: 'TA',
+      expansion: 'The Ancients',
       tier: 2,
       type: 'Minion',
     },

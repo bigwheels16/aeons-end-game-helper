@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import { allMages } from './data/allMages';
 import { useGameStore } from './store';
+import ExpansionFilter from './components/ExpansionFilter';
 
 export default function MageSearchScreen() {
   const mageSearchFilters = useGameStore((state) => state.mageSearchFilters);
@@ -73,7 +74,7 @@ export default function MageSearchScreen() {
       }
 
       return true;
-    });
+    }).sort((a, b) => a.name.localeCompare(b.name));
   }, [debouncedQuery, selectedMageExpansions]);
 
   return (
@@ -92,28 +93,11 @@ export default function MageSearchScreen() {
           />
         </div>
 
-        <div style={{ marginBottom: '1rem' }}>
-          <strong style={{ color: '#ccc' }}>Expansions:</strong>
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
-            {allExpansions.map(exp => (
-              <button
-                key={exp}
-                onClick={() => toggleExpansion(exp)}
-                style={{
-                  padding: '0.25rem 0.75rem',
-                  borderRadius: '16px',
-                  border: selectedMageExpansions.includes(exp) ? '1px solid #4CAF50' : '1px solid #555',
-                  backgroundColor: selectedMageExpansions.includes(exp) ? 'rgba(76, 175, 80, 0.2)' : '#222',
-                  color: selectedMageExpansions.includes(exp) ? '#fff' : '#ccc',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s'
-                }}
-              >
-                {exp}
-              </button>
-            ))}
-          </div>
-        </div>
+        <ExpansionFilter
+          allExpansions={allExpansions}
+          selectedExpansions={selectedMageExpansions}
+          onToggleExpansion={toggleExpansion}
+        />
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <button 

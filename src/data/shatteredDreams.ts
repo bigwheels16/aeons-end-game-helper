@@ -4,7 +4,7 @@ const shatteredDreamsData = {
   type: 'mini',
   nemeses: [
     {
-      expansion: 'SD',
+      expansion: 'Shattered Dreams',
       name: 'The Wailing',
       id: 'TheWailing',
       health: 50,
@@ -15,7 +15,7 @@ const shatteredDreamsData = {
   ],
   mages: [
     {
-      expansion: 'SD',
+      expansion: 'Shattered Dreams',
       name: 'Nook',
       id: 'Nook',
       mageTitle: 'Orb Caller',
@@ -30,7 +30,7 @@ const shatteredDreamsData = {
         {
           type: 'Gem',
           name: 'Mystic Orb',
-          expansion: 'SD',
+          expansion: 'Shattered Dreams',
           id: 'MysticOrb',
           cost: 0,
           effect: `<p>Gain 1 charge.<br/>
@@ -46,7 +46,7 @@ const shatteredDreamsData = {
   cards: [
     {
       type: 'Gem',
-      expansion: 'SD',
+      expansion: 'Shattered Dreams',
       name: 'Olivinite',
       id: 'Olivinite',
       cost: 3,
@@ -61,7 +61,7 @@ const shatteredDreamsData = {
     },
     {
       type: 'Gem',
-      expansion: 'SD',
+      expansion: 'Shattered Dreams',
       name: 'Cache Glass',
       id: 'CacheGlass',
       cost: 4,
@@ -76,7 +76,7 @@ const shatteredDreamsData = {
     },
     {
       type: 'Relic',
-      expansion: 'SD',
+      expansion: 'Shattered Dreams',
       name: 'Reflective Conduit',
       id: 'ReflectiveConduit',
       cost: 3,
@@ -93,7 +93,7 @@ const shatteredDreamsData = {
     },
     {
       type: 'Relic',
-      expansion: 'SD',
+      expansion: 'Shattered Dreams',
       name: 'Will Weaver',
       id: 'WillWeaver',
       cost: 7,
@@ -107,7 +107,7 @@ const shatteredDreamsData = {
     },
     {
       type: 'Spell',
-      expansion: 'SD',
+      expansion: 'Shattered Dreams',
       name: 'Breach Seeker',
       id: 'BreachSeeker',
       cost: 5,
@@ -124,7 +124,7 @@ const shatteredDreamsData = {
     },
     {
       type: 'Spell',
-      expansion: 'SD',
+      expansion: 'Shattered Dreams',
       name: 'Crescendo Ray',
       id: 'CrescendoRay',
       cost: 4,
@@ -139,7 +139,7 @@ const shatteredDreamsData = {
     },
     {
       type: 'Spell',
-      expansion: 'SD',
+      expansion: 'Shattered Dreams',
       name: 'Storm Vapors',
       id: 'StormVapors',
       cost: 4,
@@ -154,7 +154,7 @@ const shatteredDreamsData = {
     },
     {
       type: 'Spell',
-      expansion: 'SD',
+      expansion: 'Shattered Dreams',
       name: 'Mantra of Strength',
       id: 'MantraOfStrength',
       cost: 3,
@@ -170,7 +170,7 @@ const shatteredDreamsData = {
     },
     {
       type: 'Spell',
-      expansion: 'SD',
+      expansion: 'Shattered Dreams',
       name: 'Embody Flame',
       id: 'EmbodyFlame',
       cost: 7,
@@ -185,7 +185,7 @@ const shatteredDreamsData = {
     },
     {
       type: 'Spell',
-      expansion: 'SD',
+      expansion: 'Shattered Dreams',
       name: 'Snap Ritual',
       id: 'SnapRitual',
       cost: 6,
@@ -203,7 +203,7 @@ const shatteredDreamsData = {
     {
       id: 'MazahaedronsWorldheartShard',
       name: "Mazahaedron's Worldheart Shard",
-      expansion: 'SD',
+      expansion: 'Shattered Dreams',
       level: 1,
       subtype: 'Gem',
       effect: `
@@ -218,7 +218,7 @@ const shatteredDreamsData = {
     {
       id: 'PhaedraxasTourmalineShard',
       name: "Phaedraxa's Tourmaline Shard",
-      expansion: 'SD',
+      expansion: 'Shattered Dreams',
       level: 1,
       subtype: 'Gem',
       effect: `
@@ -231,7 +231,7 @@ const shatteredDreamsData = {
     {
       id: 'FracturedShell',
       name: 'Fractured Shell',
-      expansion: 'SD',
+      expansion: 'Shattered Dreams',
       level: 2,
       effect: `
       <p>
@@ -244,7 +244,7 @@ const shatteredDreamsData = {
     {
       id: 'Extra-DimensionalLens',
       name: 'Extra-Dimensional Lens',
-      expansion: 'SD',
+      expansion: 'Shattered Dreams',
       level: 3,
       effect: `
       <p>
@@ -256,7 +256,7 @@ const shatteredDreamsData = {
     {
       id: 'SeersBracer',
       name: "Seer's Bracer",
-      expansion: 'SD',
+      expansion: 'Shattered Dreams',
       level: 3,
       effect: `
       <p>

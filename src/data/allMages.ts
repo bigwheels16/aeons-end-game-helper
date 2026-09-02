@@ -23,6 +23,7 @@ export interface Mage {
   abilityEffect?: string;
   numberOfCharges?: number;
   uniqueStarters?: SupplyCard[];
+  recommendedCards?: string[];
 }
 
 export const allMages: Mage[] = [

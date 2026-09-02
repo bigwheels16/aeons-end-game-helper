@@ -4,7 +4,7 @@ const warEternalData = {
   type: 'standalone',
   nemeses: [
     {
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Gate Witch',
       id: 'GateWitch',
       health: 70,
@@ -18,7 +18,7 @@ const warEternalData = {
       `,
     },
     {
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Hollow Crown',
       id: 'HollowCrown',
       health: 1,
@@ -27,7 +27,7 @@ const warEternalData = {
       additionalInfo: '',
     },
     {
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Magus of Cloaks',
       id: 'MagusOfCloaks',
       health: 35,
@@ -36,7 +36,7 @@ const warEternalData = {
       additionalInfo: '',
     },
     {
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Umbra Titan',
       id: 'UmbraTitan',
       health: 70,
@@ -47,7 +47,7 @@ const warEternalData = {
   ],
   mages: [
     {
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Dezmodia',
       id: 'Dezmodia',
       mageTitle: 'Voidborn Prodigy',
@@ -64,7 +64,7 @@ const warEternalData = {
         {
           type: 'Gem',
           name: 'Oblivion Shard',
-          expansion: 'WE',
+          expansion: 'War Eternal',
           id: 'OblivionShared',
           cost: 0,
           effect: `
@@ -78,7 +78,7 @@ const warEternalData = {
       ],
     },
     {
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Garu',
       id: 'Garu',
       mageTitle: 'Oathsworn Protector',
@@ -94,7 +94,7 @@ const warEternalData = {
         {
           type: 'Spell',
           name: 'Torch',
-          expansion: 'WE',
+          expansion: 'War Eternal',
           id: 'Torch',
           cost: 0,
           effect: `
@@ -109,7 +109,7 @@ const warEternalData = {
       ],
     },
     {
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Gex',
       id: 'Gex',
       mageTitle: 'Breach Mage Adviser',
@@ -124,7 +124,7 @@ const warEternalData = {
         {
           type: 'Gem',
           name: 'Shattered Geode',
-          expansion: 'WE',
+          expansion: 'War Eternal',
           id: 'ShatteredGeode',
           cost: 0,
           effect: `
@@ -138,7 +138,7 @@ const warEternalData = {
       ],
     },
     {
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Mazahaedron',
       id: 'Mazahaedron',
       mageTitle: 'Henge Mystic',
@@ -153,7 +153,7 @@ const warEternalData = {
         {
           type: 'Gem',
           name: 'Worldheart Shard',
-          expansion: 'WE',
+          expansion: 'War Eternal',
           id: 'WorldheartShard',
           cost: 0,
           effect: `
@@ -170,7 +170,7 @@ const warEternalData = {
       ],
     },
     {
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Mist',
       id: 'MistWE',
       mageTitle: 'Voidwalker',
@@ -184,7 +184,7 @@ const warEternalData = {
         {
           type: 'Gem',
           name: 'Amethyst Paragon',
-          expansion: 'WE',
+          expansion: 'War Eternal',
           id: 'AmethystParagon',
           cost: 0,
           effect: `
@@ -199,7 +199,7 @@ const warEternalData = {
       ],
     },
     {
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Quilius',
       id: 'Quilius',
       mageTitle: 'Breach Mage Assassin',
@@ -212,7 +212,7 @@ const warEternalData = {
         {
           type: 'Spell',
           name: 'Extinguish',
-          expansion: 'WE',
+          expansion: 'War Eternal',
           id: 'Extinguish',
           cost: 0,
           effect: `
@@ -227,7 +227,7 @@ const warEternalData = {
       ],
     },
     {
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Ulgimor',
       id: 'Ulgimor',
       mageTitle: 'Shadowkin Beast',
@@ -241,7 +241,7 @@ const warEternalData = {
         {
           type: 'Gem',
           name: 'Coal Shard',
-          expansion: 'WE',
+          expansion: 'War Eternal',
           id: 'CoalShard',
           cost: 0,
           effect: `
@@ -256,7 +256,7 @@ const warEternalData = {
       ],
     },
     {
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Yan Magda',
       id: 'YanMagda',
       mageTitle: 'Enlightened Exile',
@@ -271,7 +271,7 @@ const warEternalData = {
         {
           type: 'Spell',
           name: 'Illuminate',
-          expansion: 'WE',
+          expansion: 'War Eternal',
           id: 'Illuminate',
           cost: 0,
           effect: `
@@ -289,7 +289,7 @@ const warEternalData = {
   cards: [
     {
       type: 'Gem',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Erratic Ingot',
       id: 'ErraticIngot',
       cost: 5,
@@ -304,7 +304,7 @@ const warEternalData = {
     },
     {
       type: 'Spell',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Reduce To Ash',
       id: 'ReduceToAsh',
       cost: 7,
@@ -319,7 +319,7 @@ const warEternalData = {
     },
     {
       type: 'Relic',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Vortex Gauntlet',
       id: 'VortexGauntlet',
       cost: 6,
@@ -333,7 +333,7 @@ const warEternalData = {
     },
     {
       type: 'Spell',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Carbonize',
       id: 'Carbonize',
       cost: 4,
@@ -348,7 +348,7 @@ const warEternalData = {
     },
     {
       type: 'Spell',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Equilibrium',
       id: 'Equilibrium',
       cost: 7,
@@ -363,7 +363,7 @@ const warEternalData = {
     },
     {
       type: 'Gem',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Volcanic Glass',
       id: 'VolcanicGlass',
       cost: 3,
@@ -379,7 +379,7 @@ const warEternalData = {
     },
     {
       type: 'Spell',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Convection Field',
       id: 'ConvectionField',
       cost: 5,
@@ -394,7 +394,7 @@ const warEternalData = {
     },
     {
       type: 'Spell',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Jagged Lightning',
       id: 'JaggedLightning',
       cost: 4,
@@ -409,7 +409,7 @@ const warEternalData = {
     },
     {
       type: 'Gem',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Bloodstone Jewel',
       id: 'BloodstoneJewel',
       cost: 6,
@@ -424,7 +424,7 @@ const warEternalData = {
     },
     {
       type: 'Spell',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Kindle',
       id: 'Kindle',
       cost: 4,
@@ -439,7 +439,7 @@ const warEternalData = {
     },
     {
       type: 'Spell',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Thoughtform Familiar',
       id: 'ThoughtformFamiliar',
       cost: 3,
@@ -453,7 +453,7 @@ const warEternalData = {
     },
     {
       type: 'Spell',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Crystallize',
       id: 'Crystallize',
       cost: 8,
@@ -469,7 +469,7 @@ const warEternalData = {
     },
     {
       type: 'Spell',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Fiery Torrent',
       id: 'FieryTorrent',
       cost: 5,
@@ -484,7 +484,7 @@ const warEternalData = {
     },
     {
       type: 'Spell',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Celestial Spire',
       id: 'CelestialSpire',
       cost: 5,
@@ -498,7 +498,7 @@ const warEternalData = {
     },
     {
       type: 'Spell',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Conjure The Lost',
       id: 'ConjureTheLost',
       cost: 6,
@@ -512,7 +512,7 @@ const warEternalData = {
     },
     {
       type: 'Spell',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Nova Forge',
       id: 'NovaForge',
       cost: 6,
@@ -527,7 +527,7 @@ const warEternalData = {
     },
     {
       type: 'Gem',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Dread Diamond',
       id: 'DreadDiamond',
       cost: 3,
@@ -542,7 +542,7 @@ const warEternalData = {
     },
     {
       type: 'Relic',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Cairn Compass',
       id: 'CairnCompass',
       cost: 4,
@@ -556,7 +556,7 @@ const warEternalData = {
     },
     {
       type: 'Gem',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Scoria Slag',
       id: 'ScoriaSlag',
       cost: 4,
@@ -570,7 +570,7 @@ const warEternalData = {
     },
     {
       type: 'Gem',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Breach Ore',
       id: 'BreachOre',
       cost: 4,
@@ -585,7 +585,7 @@ const warEternalData = {
     },
     {
       type: 'Relic',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Fiend Catcher',
       id: 'FiendCatcher',
       cost: 3,
@@ -600,7 +600,7 @@ const warEternalData = {
     },
     {
       type: 'Spell',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Pyrotechnic Surge',
       id: 'PyrotechnicSurge',
       cost: 4,
@@ -616,7 +616,7 @@ const warEternalData = {
     },
     {
       type: 'Spell',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Aurora',
       id: 'Aurora',
       cost: 5,
@@ -630,7 +630,7 @@ const warEternalData = {
     },
     {
       type: 'Relic',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Conclave Scroll',
       id: 'ConclaveScroll',
       cost: 3,
@@ -645,7 +645,7 @@ const warEternalData = {
     },
     {
       type: 'Relic',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Primordial Fetish',
       id: 'PrimordialFetish',
       cost: 4,
@@ -660,7 +660,7 @@ const warEternalData = {
     },
     {
       type: 'Gem',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Frozen Magmite',
       id: 'FrozenMagmite',
       cost: 3,
@@ -674,7 +674,7 @@ const warEternalData = {
     },
     {
       type: 'Relic',
-      expansion: 'WE',
+      expansion: 'War Eternal',
       name: 'Mages Totem',
       id: 'MagesTotem',
       cost: 2,

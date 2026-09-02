@@ -4,7 +4,7 @@ const intoTheWildData = {
   type: 'mini',
   nemeses: [
     {
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       name: 'Necroswarm',
       id: 'Necroswarm',
       health: 70,
@@ -15,7 +15,7 @@ const intoTheWildData = {
   ],
   mages: [
     {
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       name: 'Inco',
       id: 'Inco',
       mageTitle: 'Child Of Green',
@@ -29,7 +29,7 @@ const intoTheWildData = {
         {
           type: 'Gem',
           name: 'Verdant Emerald',
-          expansion: 'IW',
+          expansion: 'Into The Wild',
           id: 'VerdantEmerald',
           cost: 0,
           effect: `<p>Gain 1 <span class="aether">&AElig;</span>.
@@ -42,7 +42,7 @@ const intoTheWildData = {
       complexityRating: 4,
     },
     {
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       name: 'Razra',
       id: 'Razra',
       mageTitle: 'The Trainer',
@@ -61,7 +61,7 @@ const intoTheWildData = {
         {
           type: 'Relic',
           name: 'Rip, Help!',
-          expansion: 'IW',
+          expansion: 'Into The Wild',
           id: 'RipHelp',
           cost: 0,
           effect: `<p>Gain 1 charge.</p>`,
@@ -74,7 +74,7 @@ const intoTheWildData = {
   cards: [
     {
       type: 'Gem',
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       name: 'Jeweled Brain',
       id: 'JeweledBrain',
       cost: 3,
@@ -90,7 +90,7 @@ const intoTheWildData = {
     },
     {
       type: 'Relic',
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       name: 'Blast Sphere',
       id: 'BlastSphere',
       cost: 8,
@@ -104,7 +104,7 @@ const intoTheWildData = {
     },
     {
       type: 'Spell',
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       name: 'Wound Mender',
       id: 'WoundMender',
       cost: 8,
@@ -124,7 +124,7 @@ const intoTheWildData = {
     {
       id: 'DezmodiasOblivionShard',
       name: "Dezmodia's Oblivion Shard",
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       level: 1,
       subtype: 'Gem',
       effect: `
@@ -137,7 +137,7 @@ const intoTheWildData = {
     {
       id: 'UlgimorsCoalFragment',
       name: "Ulgimor's Coal Fragment",
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       level: 1,
       subtype: 'Gem',
       effect: `
@@ -151,7 +151,7 @@ const intoTheWildData = {
     {
       id: 'IndirasLoneOpal',
       name: "Indiras's Lone Opal",
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       level: 1,
       subtype: 'Gem',
       effect: `
@@ -164,7 +164,7 @@ const intoTheWildData = {
     {
       id: 'MistsAmethystParagon',
       name: "Mist's Amethyst Paragon",
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       level: 1,
       subtype: 'Gem',
       effect: `
@@ -177,7 +177,7 @@ const intoTheWildData = {
     {
       id: 'MalastarsImmolate',
       name: "Malastar's Immolate",
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       level: 1,
       subtype: 'Spell',
       effect: `
@@ -190,7 +190,7 @@ const intoTheWildData = {
     {
       id: 'YanMagdasIlluminate',
       name: "Yan Magda's Illuminate",
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       level: 1,
       subtype: 'Spell',
       effect: `
@@ -204,7 +204,7 @@ const intoTheWildData = {
     {
       id: 'EyeOfTheMaelstrom',
       name: 'Eye Of The Maelstrom',
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       level: 2,
       effect: `
         <p>
@@ -217,7 +217,7 @@ const intoTheWildData = {
     {
       id: 'WellOfDespair',
       name: 'Well Of Despair',
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       level: 2,
       effect: `
         <p>
@@ -232,7 +232,7 @@ const intoTheWildData = {
     {
       id: 'CronesAmulet',
       name: "Crones's Amulet",
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       level: 2,
       effect: `
         <p>
@@ -243,7 +243,7 @@ const intoTheWildData = {
     {
       id: 'EdibleFungusChunks',
       name: 'Edible Fungus Chunks',
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       level: 2,
       effect: `
         <p>
@@ -254,7 +254,7 @@ const intoTheWildData = {
     {
       id: 'UmbralHornOfWar',
       name: 'Umbral Horn Of War',
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       level: 2,
       effect: `
         <p>
@@ -267,7 +267,7 @@ const intoTheWildData = {
     {
       id: 'TheBrokenMask',
       name: 'The Broken Mask',
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       level: 2,
       effect: `
         <p>
@@ -278,7 +278,7 @@ const intoTheWildData = {
     {
       id: 'AlchemistsAlembic',
       name: "Alchemist's Alembic",
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       level: 3,
       effect: `
         <p>
@@ -290,7 +290,7 @@ const intoTheWildData = {
     {
       id: 'SoothsayersPouch',
       name: "Soothsayer's Pouch",
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       level: 3,
       effect: `
       <p>
@@ -303,7 +303,7 @@ const intoTheWildData = {
     {
       id: 'SuppressingPin',
       name: 'Suppressing Pin',
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       level: 3,
       effect: `
       <p>
@@ -314,7 +314,7 @@ const intoTheWildData = {
     {
       id: 'Quicksilver',
       name: 'Quicksilver',
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       level: 3,
       effect: `
       <p>
@@ -326,7 +326,7 @@ const intoTheWildData = {
     {
       id: 'BandOfRetrieval',
       name: 'Band of Retrieval',
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       level: 3,
       effect: `
       <p>
@@ -339,7 +339,7 @@ const intoTheWildData = {
     {
       id: 'PurifiedBangle',
       name: 'Purified Bangle',
-      expansion: 'IW',
+      expansion: 'Into The Wild',
       level: 3,
       effect: `
       <p>
