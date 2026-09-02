@@ -7,7 +7,6 @@ import ExpansionFilter from './components/ExpansionFilter';
 export default function MageSearchScreen() {
   const mageSearchFilters = useGameStore((state) => state.mageSearchFilters);
   const setMageSearchFilters = useGameStore((state) => state.setMageSearchFilters);
-  const [showImages, setShowImages] = useState(false);
 
   const { mageQuery, selectedMageExpansions } = mageSearchFilters;
   
@@ -63,7 +62,6 @@ export default function MageSearchScreen() {
       selectedMageExpansions: [],
     });
     setDebouncedQuery('');
-    setShowImages(false);
   };
 
   const stripHtml = (html: string) => {
@@ -135,15 +133,6 @@ export default function MageSearchScreen() {
           >
             Clear All Filters
           </button>
-          <label style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-            <input 
-              type="checkbox" 
-              checked={showImages} 
-              onChange={e => setShowImages(e.target.checked)} 
-              style={{ width: '1.2rem', height: '1.2rem', cursor: 'pointer' }}
-            />
-            Show Mage Mats (Images Only)
-          </label>
         </div>
       </div>
 
@@ -153,44 +142,9 @@ export default function MageSearchScreen() {
             <p style={{ fontSize: '1.25rem', color: '#ccc' }}>No matching mages found.</p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: showImages ? 'repeat(auto-fill, minmax(400px, 1fr))' : 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem' }}>
-            {filteredMages.map((mage, idx) => (
-              <div key={mage.id || idx} style={{ backgroundColor: '#222', padding: showImages ? '0' : '1.5rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
-                {showImages ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-                    <a href={`https://aeonsend.wiki.gg/wiki/${mage.name.replace(/ /g, '_')}`} target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
-                      <img 
-                        src={`https://aeonsend.wiki.gg/images/${mage.name.replace(/ /g, '_')}_Front.jpg`} 
-                        alt={`${mage.name} Front`}
-                        loading="lazy"
-                        style={{ width: '100%', height: 'auto', display: 'block' }} 
-                      />
-                    </a>
-                    <a href={`https://aeonsend.wiki.gg/wiki/${mage.name.replace(/ /g, '_')}`} target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
-                      <img 
-                        src={`https://aeonsend.wiki.gg/images/${mage.name.replace(/ /g, '_')}_Back.jpg`} 
-                        alt={`${mage.name} Back`}
-                        loading="lazy"
-                        style={{ width: '100%', height: 'auto', display: 'block', marginTop: '4px' }} 
-                      />
-                    </a>
-                    {mage.uniqueStarters && mage.uniqueStarters.length > 0 && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '4px' }}>
-                        {mage.uniqueStarters.map((starter, sIdx) => (
-                          <a key={sIdx} href={`https://aeonsend.wiki.gg/wiki/${starter.name.replace(/ /g, '_')}`} target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
-                            <img 
-                              src={`https://aeonsend.wiki.gg/images/${starter.name.replace(/ /g, '_')}.jpg`} 
-                              alt={starter.name}
-                              loading="lazy"
-                              style={{ width: '100%', height: 'auto', display: 'block' }} 
-                            />
-                          </a>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem' }}>
+              {filteredMages.map((mage, idx) => (
+                <div key={mage.id || idx} style={{ backgroundColor: '#222', padding: '1.5rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
                     <h2 style={{ margin: '0 0 0.25rem 0' }}>
                       <a 
                         href={`https://aeonsend.wiki.gg/wiki/${mage.name.replace(/ /g, '_')}`} 
@@ -272,14 +226,14 @@ export default function MageSearchScreen() {
                         </div>
                       </div>
                     )}
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
+                  </div>
+              ))}
+            </div>
         )}
       </div>
     </div>
   );
 }
+
+
 

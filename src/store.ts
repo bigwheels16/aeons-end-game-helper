@@ -37,7 +37,6 @@ const GameStateSchema = z.object({
     selectedExpansions: z.array(z.string()),
     selectedTypes: z.array(z.string()),
     costRange: z.tuple([z.number(), z.number()]),
-    showImages: z.boolean().default(false),
   }).optional(),
   mageSearchFilters: z.object({
     mageQuery: z.string(),
@@ -109,8 +108,6 @@ export interface SearchFilters {
   selectedTypes: string[];
   /** [minCost, maxCost] Aether cost bounds */
   costRange: [number, number];
-  /** Whether to render the card image instead of text properties */
-  showImages: boolean;
 }
 
 export interface MageSearchFilters {
@@ -350,7 +347,6 @@ const createSearchSlice: StateCreator<GameState, [], [], SearchSlice> = (set) =>
     selectedExpansions: [],
     selectedTypes: [],
     costRange: [0, 10],
-    showImages: false,
   },
   setSearchFilters: (filters) => set((state) => ({
     searchFilters: { ...state.searchFilters, ...filters }
@@ -393,4 +389,5 @@ export const useGameStore = create<GameState>()(
     }
   )
 );
+
 

@@ -18,7 +18,7 @@ export default function CardSearchScreen() {
   const searchFilters = useGameStore((state) => state.searchFilters);
   const setSearchFilters = useGameStore((state) => state.setSearchFilters);
 
-  const { nameQuery, effectQuery, selectedExpansions, selectedTypes, costRange, showImages } = searchFilters;
+  const { nameQuery, effectQuery, selectedExpansions, selectedTypes, costRange } = searchFilters;
   const [visibleImages, setVisibleImages] = useState<Set<string>>(new Set());
 
   const toggleImage = (id: string) => {
@@ -73,8 +73,7 @@ export default function CardSearchScreen() {
       effectQuery: '',
       selectedExpansions: [],
       selectedTypes: [],
-      costRange: [0, 10],
-      showImages: false
+      costRange: [0, 10]
     });
     setDebouncedName('');
     setDebouncedEffect('');
@@ -226,15 +225,6 @@ export default function CardSearchScreen() {
           >
             Clear All Filters
           </button>
-          <label style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-            <input 
-              type="checkbox" 
-              checked={showImages} 
-              onChange={e => setSearchFilters({ showImages: e.target.checked })} 
-              style={{ width: '1.2rem', height: '1.2rem', cursor: 'pointer' }}
-            />
-            Show Card Images Only
-          </label>
         </div>
       </div>
 
@@ -261,18 +251,7 @@ export default function CardSearchScreen() {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
             {filteredCards.map((card, idx) => (
-              <div key={card.id || idx} style={{ backgroundColor: '#222', padding: showImages ? '0' : '1rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
-                {showImages ? (
-                  <a href={`https://aeonsend.wiki.gg/wiki/${card.name.replace(/ /g, '_')}`} target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
-                    <img 
-                      src={`https://aeonsend.wiki.gg/images/${card.name.replace(/ /g, '_')}.jpg`} 
-                      alt={card.name}
-                      loading="lazy"
-                      style={{ width: '100%', height: 'auto', display: 'block' }} 
-                    />
-                  </a>
-                ) : (
-                  <>
+              <div key={card.id || idx} style={{ backgroundColor: '#222', padding: '1rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
                     <h3 style={{ margin: '0 0 0.5rem 0' }}>
                       <a 
                         href={`https://aeonsend.wiki.gg/wiki/${card.name.replace(/ /g, '_')}`} 
@@ -307,8 +286,7 @@ export default function CardSearchScreen() {
                           />
                         </div>
                       )}
-                    </>
-                  )}
+                    
               </div>
             ))}
           </div>
@@ -317,5 +295,7 @@ export default function CardSearchScreen() {
     </div>
   );
 }
+
+
 
 

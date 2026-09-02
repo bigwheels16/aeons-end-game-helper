@@ -7,7 +7,6 @@ import ExpansionFilter from './components/ExpansionFilter';
 export default function NemesisSearchScreen() {
   const nemesisSearchFilters = useGameStore((state) => state.nemesisSearchFilters);
   const setNemesisSearchFilters = useGameStore((state) => state.setNemesisSearchFilters);
-  const [showImages, setShowImages] = useState(false);
 
   const { nemesisQuery, selectedNemesisExpansions } = nemesisSearchFilters;
   const [visibleImages, setVisibleImages] = useState<Set<string>>(new Set());
@@ -52,7 +51,6 @@ export default function NemesisSearchScreen() {
       selectedNemesisExpansions: [],
     });
     setDebouncedQuery('');
-    setShowImages(false);
   };
 
   const stripHtml = (html: string) => {
@@ -125,15 +123,6 @@ export default function NemesisSearchScreen() {
           >
             Clear All Filters
           </button>
-          <label style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-            <input 
-              type="checkbox" 
-              checked={showImages} 
-              onChange={e => setShowImages(e.target.checked)} 
-              style={{ width: '1.2rem', height: '1.2rem', cursor: 'pointer' }}
-            />
-            Show Nemesis Mats (Images Only)
-          </label>
         </div>
       </div>
 
@@ -143,30 +132,9 @@ export default function NemesisSearchScreen() {
             <p style={{ fontSize: '1.25rem', color: '#ccc' }}>No matching nemeses found.</p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: showImages ? 'repeat(auto-fill, minmax(400px, 1fr))' : 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem' }}>
-            {filteredNemeses.map((nemesis, idx) => (
-              <div key={nemesis.id || idx} style={{ backgroundColor: '#222', padding: showImages ? '0' : '1.5rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
-                {showImages ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-                    <a href={`https://aeonsend.wiki.gg/wiki/${nemesis.name.replace(/ /g, '_')}`} target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
-                      <img 
-                        src={`https://aeonsend.wiki.gg/images/${nemesis.name.replace(/ /g, '_')}_Front.jpg`} 
-                        alt={`${nemesis.name} Front`}
-                        loading="lazy"
-                        style={{ width: '100%', height: 'auto', display: 'block' }} 
-                      />
-                    </a>
-                    <a href={`https://aeonsend.wiki.gg/wiki/${nemesis.name.replace(/ /g, '_')}`} target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
-                      <img 
-                        src={`https://aeonsend.wiki.gg/images/${nemesis.name.replace(/ /g, '_')}_Back.jpg`} 
-                        alt={`${nemesis.name} Back`}
-                        loading="lazy"
-                        style={{ width: '100%', height: 'auto', display: 'block', marginTop: '4px' }} 
-                      />
-                    </a>
-                  </div>
-                ) : (
-                  <>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem' }}>
+              {filteredNemeses.map((nemesis, idx) => (
+                <div key={nemesis.id || idx} style={{ backgroundColor: '#222', padding: '1.5rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
                     <h2 style={{ margin: '0 0 0.25rem 0' }}>
                       <a 
                         href={`https://aeonsend.wiki.gg/wiki/${nemesis.name.replace(/ /g, '_')}`} 
@@ -222,14 +190,14 @@ export default function NemesisSearchScreen() {
                         />
                       </div>
                     )}
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
+                  </div>
+              ))}
+            </div>
         )}
       </div>
     </div>
   );
 
 }
+
+
