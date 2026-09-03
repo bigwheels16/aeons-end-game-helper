@@ -185,10 +185,10 @@ export default function MageSearchScreen() {
                     <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: '#1a1a1a', borderRadius: '4px', borderLeft: '4px solid #4CAF50' }}>
                       <h4 style={{ margin: '0 0 0.5rem 0', color: '#fff' }}>{mage.ability_name} ({mage.charges} Charges)</h4>
                       {mage.ability_activation && (
-                        <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.85rem', color: '#bbb' }}><em>{mage.ability_activation}</em></p>
+                        <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.85rem', color: '#bbb', textAlign: 'center' }}><em>{mage.ability_activation}</em></p>
                       )}
                       <div 
-                        style={{ fontSize: '0.9rem', color: '#ddd' }}
+                        style={{ fontSize: '0.9rem', color: '#ddd', textAlign: 'center' }}
                         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(mage.ability_effect || '') }} 
                       />
                     </div>
@@ -251,7 +251,7 @@ export default function MageSearchScreen() {
                                 <span style={{ fontSize: '0.8rem', color: '#aaa' }}>{starter.type}</span>
                               </div>
                               <div 
-                                style={{ fontSize: '0.85rem', color: '#ddd' }}
+                                style={{ fontSize: '0.85rem', color: '#ddd', textAlign: 'center' }}
                                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(starter.effect || '') }} 
                               />
                               <button 

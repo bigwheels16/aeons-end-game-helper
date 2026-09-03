@@ -141,7 +141,7 @@ export default function NemesisSearchScreen() {
                     </div>
 
                     {nemesis.unleash && (
-                      <div style={{ marginBottom: '0.75rem' }}>
+                      <div style={{ marginBottom: '0.75rem', textAlign: 'center' }}>
                         <strong style={{ color: '#ff7043', display: 'block', marginBottom: '0.25rem' }}>Unleash:</strong>
                         <div 
                           style={{ fontSize: '0.9rem', color: '#ddd' }}
@@ -151,7 +151,7 @@ export default function NemesisSearchScreen() {
                     )}
 
                     {nemesis.increased_difficulty && (
-                      <div style={{ marginBottom: '0.75rem' }}>
+                      <div style={{ marginBottom: '0.75rem', textAlign: 'center' }}>
                         <strong style={{ color: '#ef5350', display: 'block', marginBottom: '0.25rem' }}>Increased Difficulty:</strong>
                         <div 
                           style={{ fontSize: '0.9rem', color: '#ddd' }}
@@ -161,7 +161,7 @@ export default function NemesisSearchScreen() {
                     )}
 
                     {nemesis.rules && (
-                      <div style={{ marginBottom: '0.75rem' }}>
+                      <div style={{ marginBottom: '0.75rem', textAlign: 'center' }}>
                         <strong style={{ color: '#42a5f5', display: 'block', marginBottom: '0.25rem' }}>Rules:</strong>
                         <div 
                           style={{ fontSize: '0.9rem', color: '#ddd' }}
@@ -171,7 +171,7 @@ export default function NemesisSearchScreen() {
                     )}
 
                     {nemesis.setup && (
-                      <div style={{ marginBottom: '0.75rem' }}>
+                      <div style={{ marginBottom: '0.75rem', textAlign: 'center' }}>
                         <strong style={{ color: '#ffa726', display: 'block', marginBottom: '0.25rem' }}>Setup:</strong>
                         <div 
                           style={{ fontSize: '0.9rem', color: '#ddd' }}

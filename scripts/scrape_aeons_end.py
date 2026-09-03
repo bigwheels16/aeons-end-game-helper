@@ -61,7 +61,7 @@ KNOWN_EXPANSIONS = [
 ]
 
 
-ALLOWED_HTML_TAGS = {"b", "i", "em", "strong", "br", "span", "div", "hr", "small"}
+ALLOWED_HTML_TAGS = {"b", "i", "em", "strong", "br", "span", "hr", "small"}
 
 
 def sanitize_html_markup(html: str) -> str:
@@ -69,9 +69,9 @@ def sanitize_html_markup(html: str) -> str:
     Sanitizes HTML markup from wiki content:
     - Strips executable/active tags and their contents (script, style, iframe, object, embed, etc.)
     - Removes MediaWiki <nowiki> tags
-    - Enforces strict whitelist of formatting tags (b, i, em, strong, br, span, div, hr, small)
+    - Enforces strict whitelist of formatting tags (b, i, em, strong, br, span, hr, small)
     - Strips all JavaScript event handlers (on*) and unsafe URI schemes (javascript:, data:)
-    - Preserves only safe attributes (class="aether", safe text-align styles)
+    - Preserves only safe attributes (class="aether")
     """
     if not html:
         return ""
@@ -133,8 +133,11 @@ def clean_wikitext(text: Optional[str]) -> str:
     text = re.sub(r"<br\s*/?>", "\n", text, flags=re.IGNORECASE)
     # Remove comments
     text = re.sub(r"<!--.*?-->", "", text, flags=re.DOTALL)
-    # Replace Aether symbol template
+    # Replace game mechanic templates
     text = re.sub(r"\{\{Cost\}\}", '<span class="aether">&AElig;</span>', text, flags=re.IGNORECASE)
+    text = re.sub(r"\{\{AetherToken\}\}", '<span class="aether">&AElig;</span> token', text, flags=re.IGNORECASE)
+    text = re.sub(r"\{\{Knowledge\}\}", "Knowledge", text, flags=re.IGNORECASE)
+    text = re.sub(r"\{\{Recall\}\}", "<b>Recall:</b>", text, flags=re.IGNORECASE)
     # Replace Card reference templates {{Card|Card Name}} -> Card Name
     text = re.sub(r"\{\{Card\|([^}]+)\}\}", r"\1", text, flags=re.IGNORECASE)
     # Replace wiki links [[Target|Label]] -> Label, [[Target]] -> Target
@@ -145,8 +148,8 @@ def clean_wikitext(text: Optional[str]) -> str:
     text = re.sub(r"'''''(.*?)'''''", r"<b><i>\1</i></b>", text)
     text = re.sub(r"'''(.*?)'''", r"<b>\1</b>", text)
     text = re.sub(r"''(.*?)''", r"<i>\1</i>", text)
-    # Clean generic remaining templates that aren't needed
-    text = re.sub(r"\{\{[^}]+\}\}", "", text)
+    # Strip remaining parameterized metadata templates (unparameterized templates are preserved as-is)
+    text = re.sub(r"\{\{[^}|]+\|[^}]*\}\}", "", text, flags=re.DOTALL)
     # Sanitize any raw HTML and strip disallowed tags/handlers
     text = sanitize_html_markup(text)
     # Normalize lines and join with <br/>

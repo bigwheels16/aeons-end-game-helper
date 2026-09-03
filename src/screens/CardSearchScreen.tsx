@@ -223,7 +223,7 @@ export default function CardSearchScreen() {
                       <span>Cost: {card.cost}</span>
                     </div>
                     <div 
-                        style={{ fontSize: '0.9rem', color: '#ddd', marginBottom: '0.5rem' }}
+                        style={{ fontSize: '0.9rem', color: '#ddd', marginBottom: '0.5rem', textAlign: 'center' }}
                         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(card.effect || '') }} 
                       />
                       <button 

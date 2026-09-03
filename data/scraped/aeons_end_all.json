@@ -4,7 +4,7 @@
       "name": "All-out Barrage",
       "type": "Spell",
       "cost": "5",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 4 damage. You may place the bottom card of the nemesis deck on top of the nemesis deck. If you do, deal an additional 3 damage.</div>",
+      "effect": "<b>Cast:</b> Deal 4 damage. You may place the bottom card of the nemesis deck on top of the nemesis deck. If you do, deal an additional 3 damage.",
       "expansions": [
         "The Abyss"
       ],
@@ -26,7 +26,7 @@
       "name": "Erratic Ingot",
       "type": "Gem",
       "cost": "5",
-      "effect": "<div style=\"text-align: center;\">Gain 2 <span class=\"aether\">&AElig;</span>.<br/>Gain an additional 2 <span class=\"aether\">&AElig;</span> if there is at least one nemesis turn order card in the turn order discard pile.</div>",
+      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>.<br/>Gain an additional 2 <span class=\"aether\">&AElig;</span> if there is at least one nemesis turn order card in the turn order discard pile.",
       "expansions": [
         "War Eternal"
       ],
@@ -81,7 +81,7 @@
       "name": "Flame Jab",
       "type": "Spell",
       "cost": "1",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 2 damage to a minion.<br/>You may destroy this. If you do, gain 1 <span class=\"aether\">&AElig;</span>.</div>",
+      "effect": "<b>Cast:</b> Deal 2 damage to a minion.<br/>You may destroy this. If you do, gain 1 <span class=\"aether\">&AElig;</span>.",
       "expansions": [
         "Southern Village"
       ],
@@ -180,7 +180,7 @@
       "name": "Parallel Self",
       "type": "Spell",
       "cost": "6",
-      "effect": "<b>Cast:</b> Deal 5 damage.<hr/>Spend 2 <span class=\"aether\">&AElig;</span> to deal 2 damage.",
+      "effect": "<b>Cast:</b> Deal 5 damage.<hr/><b>Recall:</b>Spend 2 <span class=\"aether\">&AElig;</span> to deal 2 damage.",
       "expansions": [
         "Legacy of Gravehold"
       ],
@@ -246,7 +246,7 @@
       "name": "Glass-Eyed Oracle",
       "type": "Relic",
       "cost": "1",
-      "effect": "<div style=\"text-align: center;\">Gain 1 <span class=\"aether\">&AElig;</span>.<br/><b>OR</b><br/>Destroy this and any number of copies of this card in hand. You may gain a card with cost up to three times the numbers of copies destroyed.</div>",
+      "effect": "Gain 1 <span class=\"aether\">&AElig;</span>.<br/><b>OR</b><br/>Destroy this and any number of copies of this card in hand. You may gain a card with cost up to three times the numbers of copies destroyed.",
       "expansions": [
         "Return To Gravehold"
       ],
@@ -268,7 +268,7 @@
       "name": "Arcane Relay",
       "type": "Spell",
       "cost": "8",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Any ally draws a card and then reveals their hand. Deal 4 damage. Deal 1 additional damage for each card in that ally's hand that costs 1 <span class=\"aether\">&AElig;</span> or more.</div>",
+      "effect": "<b>Cast:</b> Any ally draws a card and then reveals their hand. Deal 4 damage. Deal 1 additional damage for each card in that ally's hand that costs 1 <span class=\"aether\">&AElig;</span> or more.",
       "expansions": [
         "Outcasts"
       ],
@@ -411,7 +411,7 @@
       "name": "Electinium",
       "type": "Gem",
       "cost": "3",
-      "effect": "<div style=\"text-align: center;\">When you gain this, place an electrify token on any enemy.<hr/>Gain 2 <span class=\"aether\">&AElig;</span>.</div>",
+      "effect": "When you gain this, place an electrify token on any enemy.<hr/>Gain 2 <span class=\"aether\">&AElig;</span>.",
       "expansions": [
         "The Caverns"
       ],
@@ -422,7 +422,7 @@
       "name": "Cataclysm Seed",
       "type": "Relic",
       "cost": "7",
-      "effect": "<div style=\"text-align: center;\">Gain a charge.<br/><b>OR</b><br/>Destroy this. Each player may destroy any number of cards in hand.</div>",
+      "effect": "Gain a charge.<br/><b>OR</b><br/>Destroy this. Each player may destroy any number of cards in hand.",
       "expansions": [
         "Promo"
       ],
@@ -455,7 +455,7 @@
       "name": "Redistributor",
       "type": "Relic",
       "cost": "4",
-      "effect": "Gain 1 charge.<br/>Any ally gains an . If you have 3 or more charges, that ally gains an additional .",
+      "effect": "Gain 1 charge.<br/>Any ally gains an <span class=\"aether\">&AElig;</span> token. If you have 3 or more charges, that ally gains an additional <span class=\"aether\">&AElig;</span> token.",
       "expansions": [
         "The Descent"
       ],
@@ -488,7 +488,7 @@
       "name": "Mantra of Strength",
       "type": "Spell",
       "cost": "3",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Any player focuses their closed breach with the highest focus cost. Deal 1 damage. You may destroy this. If you do, deal 2 additional damage.</div>",
+      "effect": "<b>Cast:</b> Any player focuses their closed breach with the highest focus cost. Deal 1 damage. You may destroy this. If you do, deal 2 additional damage.",
       "expansions": [
         "Shattered Dreams"
       ],
@@ -620,7 +620,7 @@
       "name": "Restoration Siphon",
       "type": "Spell",
       "cost": "7",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 6 damage.<br/><b>OR</b><br/><b>Cast:</b> Deal 1 damage. Gravehold gains 3 life.</div>",
+      "effect": "<b>Cast:</b> Deal 6 damage.<br/><b>OR</b><br/><b>Cast:</b> Deal 1 damage. Gravehold gains 3 life.",
       "expansions": [
         "The Descent"
       ],
@@ -664,7 +664,7 @@
       "name": "Coruscating Sapal",
       "type": "Gem",
       "cost": "4",
-      "effect": "<div style=\"text-align: center;\">Gain 2 <span class=\"aether\">&AElig;</span>.<br/>You may lose 1 charge. If you do, gain an additional 2 <span class=\"aether\">&AElig;</span>.</div>",
+      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>.<br/>You may lose 1 charge. If you do, gain an additional 2 <span class=\"aether\">&AElig;</span>.",
       "expansions": [
         "Promo"
       ],
@@ -719,7 +719,7 @@
       "name": "Witchglass",
       "type": "Gem",
       "cost": "2",
-      "effect": "<div style=\"text-align: center;\">Gain 1 <span class=\"aether\">&AElig;</span>. Any ally gains an <span class=\"aether\">&AElig;</span> token.<hr/>You may discard this during an ally's main phase. If you do, that player may <b>Conjure</b>.</div>",
+      "effect": "Gain 1 <span class=\"aether\">&AElig;</span>. Any ally gains an <span class=\"aether\">&AElig;</span> token.<hr/>You may discard this during an ally's main phase. If you do, that player may <b>Conjure</b>.",
       "expansions": [
         "The Ruins"
       ],
@@ -741,7 +741,7 @@
       "name": "Carbonize",
       "type": "Spell",
       "cost": "4",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 3 damage.<br/>Reveal the top card of the turn order deck. You may place that card on the bottom of the turn order deck.</div>",
+      "effect": "<b>Cast:</b> Deal 3 damage.<br/>Reveal the top card of the turn order deck. You may place that card on the bottom of the turn order deck.",
       "expansions": [
         "War Eternal"
       ],
@@ -796,7 +796,7 @@
       "name": "Thoughtform Familiar",
       "type": "Spell",
       "cost": "3",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 2 damage.<br/>Deal 1 additional damage for each of your other prepped spells.</div>",
+      "effect": "<b>Cast:</b> Deal 2 damage.<br/>Deal 1 additional damage for each of your other prepped spells.",
       "expansions": [
         "War Eternal"
       ],
@@ -873,7 +873,7 @@
       "name": "Fountain of Elements",
       "type": "Spell",
       "cost": "6",
-      "effect": "<div style=\"text-align: center;\">While prepped, once per turn when any player develops a card, that player places an elemental token on any enemy.<br/><b>Cast:</b> Deal 4 damage.</div>",
+      "effect": "While prepped, once per turn when any player develops a card, that player places an elemental token on any enemy.<br/><b>Cast:</b> Deal 4 damage.",
       "expansions": [
         "The Descent"
       ],
@@ -994,7 +994,7 @@
       "name": "Whisper of Amethyst",
       "type": "Gem",
       "cost": "6",
-      "effect": "Gain 3 <span class=\"aether\">&AElig;</span>.<br/>You may discard the top card of the nemesis deck. If you do, any ally gains 2 s.",
+      "effect": "Gain 3 <span class=\"aether\">&AElig;</span>.<br/>You may discard the top card of the nemesis deck. If you do, any ally gains 2 <span class=\"aether\">&AElig;</span> tokens.",
       "expansions": [
         "The Abyss"
       ],
@@ -1005,7 +1005,7 @@
       "name": "Void Anchor",
       "type": "Relic",
       "cost": "5",
-      "effect": "Silence a minion. Any ally gains 2 s.<hr/>Gravehold gains 1 life.",
+      "effect": "Silence a minion. Any ally gains 2 <span class=\"aether\">&AElig;</span> tokens.<hr/><b>Recall:</b>Gravehold gains 1 life.",
       "expansions": [
         "Legacy of Gravehold"
       ],
@@ -1115,7 +1115,7 @@
       "name": "Rainbow Fluorite",
       "type": "Gem",
       "cost": "6",
-      "effect": "<div style=\"text-align: center;\">Gain 3 <span class=\"aether\">&AElig;</span>.<br/><b>OR</b><br/>Gain 2 charges.</div>",
+      "effect": "Gain 3 <span class=\"aether\">&AElig;</span>.<br/><b>OR</b><br/>Gain 2 charges.",
       "expansions": [
         "The Ruins"
       ],
@@ -1126,7 +1126,7 @@
       "name": "Pulsyrium Globe",
       "type": "Gem",
       "cost": "5",
-      "effect": "Gain 3 <span class=\"aether\">&AElig;</span>.<hr/> Discard a card in hand. If you do, any player gains an .",
+      "effect": "Gain 3 <span class=\"aether\">&AElig;</span>.<hr/><b>Recall:</b> Discard a card in hand. If you do, any player gains an <span class=\"aether\">&AElig;</span> token.",
       "expansions": [
         "The Ruins"
       ],
@@ -1214,7 +1214,7 @@
       "name": "Summoner's Horn",
       "type": "Relic",
       "cost": "5",
-      "effect": "Any player may prep a spell in their discard pile to their opened or closed breaches.<hr/>Discard a card to gain 1 charge.",
+      "effect": "Any player may prep a spell in their discard pile to their opened or closed breaches.<hr/><b>Recall:</b>Discard a card to gain 1 charge.",
       "expansions": [
         "Legacy of Gravehold"
       ],
@@ -1225,7 +1225,7 @@
       "name": "Thistle Spear",
       "type": "Spell",
       "cost": "8",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 5 damage.<br/>Any ally may gain a card from the Develop zone and place it into their hand.</div>",
+      "effect": "<b>Cast:</b> Deal 5 damage.<br/>Any ally may gain a card from the Develop zone and place it into their hand.",
       "expansions": [
         "Past and Future"
       ],
@@ -1291,7 +1291,7 @@
       "name": "Prismatic Flare",
       "type": "Spell",
       "cost": "5",
-      "effect": "<div style=\"text-align: center;\">When you prep this, focus your III breach.<br/><b>Cast:</b> Deal 3 damage.</div>",
+      "effect": "When you prep this, focus your III breach.<br/><b>Cast:</b> Deal 3 damage.",
       "expansions": [
         "Past and Future"
       ],
@@ -1346,7 +1346,7 @@
       "name": "Snap Ritual",
       "type": "Spell",
       "cost": "6",
-      "effect": "<div style=\"text-align: center;\">While prepped once per turn during your main phase, you may discard a card in hand to deal 2 damage.<br/><b>Cast:</b> Deal 3 damage.</div>",
+      "effect": "While prepped once per turn during your main phase, you may discard a card in hand to deal 2 damage.<br/><b>Cast:</b> Deal 3 damage.",
       "expansions": [
         "Shattered Dreams"
       ],
@@ -1368,7 +1368,7 @@
       "name": "Memory Break",
       "type": "Spell",
       "cost": "6",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 3 damage.<br/>You may destroy a card in hand. If you do, deal additional damage equal to the cost of the destroyed card.</div>",
+      "effect": "<b>Cast:</b> Deal 3 damage.<br/>You may destroy a card in hand. If you do, deal additional damage equal to the cost of the destroyed card.",
       "expansions": [
         "Return To Gravehold"
       ],
@@ -1445,7 +1445,7 @@
       "name": "Memory Allocator",
       "type": "Spell",
       "cost": "8",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 6 damage. Set aside any number of cards in hand. After drawing cards during your draw phase, return the set-aside cards to your hand.</div>",
+      "effect": "<b>Cast:</b> Deal 6 damage. Set aside any number of cards in hand. After drawing cards during your draw phase, return the set-aside cards to your hand.",
       "expansions": [
         "The Caverns"
       ],
@@ -1511,7 +1511,7 @@
       "name": "Shimmerbead",
       "type": "Gem",
       "cost": "3",
-      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>.<hr/> If you have activated your ability this turn, gain 1 life.",
+      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>.<hr/><b>Recall:</b> If you have activated your ability this turn, gain 1 life.",
       "expansions": [
         "The Ruins"
       ],
@@ -1555,7 +1555,7 @@
       "name": "Bestowing Light",
       "type": "Spell",
       "cost": "6",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 5 damage.<br/>Any ally gains an <span class=\"aether\">&AElig;</span> token for each spell prepped in an adjacent breach.</div>",
+      "effect": "<b>Cast:</b> Deal 5 damage.<br/>Any ally gains an <span class=\"aether\">&AElig;</span> token for each spell prepped in an adjacent breach.",
       "expansions": [
         "The Ruins"
       ],
@@ -1566,7 +1566,7 @@
       "name": "Consume Magic",
       "type": "Spell",
       "cost": "4",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 3 damage.<br/>If this defeats a minion from the nemesis deck, swap this card for Detonate.</div>",
+      "effect": "<b>Cast:</b> Deal 3 damage.<br/>If this defeats a minion from the nemesis deck, swap this card for Detonate.",
       "expansions": [
         "Past and Future"
       ],
@@ -1588,7 +1588,7 @@
       "name": "Glint Splinter",
       "type": "Gem",
       "cost": "4",
-      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>.<hr/>You may discard a prepped spell. If you do, gain 1 <span class=\"aether\">&AElig;</span> and you may place the next card you gain this turn on the top of your deck.",
+      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>.<hr/><b>Recall:</b>You may discard a prepped spell. If you do, gain 1 <span class=\"aether\">&AElig;</span> and you may place the next card you gain this turn on the top of your deck.",
       "expansions": [
         "Legacy of Gravehold"
       ],
@@ -1654,7 +1654,7 @@
       "name": "Kindle",
       "type": "Spell",
       "cost": "4",
-      "effect": "<div style=\"text-align: center;\">While prepped, during your main phase you may also prep one Spark to the breach this spell is prepped to. <i>(You cannot use this effect while there is a Spark prepped to this breach.)</i><br/><b>Cast:</b> Deal 3 damage.</div>",
+      "effect": "While prepped, during your main phase you may also prep one Spark to the breach this spell is prepped to. <i>(You cannot use this effect while there is a Spark prepped to this breach.)</i><br/><b>Cast:</b> Deal 3 damage.",
       "expansions": [
         "War Eternal"
       ],
@@ -1731,7 +1731,7 @@
       "name": "Rock Launcher",
       "type": "Relic",
       "cost": "3",
-      "effect": "<div style=\"text-align: center;\">Discard or destroy a card in hand. If you do, deal damage equal to its cost.</div>",
+      "effect": "Discard or destroy a card in hand. If you do, deal damage equal to its cost.",
       "expansions": [
         "Promo"
       ],
@@ -1742,7 +1742,7 @@
       "name": "Boundless Engulf",
       "type": "Spell",
       "cost": "6",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 4 damage. If your discard pile has eight or more cards, including this, you may return this to your hand.</div>",
+      "effect": "<b>Cast:</b> Deal 4 damage. If your discard pile has eight or more cards, including this, you may return this to your hand.",
       "expansions": [
         "The Descent"
       ],
@@ -1819,7 +1819,7 @@
       "name": "Crescendo Ray",
       "type": "Spell",
       "cost": "4",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 3 damage.<br/>Gain 1 <span class=\"aether\">&AElig;</span> for each other spell you have prepped.</div>",
+      "effect": "<b>Cast:</b> Deal 3 damage.<br/>Gain 1 <span class=\"aether\">&AElig;</span> for each other spell you have prepped.",
       "expansions": [
         "Shattered Dreams"
       ],
@@ -1929,7 +1929,7 @@
       "name": "Dragonflare",
       "type": "Spell",
       "cost": "6",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 5 damage.<br/><i>This starts the game in the Swap zone.</i></div>",
+      "effect": "<b>Cast:</b> Deal 5 damage.<br/><i>This starts the game in the Swap zone.</i>",
       "expansions": [
         "Past and Future"
       ],
@@ -1962,7 +1962,7 @@
       "name": "Phoenix Quill",
       "type": "Relic",
       "cost": "6",
-      "effect": "Two different players gain 1 life each.<hr/>Lose 1 charge to return a card that costs 3 <span class=\"aether\">&AElig;</span> or less from your discard pile to your hand.",
+      "effect": "Two different players gain 1 life each.<hr/><b>Recall:</b>Lose 1 charge to return a card that costs 3 <span class=\"aether\">&AElig;</span> or less from your discard pile to your hand.",
       "expansions": [
         "Legacy of Gravehold"
       ],
@@ -2050,7 +2050,7 @@
       "name": "Cleanse",
       "type": "Spell",
       "cost": "4",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 3 damage.<br/>If you have 3 or less life, gain 1 life.</div>",
+      "effect": "<b>Cast:</b> Deal 3 damage.<br/>If you have 3 or less life, gain 1 life.",
       "expansions": [
         "Return To Gravehold"
       ],
@@ -2149,7 +2149,7 @@
       "name": "Building Storm",
       "type": "Spell",
       "cost": "4",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 2 damage.<br/>Deal 1 additional damage for every copy of this card in the Develop zone.</div>",
+      "effect": "<b>Cast:</b> Deal 2 damage.<br/>Deal 1 additional damage for every copy of this card in the Develop zone.",
       "expansions": [
         "Past and Future"
       ],
@@ -2215,7 +2215,7 @@
       "name": "Force Catalyst",
       "type": "Spell",
       "cost": "4",
-      "effect": "<div style=\"text-align: center;\">While prepped, during your main phase you may spend 3 <span class=\"aether\">&AElig;</span> to cast any player's prepped spell.<br/><b>Cast:</b> Deal 3 damage.</div>",
+      "effect": "While prepped, during your main phase you may spend 3 <span class=\"aether\">&AElig;</span> to cast any player's prepped spell.<br/><b>Cast:</b> Deal 3 damage.",
       "expansions": [
         "Promo"
       ],
@@ -2237,7 +2237,7 @@
       "name": "Combust Legend",
       "type": "Spell",
       "cost": "4",
-      "effect": "While prepped, after any player plays a relic, place an  on this.<br/><b>Cast:</b> Deal 3 damage. Gain all of the s on this.",
+      "effect": "While prepped, after any player plays a relic, place an <span class=\"aether\">&AElig;</span> token on this.<br/><b>Cast:</b> Deal 3 damage. Gain all of the <span class=\"aether\">&AElig;</span> tokens on this.",
       "expansions": [
         "The Caverns"
       ],
@@ -2303,7 +2303,7 @@
       "name": "Flame Geyser",
       "type": "Spell",
       "cost": "5",
-      "effect": "<div style=\"text-align: center;\">When you develop this, place an immolate token on any enemy.<hr/><b>Cast:</b> Place a venom token on an enemy and deal 2 damage to it.</div>",
+      "effect": "When you develop this, place an immolate token on any enemy.<hr/><b>Cast:</b> Place a venom token on an enemy and deal 2 damage to it.",
       "expansions": [
         "The Descent"
       ],
@@ -2347,7 +2347,7 @@
       "name": "Celestial Spire",
       "type": "Spell",
       "cost": "5",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 3 damage.<br/>If this card's supply pile is empty, any ally draws a card.</div>",
+      "effect": "<b>Cast:</b> Deal 3 damage.<br/>If this card's supply pile is empty, any ally draws a card.",
       "expansions": [
         "War Eternal"
       ],
@@ -2391,7 +2391,7 @@
       "name": "Dawn Barrage",
       "type": "Spell",
       "cost": "3",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 1 damage.<br/>Other spells you cast during your casting phase this turn deal an additional 1 damage.</div>",
+      "effect": "<b>Cast:</b> Deal 1 damage.<br/>Other spells you cast during your casting phase this turn deal an additional 1 damage.",
       "expansions": [
         "The Ruins"
       ],
@@ -2468,7 +2468,7 @@
       "name": "Erasure of Mind",
       "type": "Spell",
       "cost": "7",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Destroy a card in hand that costs 3 <span class=\"aether\">&AElig;</span> or more. If you do, deal 10 damage.<br/><b>OR</b><br/><b>Cast:</b> Deal 5 damage. Reveal the top two cards of your deck and place any number on top of your discard pile.</div>",
+      "effect": "<b>Cast:</b> Destroy a card in hand that costs 3 <span class=\"aether\">&AElig;</span> or more. If you do, deal 10 damage.<br/><b>OR</b><br/><b>Cast:</b> Deal 5 damage. Reveal the top two cards of your deck and place any number on top of your discard pile.",
       "expansions": [
         "Southern Village"
       ],
@@ -2490,7 +2490,7 @@
       "name": "Phantasmagoria",
       "type": "Spell",
       "cost": "5",
-      "effect": "<b>Cast:</b> Deal 3 damage.<hr/> <b>Conjure</b>.",
+      "effect": "<b>Cast:</b> Deal 3 damage.<hr/><b>Recall:</b> <b>Conjure</b>.",
       "expansions": [
         "The Ruins"
       ],
@@ -2600,7 +2600,7 @@
       "name": "Aether Dust",
       "type": "Gem",
       "cost": "5",
-      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>.<br/>Each ally gains an .",
+      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>.<br/>Each ally gains an <span class=\"aether\">&AElig;</span> token.",
       "expansions": [
         "Legacy of Gravehold"
       ],
@@ -2732,7 +2732,7 @@
       "name": "Talusoid Clod",
       "type": "Gem",
       "cost": "4",
-      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>.<hr/>You may suffer 2 damage to return this to your hand.",
+      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>.<hr/><b>Recall:</b>You may suffer 2 damage to return this to your hand.",
       "expansions": [
         "Promo"
       ],
@@ -2754,7 +2754,7 @@
       "name": "Glowstone",
       "type": "Gem",
       "cost": "3",
-      "effect": "<div style=\"text-align: center;\">Gain 2 <span class=\"aether\">&AElig;</span>.<br/>Swap this card for Illuminite.</div>",
+      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>.<br/>Swap this card for Illuminite.",
       "expansions": [
         "Past and Future"
       ],
@@ -2787,7 +2787,7 @@
       "name": "Abacus of Ignition",
       "type": "Relic",
       "cost": "4",
-      "effect": "<div style=\"text-align: center;\">You may cast any ally's prepped spell. Any ally draws a card.</div>",
+      "effect": "You may cast any ally's prepped spell. Any ally draws a card.",
       "expansions": [
         "Promo"
       ],
@@ -2798,7 +2798,7 @@
       "name": "Detonate",
       "type": "Spell",
       "cost": "5",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 3 damage to a minion. Deal 3 damage to the nemesis.<br/><i>This starts the game in the Swap zone.</i></div>",
+      "effect": "<b>Cast:</b> Deal 3 damage to a minion. Deal 3 damage to the nemesis.<br/><i>This starts the game in the Swap zone.</i>",
       "expansions": [
         "Past and Future"
       ],
@@ -2820,7 +2820,7 @@
       "name": "Infused Ignition",
       "type": "Spell",
       "cost": "4",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 3 damage.<br/>If Xaxos: Outcast has 4 or less charges, he gains 1 charge.</div>",
+      "effect": "<b>Cast:</b> Deal 3 damage.<br/>If Xaxos: Outcast has 4 or less charges, he gains 1 charge.",
       "expansions": [
         "Outcasts"
       ],
@@ -2842,7 +2842,7 @@
       "name": "Mage's Totem",
       "type": "Relic",
       "cost": "2",
-      "effect": "<div style=\"text-align: center;\">Destroy a gem or relic you played this turn.<br/><b>OR</b><br/>Destroy this. Gravehold gains 1 life.</div>",
+      "effect": "Destroy a gem or relic you played this turn.<br/><b>OR</b><br/>Destroy this. Gravehold gains 1 life.",
       "expansions": [
         "War Eternal"
       ],
@@ -3238,7 +3238,7 @@
       "name": "Flamium",
       "type": "Gem",
       "cost": "3",
-      "effect": "<div style=\"text-align: center;\">Gain 2 <span class=\"aether\">&AElig;</span>.<br/><b>OR</b><br/>Place an immolate token on an enemy.</div>",
+      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>.<br/><b>OR</b><br/>Place an immolate token on an enemy.",
       "expansions": [
         "The Descent"
       ],
@@ -3249,7 +3249,7 @@
       "name": "Stupefy",
       "type": "Spell",
       "cost": "3",
-      "effect": "<b>Cast:</b> Deal 2 damage.<hr/> You may discard a card to silence a minion.",
+      "effect": "<b>Cast:</b> Deal 2 damage.<hr/><b>Recall:</b> You may discard a card to silence a minion.",
       "expansions": [
         "The Ruins"
       ],
@@ -3370,7 +3370,7 @@
       "name": "Humming Shell",
       "type": "Relic",
       "cost": "7",
-      "effect": "<div style=\"text-align: center;\">Destroy up to two cards in hand or discard pile.<br/><b>OR</b><br/>Gain 2 charges.</div>",
+      "effect": "Destroy up to two cards in hand or discard pile.<br/><b>OR</b><br/>Gain 2 charges.",
       "expansions": [
         "Promo"
       ],
@@ -3524,7 +3524,7 @@
       "name": "Silent Sting",
       "type": "Spell",
       "cost": "3",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Place a venom token on an enemy and deal 1 damage to it.</div>",
+      "effect": "<b>Cast:</b> Place a venom token on an enemy and deal 1 damage to it.",
       "expansions": [
         "The Descent"
       ],
@@ -3601,7 +3601,7 @@
       "name": "Harbinger Descent",
       "type": "Spell",
       "cost": "8",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 6 damage.<br/>You may discard three of your other prepped spells to swap this card for Apocalypse.</div>",
+      "effect": "<b>Cast:</b> Deal 6 damage.<br/>You may discard three of your other prepped spells to swap this card for Apocalypse.",
       "expansions": [
         "Past and Future"
       ],
@@ -3744,7 +3744,7 @@
       "name": "Aurora",
       "type": "Spell",
       "cost": "5",
-      "effect": "<div style=\"text-align: center;\">While prepped, once per turn during your main phase you may gain 1 charge.<br/><b>Cast:</b> Deal 3 damage.</div>",
+      "effect": "While prepped, once per turn during your main phase you may gain 1 charge.<br/><b>Cast:</b> Deal 3 damage.",
       "expansions": [
         "War Eternal"
       ],
@@ -3788,7 +3788,7 @@
       "name": "Flamequake",
       "type": "Spell",
       "cost": "6",
-      "effect": "<b>Cast:</b> Deal 5 damage.<hr/> Lose 2 charges to remove a fire token from your location on the map.",
+      "effect": "<b>Cast:</b> Deal 5 damage.<hr/><b>Recall:</b> Lose 2 charges to remove a fire token from your location on the map.",
       "expansions": [
         "Legacy of Gravehold"
       ],
@@ -3799,7 +3799,7 @@
       "name": "Polyphase Turbine",
       "type": "Relic",
       "cost": "3",
-      "effect": "<div style=\"text-align: center;\">If this is the first time you've played a Polyphase Turbine this turn, gain 2 <span class=\"aether\">&AElig;</span>. Otherwise, gain 1 charge and 1 <span class=\"aether\">&AElig;</span>.</div>",
+      "effect": "If this is the first time you've played a Polyphase Turbine this turn, gain 2 <span class=\"aether\">&AElig;</span>. Otherwise, gain 1 charge and 1 <span class=\"aether\">&AElig;</span>.",
       "expansions": [
         "The Ancients"
       ],
@@ -3876,7 +3876,7 @@
       "name": "Seer's Wrath",
       "type": "Spell",
       "cost": "5",
-      "effect": "<div style=\"text-align: center;\">When you Develop this, look at the top card of the turn order deck. You may place that card on the bottom or top of the turn order deck.<br/><b>Cast:</b> Deal 3 damage.</div>",
+      "effect": "When you Develop this, look at the top card of the turn order deck. You may place that card on the bottom or top of the turn order deck.<br/><b>Cast:</b> Deal 3 damage.",
       "expansions": [
         "Past and Future"
       ],
@@ -3920,7 +3920,7 @@
       "name": "Aether Ripple",
       "type": "Spell",
       "cost": "3",
-      "effect": "<b>Cast:</b> Deal 2 damage. Each ally gains an .",
+      "effect": "<b>Cast:</b> Deal 2 damage. Each ally gains an <span class=\"aether\">&AElig;</span> token.",
       "expansions": [
         "Legacy of Gravehold"
       ],
@@ -3964,7 +3964,7 @@
       "name": "Accelerating Field",
       "type": "Spell",
       "cost": "5",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 3 damage.<br/>If this is the first time you have cast an Accelerating Field this turn, you may reveal the top four cards of your deck. You may place any cards named Accelerating Field revealed this way into your hand.</div>",
+      "effect": "<b>Cast:</b> Deal 3 damage.<br/>If this is the first time you have cast an Accelerating Field this turn, you may reveal the top four cards of your deck. You may place any cards named Accelerating Field revealed this way into your hand.",
       "expansions": [
         "The Ruins"
       ],
@@ -4019,7 +4019,7 @@
       "name": "Chronoid",
       "type": "Relic",
       "cost": "5",
-      "effect": "Any ally gains 3 s.<hr/> Look at the top card of the turn order deck. You may place that card on the bottom or the top of the turn order deck.",
+      "effect": "Any ally gains 3 <span class=\"aether\">&AElig;</span> tokens.<hr/><b>Recall:</b> Look at the top card of the turn order deck. You may place that card on the bottom or the top of the turn order deck.",
       "expansions": [
         "Beyond the Breach"
       ],
@@ -4052,7 +4052,7 @@
       "name": "Thought Totem",
       "type": "Relic",
       "cost": "7",
-      "effect": "When you Develop this, any ally gains 2 s.<hr/>Gain 2 charges. Reveal the top three cards of your deck. Discard any number of them. Return the rest to the top of your deck in any order.",
+      "effect": "When you Develop this, any ally gains 2 <span class=\"aether\">&AElig;</span> tokens.<hr/>Gain 2 charges. Reveal the top three cards of your deck. Discard any number of them. Return the rest to the top of your deck in any order.",
       "expansions": [
         "Beyond the Breach"
       ],
@@ -4107,7 +4107,7 @@
       "name": "Eternity's Echo",
       "type": "Spell",
       "cost": "7",
-      "effect": "<b>Cast:</b> Deal 3 damage.<hr/> You may cast one of your prepped spells. <b>Conjure</b>.",
+      "effect": "<b>Cast:</b> Deal 3 damage.<hr/><b>Recall:</b> You may cast one of your prepped spells. <b>Conjure</b>.",
       "expansions": [
         "Beyond the Breach"
       ],
@@ -4184,7 +4184,7 @@
       "name": "Hewn Gravitite",
       "type": "Gem",
       "cost": "3",
-      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>. You may lose 2 pulse tokens. If you do, cast any player's prepped spell.<hr/> Gain 1 pulse token.",
+      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>. You may lose 2 pulse tokens. If you do, cast any player's prepped spell.<hr/><b>Recall:</b> Gain 1 pulse token.",
       "expansions": [
         "Beyond the Breach"
       ],
@@ -4195,7 +4195,7 @@
       "name": "Atomized Ash",
       "type": "Gem",
       "cost": "3",
-      "effect": "When you gain this, gain 1 pulse token.<hr/>Gain 2 <span class=\"aether\">&AElig;</span>.<hr/> Lose 1 pulse token to deal 1 damage.",
+      "effect": "When you gain this, gain 1 pulse token.<hr/>Gain 2 <span class=\"aether\">&AElig;</span>.<hr/><b>Recall:</b> Lose 1 pulse token to deal 1 damage.",
       "expansions": [
         "Beyond the Breach"
       ],
@@ -4228,7 +4228,7 @@
       "name": "Phosphor Nugget",
       "type": "Gem",
       "cost": "4",
-      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>.<br/>Any ally gains an .",
+      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>.<br/><b>Recall:</b> Any ally gains an <span class=\"aether\">&AElig;</span> token.",
       "expansions": [
         "Beyond the Breach"
       ],
@@ -4261,7 +4261,7 @@
       "name": "Archaic Discharge",
       "type": "Spell",
       "cost": "6",
-      "effect": "<div style=\"text-align: center;\">While prepped, after you play a relic, place a charge token on this.<br/><b>Cast:</b> Deal 4 damage. Deal an additional 2 damage for each charge token on this. Then, discard all of the tokens placed on this.</div>",
+      "effect": "While prepped, after you play a relic, place a charge token on this.<br/><b>Cast:</b> Deal 4 damage. Deal an additional 2 damage for each charge token on this. Then, discard all of the tokens placed on this.",
       "expansions": [
         "The Caverns"
       ],
@@ -4294,7 +4294,7 @@
       "name": "Boundless Fire",
       "type": "Spell",
       "cost": "3",
-      "effect": "<b>Cast:</b> Deal 2 damage.<hr/> Lose a charge to place this into your hand.",
+      "effect": "<b>Cast:</b> Deal 2 damage.<hr/><b>Recall:</b> Lose a charge to place this into your hand.",
       "expansions": [
         "The Surface"
       ],
@@ -4360,7 +4360,7 @@
       "name": "Coiled Trillium",
       "type": "Gem",
       "cost": "3",
-      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>.<br/>Any ally may discard a Coiled Trillium in hand. If they do, they gain 2 s and 1 charge.",
+      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>.<br/>Any ally may discard a Coiled Trillium in hand. If they do, they gain 2 <span class=\"aether\">&AElig;</span> tokens and 1 charge.",
       "expansions": [
         "The Returned"
       ],
@@ -4382,7 +4382,7 @@
       "name": "Nebulae Fragment",
       "type": "Gem",
       "cost": "3",
-      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>.<br/>Any ally may discard a Nebulae Fragment in hand. If they do, that ally gains an  and may <b>Conjure</b> to an opened or closed breach.",
+      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>.<br/>Any ally may discard a Nebulae Fragment in hand. If they do, that ally gains an <span class=\"aether\">&AElig;</span> token and may <b>Conjure</b> to an opened or closed breach.",
       "expansions": [
         "The Surface"
       ],
@@ -4404,7 +4404,7 @@
       "name": "Bell of Gravehold",
       "type": "Relic",
       "cost": "6",
-      "effect": "Any player destroys any number of cards in hand and gains an  for each card destroyed this way.<hr/> Discard a card in hand. If you do, any ally gains 1 charge.",
+      "effect": "Any player destroys any number of cards in hand and gains an <span class=\"aether\">&AElig;</span> token for each card destroyed this way.<hr/><b>Recall:</b> Discard a card in hand. If you do, any ally gains 1 charge.",
       "expansions": [
         "Promo"
       ],
@@ -4470,7 +4470,7 @@
       "name": "Pact Prism",
       "type": "Relic",
       "cost": "3",
-      "effect": "Gain 2 s at the end of your turn.<br/>Any ally may discard a Pact Prism in hand and draw a card. If they do, you gain 1 life.",
+      "effect": "Gain 2 <span class=\"aether\">&AElig;</span> tokens at the end of your turn.<br/>Any ally may discard a Pact Prism in hand and draw a card. If they do, you gain 1 life.",
       "expansions": [
         "The Returned"
       ],
@@ -4481,7 +4481,7 @@
       "name": "Visionary Staff",
       "type": "Relic",
       "cost": "5",
-      "effect": "Any ally draws three cards in hand and discards two cards in hand.<br/><b>OR</b><br/>Resolve a <b>Recall:</b> effect in any player's discard pile up to two times.<hr/> Gain a charge.",
+      "effect": "Any ally draws three cards in hand and discards two cards in hand.<br/><b>OR</b><br/>Resolve a <b>Recall:</b> effect in any player's discard pile up to two times.<hr/><b>Recall:</b> Gain a charge.",
       "expansions": [
         "The Returned"
       ],
@@ -4547,7 +4547,7 @@
       "name": "Will Weaver",
       "type": "Relic",
       "cost": "7",
-      "effect": "<div style=\"text-align: center;\">Gain 2 charges.<br/>After the next time you activate your ability this turn, deal 3 damage.</div>",
+      "effect": "Gain 2 charges.<br/>After the next time you activate your ability this turn, deal 3 damage.",
       "expansions": [
         "Shattered Dreams"
       ],
@@ -4569,7 +4569,7 @@
       "name": "Coruscating Mirror",
       "type": "Relic",
       "cost": "3",
-      "effect": "When a minion is drawn from the nemesis deck, you may reveal this from hand to place an electrify token on that minion.<hr/>Any ally draws a card and gains an .",
+      "effect": "When a minion is drawn from the nemesis deck, you may reveal this from hand to place an electrify token on that minion.<hr/>Any ally draws a card and gains an <span class=\"aether\">&AElig;</span> token.",
       "expansions": [
         "The Descent"
       ],
@@ -4624,7 +4624,7 @@
       "name": "Nova Forge",
       "type": "Spell",
       "cost": "6",
-      "effect": "<div style=\"text-align: center;\">While prepped, once per turn during your main phase you may gain 2 <span class=\"aether\">&AElig;</span> that can only be used to gain a spell.<br/><b>Cast:</b> Deal 4 damage.</div>",
+      "effect": "While prepped, once per turn during your main phase you may gain 2 <span class=\"aether\">&AElig;</span> that can only be used to gain a spell.<br/><b>Cast:</b> Deal 4 damage.",
       "expansions": [
         "War Eternal"
       ],
@@ -4635,7 +4635,7 @@
       "name": "Dust Caller",
       "type": "Spell",
       "cost": "5",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 4 damage.<br/>Any ally returns a card that costs 0 <span class=\"aether\">&AElig;</span> from their discard pile to their hand.</div>",
+      "effect": "<b>Cast:</b> Deal 4 damage.<br/>Any ally returns a card that costs 0 <span class=\"aether\">&AElig;</span> from their discard pile to their hand.",
       "expansions": [
         "The Ancients"
       ],
@@ -4800,7 +4800,7 @@
       "name": "Eternium",
       "type": "Gem",
       "cost": "0",
-      "effect": "Gain 1 <span class=\"aether\">&AElig;</span>.<br/>You may suffer 1 damage. If you do, any ally gains an .",
+      "effect": "Gain 1 <span class=\"aether\">&AElig;</span>.<br/>You may suffer 1 damage. If you do, any ally gains an <span class=\"aether\">&AElig;</span> token.",
       "expansions": [
         "The Descent"
       ],
@@ -5030,7 +5030,7 @@
       "name": "Funneled Rage",
       "type": "Spell",
       "cost": "0",
-      "effect": "While prepped, when you suffer damage, gain an . When a player would suffer damage, you may suffer that damage instead.<br/><b>Cast:</b> Deal 1 damage.",
+      "effect": "While prepped, when you suffer damage, gain an <span class=\"aether\">&AElig;</span> token. When a player would suffer damage, you may suffer that damage instead.<br/><b>Cast:</b> Deal 1 damage.",
       "expansions": [
         "The Descent"
       ],
@@ -5198,7 +5198,7 @@
       "name": "Phoenix Spark",
       "type": "Spell",
       "cost": "0",
-      "effect": "<b>Cast:</b> Deal 1 damage. You may spend 2  to swap this card for Phoenix Blaze.",
+      "effect": "<b>Cast:</b> Deal 1 damage. You may spend 2 Knowledge to swap this card for Phoenix Blaze.",
       "expansions": [
         "Origins"
       ],
@@ -5402,7 +5402,7 @@
       "name": "Raven's Eye",
       "type": "Gem",
       "cost": "0",
-      "effect": "<div style=\"text-align: center;\">Gain 1 <span class=\"aether\">&AElig;</span>.<br/><b>OR</b><br/>You may spend Knowledge equal to the cost of the top card of the Forgotten Ritual deck to gain it.</div>",
+      "effect": "Gain 1 <span class=\"aether\">&AElig;</span>.<br/><b>OR</b><br/>You may spend Knowledge equal to the cost of the top card of the Forgotten Ritual deck to gain it.",
       "expansions": [
         "The Descent"
       ],
@@ -5438,7 +5438,7 @@
       "name": "Tidal Surge",
       "type": "Spell",
       "cost": "0",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Gain 1 charge.</div>",
+      "effect": "<b>Cast:</b> Gain 1 charge.",
       "expansions": [
         "The New Age"
       ],
@@ -5619,7 +5619,7 @@
       "name": "Spilt Light",
       "type": "Spell",
       "cost": "0",
-      "effect": "<b>Cast:</b> Deal 1 damage.<br/>Any player may discard a card in hand. If they do, that player gains an .",
+      "effect": "<b>Cast:</b> Deal 1 damage.<br/>Any player may discard a card in hand. If they do, that player gains an <span class=\"aether\">&AElig;</span> token.",
       "expansions": [
         "Tales of Old Gravehold"
       ],
@@ -5655,7 +5655,7 @@
       "name": "Royal Inscriptions",
       "type": "Gem",
       "cost": "0",
-      "effect": "Gain 1 <span class=\"aether\">&AElig;</span>. You may pay 3 Knowledge to swap this card for Legacy Coin.<hr/> Gain 1 Knowledge.",
+      "effect": "Gain 1 <span class=\"aether\">&AElig;</span>. You may pay 3 Knowledge to swap this card for Legacy Coin.<hr/><b>Recall:</b> Gain 1 Knowledge.",
       "expansions": [
         "Past and Future"
       ],
@@ -5679,7 +5679,7 @@
       "name": "Seeker's Light",
       "type": "Gem",
       "cost": "0",
-      "effect": "<div style=\"text-align: center;\">Gain 1 <span class=\"aether\">&AElig;</span>.<br/>You may place the top card of the Forgotten Ritual deck on the bottom of it.</div>",
+      "effect": "Gain 1 <span class=\"aether\">&AElig;</span>.<br/>You may place the top card of the Forgotten Ritual deck on the bottom of it.",
       "expansions": [
         "The Descent"
       ],
@@ -6084,7 +6084,7 @@
       "name": "Spectralite",
       "type": "Gem",
       "cost": "5",
-      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>.<hr/> Place a gem or relic you played this turn on top of your deck.<br/><i>Use this card only when playing with Nadea.</i>",
+      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>.<hr/><b>Recall:</b> Place a gem or relic you played this turn on top of your deck.<br/><i>Use this card only when playing with Nadea.</i>",
       "expansions": [
         "Past and Future"
       ],
@@ -6144,7 +6144,7 @@
       "name": "Condensed Pyre",
       "type": "Spell",
       "cost": "0",
-      "effect": "While prepped, once per turn during your main phase, gain 1 .<br/><b>Cast:</b> Deal 1 damage.",
+      "effect": "While prepped, once per turn during your main phase, gain 1 Knowledge.<br/><b>Cast:</b> Deal 1 damage.",
       "expansions": [
         "Origins"
       ],
@@ -6156,7 +6156,7 @@
       "name": "Furnacium",
       "type": "Relic",
       "cost": "0",
-      "effect": "<div style=\"text-align: center;\">Gain 1 <span class=\"aether\">&AElig;</span>.<br/>Discard up to three spells in hand. Gain 1 <span class=\"aether\">&AElig;</span> for each spell discarded this way.<br/>You may place this on top of your deck.</div>",
+      "effect": "Gain 1 <span class=\"aether\">&AElig;</span>.<br/>Discard up to three spells in hand. Gain 1 <span class=\"aether\">&AElig;</span> for each spell discarded this way.<br/>You may place this on top of your deck.",
       "expansions": [
         "The New Age"
       ],
@@ -6168,7 +6168,7 @@
       "name": "Legacy Coin",
       "type": "Gem",
       "cost": "5",
-      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>.<hr/> Any ally gains an <span class=\"aether\">&AElig;</span> token.<br/><i>Use this card only when playing with Nadea.</i>",
+      "effect": "Gain 2 <span class=\"aether\">&AElig;</span>.<hr/><b>Recall:</b> Any ally gains an <span class=\"aether\">&AElig;</span> token.<br/><i>Use this card only when playing with Nadea.</i>",
       "expansions": [
         "Past and Future"
       ],
@@ -6205,7 +6205,7 @@
       "name": "Phoenix Flare",
       "type": "Spell",
       "cost": "0",
-      "effect": "<b>Cast:</b> Deal 1 damage. You may spend 2  to swap this card for Phoenix Scorch.",
+      "effect": "<b>Cast:</b> Deal 1 damage. You may spend 2 Knowledge to swap this card for Phoenix Scorch.",
       "expansions": [
         "Origins"
       ],
@@ -6382,7 +6382,7 @@
       "name": "Invigorate",
       "type": "Spell",
       "cost": "0",
-      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 1 damage.<br/><b>OR</b><br/><b>Cast:</b> Return a spell in your discard pile to your hand.</div>",
+      "effect": "<b>Cast:</b> Deal 1 damage.<br/><b>OR</b><br/><b>Cast:</b> Return a spell in your discard pile to your hand.",
       "expansions": [
         "Return To Gravehold"
       ],
@@ -6478,7 +6478,7 @@
       "name": "Phoenix Blaze",
       "type": "Spell",
       "cost": "3",
-      "effect": "<b>Cast:</b> Deal 2 damage. Kiri gains 1 . You may spend 3 Knowledge to swap this card for Phoenix Pyre.<br/><i>Use this card only when playing with Kiri and Phoenix.</i>",
+      "effect": "<b>Cast:</b> Deal 2 damage. Kiri gains 1 <span class=\"aether\">&AElig;</span> token. You may spend 3 Knowledge to swap this card for Phoenix Pyre.<br/><i>Use this card only when playing with Kiri and Phoenix.</i>",
       "expansions": [
         "Origins"
       ],
@@ -6515,7 +6515,7 @@
       "name": "Invention: Maker's Mitt",
       "type": "Relic",
       "cost": "7",
-      "effect": "Gain 1 charge or destroy a card in hand or discard pile. Repeat this twice. Malastar gains an .<br/><i>Use this card only when playing with Malastar: Inventor.</i>",
+      "effect": "Gain 1 charge or destroy a card in hand or discard pile. Repeat this twice. Malastar gains an <span class=\"aether\">&AElig;</span> token.<br/><i>Use this card only when playing with Malastar: Inventor.</i>",
       "expansions": [
         "Legacy of Gravehold"
       ],
@@ -6587,7 +6587,7 @@
       "name": "Phoenix Ember",
       "type": "Spell",
       "cost": "0",
-      "effect": "<b>Cast:</b> Deal 1 damage. You may spend 2  to swap this card for Phoenix Blast.",
+      "effect": "<b>Cast:</b> Deal 1 damage. You may spend 2 Knowledge to swap this card for Phoenix Blast.",
       "expansions": [
         "Origins"
       ],
@@ -6659,7 +6659,7 @@
       "name": "Phoenix Blast",
       "type": "Spell",
       "cost": "3",
-      "effect": "<b>Cast:</b> Deal 3 damage. You may spend 3  to swap this card for Phoenix Inferno.<br/><i>Use this card only when playing with Kiri and Phoenix.</i>",
+      "effect": "<b>Cast:</b> Deal 3 damage. You may spend 3 Knowledge to swap this card for Phoenix Inferno.<br/><i>Use this card only when playing with Kiri and Phoenix.</i>",
       "expansions": [
         "Origins"
       ],
@@ -6863,7 +6863,7 @@
       "name": "Phoenix Scorch",
       "type": "Spell",
       "cost": "3",
-      "effect": "<b>Cast:</b> Deal 2 damage. Any player may discard a card to gain a charge. You may spend 3  to swap this card for Phoenix Char.<br/><i>Use this card only when playing with Kiri and Phoenix.</i>",
+      "effect": "<b>Cast:</b> Deal 2 damage. Any player may discard a card to gain a charge. You may spend 3 Knowledge to swap this card for Phoenix Char.<br/><i>Use this card only when playing with Kiri and Phoenix.</i>",
       "expansions": [
         "Origins"
       ],
@@ -6960,7 +6960,7 @@
       "name": "Infuser",
       "type": "Gem",
       "cost": "0",
-      "effect": "During any player's turn, when that player focuses or opens a breach, you may discard this. If you do, gain 2 s.<hr/>Gain 1 <span class=\"aether\">&AElig;</span>.",
+      "effect": "During any player's turn, when that player focuses or opens a breach, you may discard this. If you do, gain 2 <span class=\"aether\">&AElig;</span> tokens.<hr/>Gain 1 <span class=\"aether\">&AElig;</span>.",
       "expansions": [
         "The Descent"
       ],
@@ -7440,7 +7440,7 @@
       "name": "Glittering Trinket",
       "type": "Gem;trinket",
       "cost": "0",
-      "effect": "Gain 1 <span class=\"aether\">&AElig;</span>.<br/>Any ally gains an .<br/>Return this to the bottom of the trinket deck.",
+      "effect": "Gain 1 <span class=\"aether\">&AElig;</span>.<br/>Any ally gains an <span class=\"aether\">&AElig;</span> token.<br/>Return this to the bottom of the trinket deck.",
       "expansions": [
         "Beyond the Breach"
       ],
@@ -7488,7 +7488,7 @@
       "name": "Sparkling Meteorite",
       "type": "Gem",
       "cost": "0",
-      "effect": "<div style=\"text-align: center;\">Gain 1 <span class=\"aether\">&AElig;</span>.<br/><b>OR</b><br/>Gain 3 <span class=\"aether\">&AElig;</span> that can only be used to focus or open a breach.</div>",
+      "effect": "Gain 1 <span class=\"aether\">&AElig;</span>.<br/><b>OR</b><br/>Gain 3 <span class=\"aether\">&AElig;</span> that can only be used to focus or open a breach.",
       "expansions": [
         "The New Age"
       ],
@@ -7512,7 +7512,7 @@
       "name": "Lucky Coin",
       "type": "Gem",
       "cost": "0",
-      "effect": "<div style=\"text-align: center;\">Gain 1 <span class=\"aether\">&AElig;</span>.<br/>You may lose 1 charge. If you do, gain 2 additional <span class=\"aether\">&AElig;</span>.</div>",
+      "effect": "Gain 1 <span class=\"aether\">&AElig;</span>.<br/>You may lose 1 charge. If you do, gain 2 additional <span class=\"aether\">&AElig;</span>.",
       "expansions": [
         "The New Age"
       ],
@@ -13724,7 +13724,7 @@
       "name": "Shrieking Havoc",
       "type": "Minion",
       "tier": "2",
-      "effect": "<b>PERSISTENT:</b> The player with the lowest life suffers 2 damage.",
+      "effect": "{{Wandering}}<br/><b>PERSISTENT:</b> The player with the lowest life suffers 2 damage.",
       "nemesis": "Basic",
       "id": "ATD-1c-20",
       "expansions": [
@@ -16735,7 +16735,7 @@
       "name": "Gemflesh Acolyte",
       "type": "Minion",
       "tier": "1",
-      "effect": "When this is dealt damage, remove an  from a card in stasis.<br/><b>PERSISTENT:</b> The player with the lowest life suffers 2 damage.",
+      "effect": "When this is dealt damage, remove an <span class=\"aether\">&AElig;</span> token from a card in stasis.<br/><b>PERSISTENT:</b> The player with the lowest life suffers 2 damage.",
       "nemesis": "Absorbing Wraith",
       "id": "TC84",
       "expansions": [
@@ -16748,7 +16748,7 @@
       "name": "Flayed One",
       "type": "Minion",
       "tier": "2",
-      "effect": "<b>PERSISTENT:</b> Remove 3 s from a card in stasis.<br/><b>OR</b><br/>Any player suffers 3 damage.",
+      "effect": "<b>PERSISTENT:</b> Remove 3 <span class=\"aether\">&AElig;</span> tokens from a card in stasis.<br/><b>OR</b><br/>Any player suffers 3 damage.",
       "nemesis": "Absorbing Wraith",
       "id": "TC87",
       "expansions": [
@@ -16891,7 +16891,7 @@
       "name": "Wandering Corrupted",
       "type": "Minion",
       "tier": "0",
-      "effect": "<b>PERSISTENT</b>: Any player discards a gem and suffers 1 damage.",
+      "effect": "{{Wandering}}<br/><b>PERSISTENT</b>: Any player discards a gem and suffers 1 damage.",
       "nemesis": "Stonemonger",
       "id": "PAS-2a-30",
       "expansions": [
@@ -16904,7 +16904,7 @@
       "name": "Wandering Mindless",
       "type": "Minion",
       "tier": "0",
-      "effect": "<b>PERSISTENT</b>: Any player suffers 2 damage.",
+      "effect": "{{Wandering}}<br/><b>PERSISTENT</b>: Any player suffers 2 damage.",
       "nemesis": "Stonemonger",
       "id": "PAS-2a-29",
       "expansions": [
@@ -16917,7 +16917,7 @@
       "name": "Wandering Horde",
       "type": "Minion",
       "tier": "0",
-      "effect": "<b>PERSISTENT</b>: Gravehold suffers 2 damage.",
+      "effect": "{{Wandering}}<br/><b>PERSISTENT</b>: Gravehold suffers 2 damage.",
       "nemesis": "Stonemonger",
       "id": "PAS-2a-28",
       "expansions": [
@@ -17019,7 +17019,7 @@
       "name": "Energy Vacuum",
       "type": "Power",
       "tier": "1",
-      "effect": "<b>POWER 3:</b> Remove all s from the card in stasis with the most s on it. If 2 or fewer s were removed this way, any player suffers 4 damage.",
+      "effect": "<b>POWER 3:</b> Remove all <span class=\"aether\">&AElig;</span> tokens from the card in stasis with the most <span class=\"aether\">&AElig;</span> tokens on it. If 2 or fewer <span class=\"aether\">&AElig;</span> tokens were removed this way, any player suffers 4 damage.",
       "nemesis": "Absorbing Wraith",
       "id": "TC83",
       "expansions": [
@@ -17044,7 +17044,7 @@
       "name": "Encrust",
       "type": "Attack",
       "tier": "2",
-      "effect": "Unleash.<br/>Freeze a card.<br/>Freeze a card.<br/>Place 2 s on one of these two cards.",
+      "effect": "Unleash.<br/>Freeze a card.<br/>Freeze a card.<br/>Place 2 <span class=\"aether\">&AElig;</span> tokens on one of these two cards.",
       "nemesis": "Absorbing Wraith",
       "id": "TC85",
       "expansions": [
@@ -18121,7 +18121,7 @@
       "name": "Wandering Wraith",
       "type": "Minion",
       "tier": "3",
-      "effect": "<b>PERSISTENT</b>: Any player and Gravehold each suffer 2 damage.",
+      "effect": "{{Wandering}}<br/><b>PERSISTENT</b>: Any player and Gravehold each suffer 2 damage.",
       "nemesis": "Stonemonger",
       "id": "PAS-2a-37",
       "expansions": [
@@ -18207,7 +18207,7 @@
       "name": "Wandering Glutton",
       "type": "Minion",
       "tier": "0",
-      "effect": "<b>PERSISTENT</b>: Any player loses 2 charges or Gravehold suffers 3 damage.",
+      "effect": "{{Wandering}}<br/><b>PERSISTENT</b>: Any player loses 2 charges or Gravehold suffers 3 damage.",
       "nemesis": "Stonemonger",
       "id": "PAS-2a-27",
       "expansions": [
@@ -18580,7 +18580,7 @@
       "name": "Wandering Lasher",
       "type": "Minion",
       "tier": "1",
-      "effect": "<b>PERSISTENT</b>: Unleash.",
+      "effect": "{{Wandering}}<br/><b>PERSISTENT</b>: Unleash.",
       "nemesis": "Basic",
       "id": "O-1c-27",
       "expansions": [
@@ -18593,7 +18593,7 @@
       "name": "Wandering Observer",
       "type": "Minion",
       "tier": "2",
-      "effect": "<b>PERSISTENT</b>: Gravehold suffers 2 damage.",
+      "effect": "{{Wandering}}<br/><b>PERSISTENT</b>: Gravehold suffers 2 damage.",
       "nemesis": "Basic",
       "id": "O-1c-13",
       "expansions": [
@@ -18717,7 +18717,7 @@
       "name": "Labyrinth Wraith",
       "type": "Minion",
       "tier": "1",
-      "effect": "<b>PERSISTENT</b>: Unleash. Any player suffers 1 damage.",
+      "effect": "{{Wandering}}<br/><b>PERSISTENT</b>: Unleash. Any player suffers 1 damage.",
       "nemesis": "Basic",
       "id": "O-4-22",
       "expansions": [
@@ -20319,7 +20319,7 @@
       "name": "Wandering Scion",
       "type": "Minion",
       "tier": "2",
-      "effect": "<b>PERSISTENT</b>: Any player gains a compulsion. Gravehold suffers 1 damage.",
+      "effect": "{{Wandering}}<br/><b>PERSISTENT</b>: Any player gains a compulsion. Gravehold suffers 1 damage.",
       "nemesis": "Clouded Mesmer",
       "id": "EVO-43",
       "expansions": [
@@ -21323,7 +21323,7 @@
       "name": "Portalmaw",
       "type": "Minion",
       "tier": "2",
-      "effect": "<b>PERSISTENT:</b> The player with the most expensive gem in hand discards that card and suffers 1 damage.",
+      "effect": "{{Wandering}}<br/><b>PERSISTENT:</b> The player with the most expensive gem in hand discards that card and suffers 1 damage.",
       "nemesis": "Burrower",
       "id": "RTG-68",
       "expansions": [
