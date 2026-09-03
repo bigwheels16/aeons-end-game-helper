@@ -19,7 +19,7 @@ import re
 import argparse
 import urllib.request
 import urllib.parse
-from typing import Dict, List, Any, Optional, Set
+from typing import Dict, List, Any, Optional, Set, Tuple
 
 API_URL = "https://aeonsend.wiki.gg/api.php"
 BASE_PAGE_URL = "https://aeonsend.wiki.gg/wiki/"
@@ -86,6 +86,23 @@ def clean_wikitext(text: Optional[str]) -> str:
     # Normalize lines and join with <br/>
     lines = [l.strip() for l in text.splitlines()]
     return "<br/>".join(l for l in lines if l).strip()
+
+
+def make_page_url(title: str) -> str:
+    """Returns the canonical wiki URL for a given page title."""
+    return f"{BASE_PAGE_URL}{urllib.parse.quote(title.replace(' ', '_'))}"
+
+
+def get_clean(params: Dict[str, str], key: str, default: str = "") -> str:
+    """Retrieves and cleans wikitext for a given parameter key."""
+    val = params.get(key)
+    return clean_wikitext(val) if val is not None else default
+
+
+def extract_card_id(params: Dict[str, str]) -> str:
+    """Extracts and normalizes card identifier from template parameters."""
+    raw_id = params.get("id 1") or params.get("id") or ""
+    return clean_wikitext(raw_id).split("\n")[0].strip()
 
 
 def parse_template(wikitext: str, template_name: str) -> Optional[Dict[str, str]]:
@@ -270,24 +287,19 @@ def extract_expansions(params: Dict[str, str], categories: List[str]) -> List[st
     return expansions if expansions else ["Unknown"]
 
 
-def process_player_card(title: str, page_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+def process_player_card(title: str, page_data: Dict[str, Any]) -> Optional[Tuple[str, Dict[str, Any]]]:
     """Parses PlayerCard templates (Gems, Relics, Spells, and Unique Starters)."""
     wikitext = page_data["wikitext"]
     params = parse_template(wikitext, "PlayerCard")
     if not params:
         return None
 
-    card_type = params.get("type", "").capitalize()
-    cost = clean_wikitext(params.get("cost", "")).strip() or "0"
-
-    unique_to = params.get("unique to") or ""
-    unique_to = clean_wikitext(unique_to)
+    card_type = get_clean(params, "type").capitalize()
+    cost = get_clean(params, "cost").strip() or "0"
+    unique_to = get_clean(params, "unique to")
     is_unique = bool(unique_to) or cost == "0"
-
-    rules = clean_wikitext(params.get("rules") or params.get("effect") or "")
-    card_id = params.get("id 1") or params.get("id") or ""
-    card_id = clean_wikitext(card_id).split("\n")[0].strip()
-
+    rules = get_clean(params, "rules") or get_clean(params, "effect")
+    card_id = extract_card_id(params)
     expansions = extract_expansions(params, page_data["categories"])
 
     item: Dict[str, Any] = {
@@ -297,20 +309,17 @@ def process_player_card(title: str, page_data: Dict[str, Any]) -> Optional[Dict[
         "effect": rules,
         "expansions": expansions,
         "id": card_id,
-        "page_url": f"{BASE_PAGE_URL}{urllib.parse.quote(title.replace(' ', '_'))}",
+        "page_url": make_page_url(title),
     }
 
     if is_unique:
-        item["category"] = "unique_starters"
         item["mage"] = unique_to
-    else:
-        type_lower = card_type.lower()
-        if type_lower in ("gem", "relic", "spell"):
-            item["category"] = "supply"
-        else:
-            item["category"] = "other_player_cards"
+        return "unique_starters", item
 
-    return item
+    if card_type.lower() in ("gem", "relic", "spell"):
+        return "supply", item
+
+    return "other_player_cards", item
 
 
 def parse_mage_breaches(params: Dict[str, str], wikitext: str) -> List[List[str]]:
@@ -319,83 +328,65 @@ def parse_mage_breaches(params: Dict[str, str], wikitext: str) -> List[List[str]
       example: [["I", "down"], ["II", "left"], ["Refined Breach", "right"], ["IV", "down"]]
     """
     slot_romans = {1: "I", 2: "II", 3: "III", 4: "IV"}
-    default_closed_positions = {1: "down", 2: "left", 3: "right", 4: "down"}
+    default_closed = {1: "down", 2: "left", 3: "right", 4: "down"}
 
-    # Extract slots from {{BreachTable|slot1|slot2|slot3|slot4}} if available
-    slots = []
     bt_match = re.search(r"\{\{BreachTable\|([^}]+)\}\}", wikitext, re.IGNORECASE)
-    if bt_match:
-        slots = [p.strip() for p in bt_match.group(1).split("|")]
-
-    # Fallback to Breach1..4 in template params if BreachTable missing or incomplete
+    slots = [p.strip() for p in bt_match.group(1).split("|")] if bt_match else []
     if len(slots) < 4:
-        slots = [
-            params.get("breach1", ""),
-            params.get("breach2", ""),
-            params.get("breach3", ""),
-            params.get("breach4", ""),
-        ]
+        slots = [params.get(f"breach{i}", "") for i in range(1, 5)]
 
     breaches: List[List[str]] = []
-
     for i in range(1, 5):
-        raw_val = slots[i - 1] if i <= len(slots) else ""
-        s = raw_val.replace("_", " ").strip()
-        s_lower = s.lower()
+        raw = (slots[i - 1] if i <= len(slots) else "").replace("_", " ").strip()
+        raw_lower = raw.lower()
 
-        # Check standard breach orientations
-        if s_lower in ("open", "none", "no breach", "up", "down", "left", "right"):
-            pos = "none" if s_lower in ("none", "no breach") else s_lower
-            breaches.append([slot_romans[i], pos])
-            continue
-
-        # Custom breach
-        if re.search(r"\bopen\b|\bopened\b", s_lower):
+        # Orientation
+        if any(w in raw_lower for w in ("open", "opened")) or (i == 1 and "archive breach i" in raw_lower):
             pos = "open"
-        elif re.search(r"\bright\b", s_lower):
-            pos = "right"
-        elif re.search(r"\bleft\b", s_lower):
-            pos = "left"
-        elif re.search(r"\bdown\b", s_lower):
-            pos = "down"
-        elif re.search(r"\bup\b", s_lower):
-            pos = "up"
-        elif re.search(r"\bnone\b|\bno breach\b", s_lower):
+        elif any(w in raw_lower for w in ("none", "no breach")):
             pos = "none"
-        elif i == 1 and "archive breach i" in s_lower:
-            pos = "open"
+        elif "right" in raw_lower:
+            pos = "right"
+        elif "left" in raw_lower:
+            pos = "left"
+        elif "up" in raw_lower:
+            pos = "up"
+        elif "down" in raw_lower:
+            pos = "down"
         else:
-            pos = default_closed_positions[i]
+            pos = default_closed[i]
 
-        clean_name = re.sub(r"\b(open|opened|closed|back|icon|right|left|down|up)\b", "", s, flags=re.IGNORECASE)
-        clean_name = " ".join(clean_name.split()).strip()
-        if not clean_name.lower().endswith("breach") and not any(clean_name.lower().endswith(f"breach {r}".lower()) for r in ("i", "ii", "iii", "iv")):
-            if "breach" not in clean_name.lower():
-                clean_name += " Breach"
+        # Name
+        if raw_lower in ("open", "none", "no breach", "up", "down", "left", "right"):
+            name = slot_romans[i]
+        else:
+            clean_name = re.sub(r"\b(open|opened|closed|back|icon|right|left|down|up)\b", "", raw, flags=re.IGNORECASE)
+            clean_name = " ".join(clean_name.split()).strip()
+            if not clean_name.lower().endswith("breach") and not any(clean_name.lower().endswith(f"breach {r}") for r in ("i", "ii", "iii", "iv")):
+                if "breach" not in clean_name.lower():
+                    clean_name += " Breach"
+            name = clean_name or slot_romans[i]
 
-        breaches.append([clean_name, pos])
+        breaches.append([name, pos])
 
     return breaches
 
 
-def process_mage(title: str, page_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+def process_mage(title: str, page_data: Dict[str, Any]) -> Optional[Tuple[str, Dict[str, Any]]]:
     """Parses Mage templates."""
     wikitext = page_data["wikitext"]
     params = parse_template(wikitext, "Mage")
     if not params:
         return None
 
-    charges = clean_wikitext(params.get("charge spaces", "")).strip() or "0"
-
+    charges = get_clean(params, "charge spaces").strip() or "0"
     expansions = extract_expansions(params, page_data["categories"])
 
-    # Extract unique cards list
     unique_cards_raw = params.get("unique cards", "")
     unique_cards = re.findall(r"\{\{Card\|([^}]+)\}\}", unique_cards_raw, re.IGNORECASE)
     if not unique_cards:
         unique_cards = [c.strip() for c in unique_cards_raw.split(",") if c.strip()]
 
-    # Parse ability activation timing and effect body
     raw_effect = params.get("effect", "")
     act_match = re.match(r"^(Activate\s+[^:]+:?)\s*(.*)", raw_effect, re.IGNORECASE | re.DOTALL)
     if act_match:
@@ -417,103 +408,87 @@ def process_mage(title: str, page_data: Dict[str, Any]) -> Optional[Dict[str, An
             activation = ""
             effect_body = raw_effect
 
-    return {
+    item: Dict[str, Any] = {
         "name": title,
         "type": "Mage",
-        "title": clean_wikitext(params.get("title", "")),
+        "title": get_clean(params, "title"),
         "expansions": expansions,
         "charges": charges,
-        "ability_name": clean_wikitext(params.get("name", "")),
+        "ability_name": get_clean(params, "name"),
         "ability_activation": clean_wikitext(activation),
         "ability_effect": clean_wikitext(effect_body),
         "unique_cards": unique_cards,
-        "starting_hand": clean_wikitext(params.get("starting hand", "")),
-        "starting_deck": clean_wikitext(params.get("starting deck", "")),
+        "starting_hand": get_clean(params, "starting hand"),
+        "starting_deck": get_clean(params, "starting deck"),
         "breaches": parse_mage_breaches(params, wikitext),
-        "category": "mages",
-        "page_url": f"{BASE_PAGE_URL}{urllib.parse.quote(title.replace(' ', '_'))}",
+        "page_url": make_page_url(title),
     }
+    return "mages", item
 
 
-def process_nemesis(title: str, page_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+def process_nemesis(title: str, page_data: Dict[str, Any]) -> Optional[Tuple[str, Dict[str, Any]]]:
     """Parses Nemesis templates."""
     wikitext = page_data["wikitext"]
     params = parse_template(wikitext, "Nemesis")
     if not params:
         return None
 
-    health = clean_wikitext(params.get("life", "")).strip() or "0"
-    difficulty = clean_wikitext(params.get("difficulty level", "")).strip() or "0"
-
-    expansions = extract_expansions(params, page_data["categories"])
-
-    return {
+    item: Dict[str, Any] = {
         "name": title,
         "type": "Nemesis",
-        "health": health,
-        "difficulty": difficulty,
-        "expedition_battle": clean_wikitext(params.get("expedition battle", "")),
-        "unleash": clean_wikitext(params.get("unleash", "")),
-        "increased_difficulty": clean_wikitext(params.get("increased difficulty", "")),
-        "rules": clean_wikitext(params.get("rules", "")),
-        "setup": clean_wikitext(params.get("setup", "")),
-        "expansions": expansions,
-        "category": "nemeses",
-        "page_url": f"{BASE_PAGE_URL}{urllib.parse.quote(title.replace(' ', '_'))}",
+        "health": get_clean(params, "life").strip() or "0",
+        "difficulty": get_clean(params, "difficulty level").strip() or "0",
+        "expedition_battle": get_clean(params, "expedition battle"),
+        "unleash": get_clean(params, "unleash"),
+        "increased_difficulty": get_clean(params, "increased difficulty"),
+        "rules": get_clean(params, "rules"),
+        "setup": get_clean(params, "setup"),
+        "expansions": extract_expansions(params, page_data["categories"]),
+        "page_url": make_page_url(title),
     }
+    return "nemeses", item
 
 
-def process_nemesis_card(title: str, page_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+def process_nemesis_card(title: str, page_data: Dict[str, Any]) -> Optional[Tuple[str, Dict[str, Any]]]:
     """Parses NemesisCard templates."""
     wikitext = page_data["wikitext"]
     params = parse_template(wikitext, "NemesisCard")
     if not params:
         return None
 
-    tier_raw = clean_wikitext(params.get("tier", "")).strip()
+    tier_raw = get_clean(params, "tier").strip()
     clean_tier = re.sub(r"[^\d]", "", tier_raw)
     tier = clean_tier if clean_tier else tier_raw
 
-    expansions = extract_expansions(params, page_data["categories"])
-    card_id = params.get("id 1") or params.get("id") or ""
-    card_id = clean_wikitext(card_id).split("\n")[0].strip()
-
-    card_type = clean_wikitext(params.get("type", "")).capitalize()
+    card_type = get_clean(params, "type").capitalize()
 
     card: Dict[str, Any] = {
         "name": title,
         "type": card_type,
         "tier": tier,
-        "effect": clean_wikitext(params.get("effect", "")),
-        "nemesis": clean_wikitext(params.get("nemesis", "Basic")),
-        "id": card_id,
-        "expansions": expansions,
-        "category": "nemesis_cards",
-        "page_url": f"{BASE_PAGE_URL}{urllib.parse.quote(title.replace(' ', '_'))}",
+        "effect": get_clean(params, "effect"),
+        "nemesis": get_clean(params, "nemesis", default="Basic"),
+        "id": extract_card_id(params),
+        "expansions": extract_expansions(params, page_data["categories"]),
+        "page_url": make_page_url(title),
     }
 
     if card_type == "Minion":
-        life_str = clean_wikitext(params.get("life", ""))
+        life_str = get_clean(params, "life")
         if not life_str:
             resolve_minion = parse_template(wikitext, "ResolveNemesisMinion")
             if resolve_minion and resolve_minion.get("count"):
                 life_str = clean_wikitext(resolve_minion.get("count"))
         if life_str:
             clean_digits = re.sub(r"[^\d]", "", life_str)
-            if clean_digits:
-                card["life"] = int(clean_digits)
-            else:
-                card["life"] = life_str
+            card["life"] = int(clean_digits) if clean_digits else life_str
     elif card_type == "Power":
         power_val: Optional[str] = None
-
-        # Strategy 1: Check |power parameter in NemesisCard
         if params.get("power"):
-            p_num = re.sub(r"[^\d]", "", clean_wikitext(params.get("power")))
+            p_num = re.sub(r"[^\d]", "", get_clean(params, "power"))
             if p_num:
                 power_val = p_num
 
-        # Strategy 2: Check {{ResolveNemesisPower | count = X}}
         if power_val is None:
             resolve_power = parse_template(wikitext, "ResolveNemesisPower")
             if resolve_power and resolve_power.get("count"):
@@ -521,30 +496,19 @@ def process_nemesis_card(title: str, page_data: Dict[str, Any]) -> Optional[Dict
                 if c_num:
                     power_val = c_num
 
-        # Strategy 3: Regex match "POWER X:" in effect or full wikitext
         if power_val is None:
-            effect_text = params.get("effect", "")
-            m = re.search(r"\bPOWER\s+(\d+)\s*:", effect_text, re.IGNORECASE)
-            if not m:
-                m = re.search(r"\bPOWER\s+(\d+)\s*:", wikitext, re.IGNORECASE)
+            m = re.search(r"\bPOWER\s+(\d+)\s*:", params.get("effect", "") or wikitext, re.IGNORECASE)
             if m:
                 power_val = str(m.group(1))
 
         if power_val is not None:
             card["power"] = power_val
 
-    return card
+    return "nemesis_cards", card
 
 
-def scrape(args: argparse.Namespace) -> None:
-    print(f"=== Starting Aeon's End Wiki Scrape ===")
-    print(f"Target: {API_URL}")
-    print(f"Output Directory: {args.output_dir}\n")
-
-    os.makedirs(args.output_dir, exist_ok=True)
-    cache_dir = os.path.join(args.output_dir, ".cache")
-    all_pages_data: Dict[str, Dict[str, Any]] = {}
-
+def collect_or_load_pages(args: argparse.Namespace, cache_dir: str) -> Optional[Dict[str, Dict[str, Any]]]:
+    """Loads cached page files or fetches needed pages from the MediaWiki API."""
     if args.cache_only:
         print("=== Running in Cache-Only Mode (No Network Downloads) ===")
         print(f"Reading cached pages from: {cache_dir}/\n")
@@ -554,92 +518,63 @@ def scrape(args: argparse.Namespace) -> None:
             print("Run the scraper without --cache-only first to download the wiki data.")
             sys.exit(1)
         print(f"Loaded {len(all_pages_data)} cached pages.")
-    else:
-        # Step 1: Collect unique titles across categories
-        categories_to_fetch = [
-            ("Gem", "gems"),
-            ("Relic", "relics"),
-            ("Spell", "spells"),
-            ("Mage", "mages"),
-            ("Nemesis", "nemeses"),
-            ("Nemesis Card", "nemesis_cards"),
-        ]
+        return all_pages_data
 
-        all_titles: Set[str] = set()
-        category_map: Dict[str, str] = {}
+    categories = ["Gem", "Relic", "Spell", "Mage", "Nemesis", "Nemesis Card"]
+    all_titles: Set[str] = set()
 
-        for cat_name, cat_key in categories_to_fetch:
-            print(f"Fetching titles from Category:{cat_name}...")
-            titles = get_category_members(cat_name, args.user_agent, delay=args.delay)
-            print(f"  -> Found {len(titles)} pages in Category:{cat_name}")
-            for t in titles:
-                all_titles.add(t)
-                if t not in category_map:
-                    category_map[t] = cat_key
+    for cat_name in categories:
+        print(f"Fetching titles from Category:{cat_name}...")
+        titles = get_category_members(cat_name, args.user_agent, delay=args.delay)
+        print(f"  -> Found {len(titles)} pages in Category:{cat_name}")
+        all_titles.update(titles)
 
-        total_titles = len(all_titles)
-        print(f"\nTotal unique pages to process: {total_titles}\n")
+    print(f"\nTotal unique pages to process: {len(all_titles)}\n")
 
-        if args.dry_run:
-            print("Dry run requested. Exiting without fetching page content.")
-            return
+    if args.dry_run:
+        print("Dry run requested. Exiting without fetching page content.")
+        return None
 
-        # Step 2: Batch fetch pages with per-page file caching
-        if not args.no_cache:
-            all_pages_data = load_page_cache(cache_dir)
-            if all_pages_data:
-                print(f"Loaded {len(all_pages_data)} pages from cache directory ({cache_dir}/).")
+    all_pages_data: Dict[str, Dict[str, Any]] = {}
+    if not args.no_cache:
+        all_pages_data = load_page_cache(cache_dir)
+        if all_pages_data:
+            print(f"Loaded {len(all_pages_data)} pages from cache directory ({cache_dir}/).")
 
-        title_list = sorted(list(all_titles))
-        titles_to_fetch = [t for t in title_list if t not in all_pages_data]
-        print(f"Total pages: {len(title_list)} | Cached: {len(all_pages_data)} | Remaining to fetch: {len(titles_to_fetch)}")
+    title_list = sorted(list(all_titles))
+    titles_to_fetch = [t for t in title_list if t not in all_pages_data]
+    print(f"Total pages: {len(title_list)} | Cached: {len(all_pages_data)} | Remaining to fetch: {len(titles_to_fetch)}")
 
-        if titles_to_fetch:
-            batch_size = args.batch_size
-            total_batches = (len(titles_to_fetch) + batch_size - 1) // batch_size
+    if titles_to_fetch:
+        batch_size = args.batch_size
+        total_batches = (len(titles_to_fetch) + batch_size - 1) // batch_size
+        print(f"Fetching {len(titles_to_fetch)} page contents in batches of {batch_size}...")
+        try:
+            for i in range(0, len(titles_to_fetch), batch_size):
+                batch = titles_to_fetch[i : i + batch_size]
+                current_batch = i // batch_size + 1
+                print(f"  Fetching batch {current_batch}/{total_batches} ({len(batch)} pages)...")
+                batch_results = fetch_pages_batch(batch, args.user_agent)
+                for title, page_data in batch_results.items():
+                    all_pages_data[title] = page_data
+                    if not args.no_cache:
+                        save_page_file(cache_dir, page_data)
+                time.sleep(args.delay)
+        except KeyboardInterrupt:
+            print("\n\nScraping interrupted by user (Ctrl+C).")
+            print(f"All saved page files are preserved in {cache_dir}/ ({len(all_pages_data)} pages cached).")
+            print("Re-run the command to pick up right where you left off.")
+            sys.exit(130)
 
-            print(f"Fetching {len(titles_to_fetch)} page contents in batches of {batch_size}...")
-            try:
-                for i in range(0, len(titles_to_fetch), batch_size):
-                    batch = titles_to_fetch[i : i + batch_size]
-                    current_batch = i // batch_size + 1
-                    print(f"  Fetching batch {current_batch}/{total_batches} ({len(batch)} pages)...")
-                    batch_results = fetch_pages_batch(batch, args.user_agent)
-                    for title, page_data in batch_results.items():
-                        all_pages_data[title] = page_data
-                        if not args.no_cache:
-                            save_page_file(cache_dir, page_data)
-                    time.sleep(args.delay)
-            except KeyboardInterrupt:
-                print("\n\nScraping interrupted by user (Ctrl+C).")
-                print(f"All saved page files are preserved in {cache_dir}/ ({len(all_pages_data)} pages cached).")
-                print("Re-run the command to pick up right where you left off.")
-                sys.exit(130)
+    return all_pages_data
 
-    # Step 3: Parse items into structured records
+
+def parse_and_group(
+    all_pages_data: Dict[str, Dict[str, Any]],
+    expansion_filter: Optional[str] = None
+) -> Dict[str, List[Dict[str, Any]]]:
+    """Parses raw wiki page data into categorized game records, optionally filtering by expansion."""
     print("\nParsing item templates and classifying content...")
-    scraped_items: List[Dict[str, Any]] = []
-
-    for title, page_data in all_pages_data.items():
-        parsed_item: Optional[Dict[str, Any]] = None
-        wikitext = page_data["wikitext"]
-
-        if "{{PlayerCard" in wikitext or "{{playercard" in wikitext:
-            parsed_item = process_player_card(title, page_data)
-        elif "{{Mage" in wikitext or "{{mage" in wikitext:
-            parsed_item = process_mage(title, page_data)
-        elif "{{NemesisCard" in wikitext or "{{nemesiscard" in wikitext:
-            parsed_item = process_nemesis_card(title, page_data)
-        elif "{{Nemesis" in wikitext or "{{nemesis" in wikitext:
-            parsed_item = process_nemesis(title, page_data)
-
-        if parsed_item:
-            scraped_items.append(parsed_item)
-
-    print(f"Successfully parsed {len(scraped_items)} items.")
-
-    # Step 4: Group data
-    # Categories: supply, unique_starters, mages, nemeses, nemesis_cards
     by_category: Dict[str, List[Dict[str, Any]]] = {
         "supply": [],
         "unique_starters": [],
@@ -647,30 +582,51 @@ def scrape(args: argparse.Namespace) -> None:
         "nemeses": [],
         "nemesis_cards": [],
     }
+    total_parsed = 0
 
-    for item in scraped_items:
-        cat = item.pop("category", "")
-        if args.expansion:
-            target = args.expansion.lower()
+    for title, page_data in all_pages_data.items():
+        wikitext = page_data["wikitext"]
+        res: Optional[Tuple[str, Dict[str, Any]]] = None
+
+        if "{{PlayerCard" in wikitext or "{{playercard" in wikitext:
+            res = process_player_card(title, page_data)
+        elif "{{Mage" in wikitext or "{{mage" in wikitext:
+            res = process_mage(title, page_data)
+        elif "{{NemesisCard" in wikitext or "{{nemesiscard" in wikitext:
+            res = process_nemesis_card(title, page_data)
+        elif "{{Nemesis" in wikitext or "{{nemesis" in wikitext:
+            res = process_nemesis(title, page_data)
+
+        if not res:
+            continue
+
+        cat, item = res
+        total_parsed += 1
+
+        if expansion_filter:
+            target = expansion_filter.lower()
             item_exps = [e.lower() for e in item.get("expansions", [])]
             if not any(target in e for e in item_exps):
                 continue
+
         if cat in by_category:
             by_category[cat].append(item)
 
-    if args.expansion:
-        print(f"Filtered records to expansion matching '{args.expansion}'")
+    print(f"Successfully parsed {total_parsed} items.")
+    if expansion_filter:
+        print(f"Filtered records to expansion matching '{expansion_filter}'")
 
-    # Step 5: Save output files
-    os.makedirs(args.output_dir, exist_ok=True)
+    return by_category
 
-    # Flat category JSON (aeons_end_all.json)
-    all_path = os.path.join(args.output_dir, "aeons_end_all.json")
+
+def save_dataset(by_category: Dict[str, List[Dict[str, Any]]], output_dir: str) -> None:
+    """Saves the categorized records into master JSON and prints a summary."""
+    os.makedirs(output_dir, exist_ok=True)
+    all_path = os.path.join(output_dir, "aeons_end_all.json")
     with open(all_path, "w", encoding="utf-8") as f:
         json.dump(by_category, f, indent=2, ensure_ascii=False)
     print(f"\nSaved master JSON: {all_path}\n")
 
-    # Step 6: Summary Printout
     print("=== Scraping Summary ===")
     total_saved = 0
     for cat, items in by_category.items():
@@ -678,6 +634,21 @@ def scrape(args: argparse.Namespace) -> None:
         total_saved += len(items)
     print(f"\nTotal Items Saved: {total_saved}")
     print("Scraping complete!")
+
+
+def scrape(args: argparse.Namespace) -> None:
+    """Main scraping orchestrator."""
+    print("=== Starting Aeon's End Wiki Scrape ===")
+    print(f"Target: {API_URL}")
+    print(f"Output Directory: {args.output_dir}\n")
+
+    cache_dir = os.path.join(args.output_dir, ".cache")
+    all_pages_data = collect_or_load_pages(args, cache_dir)
+    if not all_pages_data:
+        return
+
+    by_category = parse_and_group(all_pages_data, expansion_filter=args.expansion)
+    save_dataset(by_category, args.output_dir)
 
 
 def main():
