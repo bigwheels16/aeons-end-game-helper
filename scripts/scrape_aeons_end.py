@@ -131,15 +131,15 @@ def clean_wikitext(text: Optional[str]) -> str:
         return ""
     # Normalize any existing <br> or <br/> tags to newlines for consistent splitting
     text = re.sub(r"<br\s*/?>", "\n", text, flags=re.IGNORECASE)
-    # Remove comments
-    text = re.sub(r"<!--.*?-->", "", text, flags=re.DOTALL)
+    # Remove comments (including trailing unclosed comments)
+    text = re.sub(r"<!--.*?(?:-->|$)", "", text, flags=re.DOTALL)
     # Replace game mechanic templates
     text = re.sub(r"\{\{Cost\}\}", '<span class="aether">&AElig;</span>', text, flags=re.IGNORECASE)
     text = re.sub(r"\{\{AetherToken\}\}", '<span class="aether">&AElig;</span> token', text, flags=re.IGNORECASE)
     text = re.sub(r"\{\{Knowledge\}\}", "Knowledge", text, flags=re.IGNORECASE)
     text = re.sub(r"\{\{Recall\}\}", "<b>Recall:</b>", text, flags=re.IGNORECASE)
-    # Replace Card reference templates {{Card|Card Name}} -> Card Name
-    text = re.sub(r"\{\{Card\|([^}]+)\}\}", r"\1", text, flags=re.IGNORECASE)
+    # Replace Card reference templates {{Card|Target|Label}} -> Label, {{Card|Target}} -> Target
+    text = re.sub(r"\{\{Card\|(?:[^|}]*\|)?([^}]+)\}\}", r"\1", text, flags=re.IGNORECASE)
     # Replace wiki links [[Target|Label]] -> Label, [[Target]] -> Target
     text = re.sub(r"\[\[(?:[^|\]]*\|)?([^\]]+)\]\]", r"\1", text)
     # Remove files / images markup e.g. [[File:...]]
@@ -206,6 +206,8 @@ def parse_template(wikitext: str, template_name: str) -> Optional[Dict[str, str]
         return None
 
     template_body = wikitext[match.end():end - 2]
+    # Strip HTML comments from template_body before parameter splitting so commented pipes don't leak into parameters
+    template_body = re.sub(r"<!--.*?-->", "", template_body, flags=re.DOTALL)
     params: Dict[str, str] = {}
     current_param: List[str] = []
     d_curly = 0
@@ -461,11 +463,12 @@ def process_mage(title: str, page_data: Dict[str, Any]) -> Optional[Tuple[str, D
     if not params:
         return None
 
-    charges = get_clean(params, "charge spaces").strip() or "0"
+    charges_raw = get_clean(params, "charge spaces").strip()
+    charges = re.sub(r"[^\d]", "", charges_raw) or charges_raw or "0"
     expansions = extract_expansions(params, page_data["categories"])
 
     unique_cards_raw = params.get("unique cards", "")
-    unique_cards = re.findall(r"\{\{Card\|([^}]+)\}\}", unique_cards_raw, re.IGNORECASE)
+    unique_cards = [c.split("|")[-1].strip() for c in re.findall(r"\{\{Card\|([^}]+)\}\}", unique_cards_raw, re.IGNORECASE)]
     if not unique_cards:
         unique_cards = [c.strip() for c in unique_cards_raw.split(",") if c.strip()]
 

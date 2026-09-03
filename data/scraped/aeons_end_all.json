@@ -2512,7 +2512,7 @@
       "name": "Fool's Gold",
       "type": "Gem",
       "cost": "5",
-      "effect": "Gain 3 <span class=\"aether\">&AElig;</span>.<br/>You may swap this card for Smite (Spell)|Smite.",
+      "effect": "Gain 3 <span class=\"aether\">&AElig;</span>.<br/>You may swap this card for Smite.",
       "expansions": [
         "Past and Future"
       ],
@@ -4752,7 +4752,7 @@
       "name": "Fossilized Flame",
       "type": "Gem",
       "cost": "0",
-      "effect": "Gain 1 <span class=\"aether\">&AElig;</span>.<br/>You may spend 2 Knowledge to swap this card for Overwhelm (Ona)|Overwhelm.<br/>When you gain a card that costs 5 <span class=\"aether\">&AElig;</span> or more this turn, gain 1 Knowledge.",
+      "effect": "Gain 1 <span class=\"aether\">&AElig;</span>.<br/>You may spend 2 Knowledge to swap this card for Overwhelm.<br/>When you gain a card that costs 5 <span class=\"aether\">&AElig;</span> or more this turn, gain 1 Knowledge.",
       "expansions": [
         "Past and Future"
       ],
@@ -7638,7 +7638,7 @@
       "expansions": [
         "Aeon's End (Core Box)"
       ],
-      "charges": "5<br/><!--",
+      "charges": "5",
       "ability_name": "Brink Siphon",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Any player gains 4 life.",
@@ -8038,7 +8038,7 @@
       "expansions": [
         "Aeon's End (Core Box)"
       ],
-      "charges": "5<br/><!--",
+      "charges": "5",
       "ability_name": "Aethereal Ward",
       "ability_activation": "Activate during the nemesis draw phase:",
       "ability_effect": "When a nemesis attack or power card is drawn but before it is resolved, you may discard it. It has no effect. <i>(The nemesis does not draw a replacement card)</i>",
@@ -8334,7 +8334,7 @@
       "expansions": [
         "Aeon's End (Core Box)"
       ],
-      "charges": "5<br/><!--",
+      "charges": "5",
       "ability_name": "Metaphysical Link",
       "ability_activation": "Activate during any player's main phase:",
       "ability_effect": "Allies collectively gain 4 charges. Reveal the turn order deck and return the revealed cards in any order.",
@@ -8370,7 +8370,7 @@
       "expansions": [
         "Aeon's End (Core Box)"
       ],
-      "charges": "5<br/><!--",
+      "charges": "5",
       "ability_name": "Quicken Thought",
       "ability_activation": "Activate during any player's main phase:",
       "ability_effect": "Shuffle any player's turn order card into the turn order deck. That player suffers 1 damage.",
@@ -8663,7 +8663,7 @@
       "expansions": [
         "Aeon's End (Core Box)"
       ],
-      "charges": "5<br/><!--",
+      "charges": "5",
       "ability_name": "Divine Augury",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Any ally draws 4 cards.",
@@ -8960,7 +8960,7 @@
       "expansions": [
         "The New Age"
       ],
-      "charges": "4<br/><!--",
+      "charges": "4",
       "ability_name": "Sublimate",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Return a card in your hand or discard pile to its supply pile. If you returned a relic, gain a card from any supply pile that costs up to 3 <span class=\"aether\">&AElig;</span> more than the returned card. Otherwise, gain a card from any supply pile that costs up to 2 <span class=\"aether\">&AElig;</span> more than the returned card. Either way, place the gained card into your hand.",
@@ -8996,7 +8996,7 @@
       "expansions": [
         "Shattered Dreams"
       ],
-      "charges": "5<br/><!--",
+      "charges": "5",
       "ability_name": "Condense Aether",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "You may destroy a card in your hand or discard pile. Gain 4 <span class=\"aether\">&AElig;</span>. You may place the next spell you gain this turn into your hand.",
@@ -9218,7 +9218,7 @@
       "expansions": [
         "Aeon's End (Core Box)"
       ],
-      "charges": "5<br/><!--",
+      "charges": "5",
       "ability_name": "Auspex Rune",
       "ability_activation": "Activate immediately after a turn order card is drawn:",
       "ability_effect": "Prevent any damage that the players or Gravehold would suffer during that turn.",
@@ -10125,8 +10125,8 @@
         "Fossilized Flame",
         "Golden Geode",
         "Leeching Beacon",
-        "Destroy (Ona)|Destroy",
-        "Overwhelm (Ona)|Overwhelm",
+        "Destroy",
+        "Overwhelm",
         "Sustain"
       ],
       "starting_hand": "3x Crystal<br/>1x Fossilized Flame<br/>1x Spark",
@@ -10279,7 +10279,7 @@
       "expansions": [
         "Aeon's End (Core Box)"
       ],
-      "charges": "4<br/><!--",
+      "charges": "4",
       "ability_name": "Black Mirror",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Cast any player's prepped spell without discarding it.<br/>Then cast that prepped spell again.<br/><i>(Discard it afterward)</i>",
@@ -10427,7 +10427,7 @@
       "expansions": [
         "Outcasts"
       ],
-      "charges": "5<br/><!--",
+      "charges": "5",
       "ability_name": "Life Embrace",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Cast all of your prepped spells without discarding them. Any ally returns a card in their discard pile to their hand.",
@@ -10578,7 +10578,7 @@
       "expansions": [
         "Outcasts"
       ],
-      "charges": "4<br/><!--",
+      "charges": "4",
       "ability_name": "Combust Aether",
       "ability_activation": "Activate at the end of your draw phase:",
       "ability_effect": "Draw three cards.",
@@ -10650,7 +10650,7 @@
       "expansions": [
         "Outcasts"
       ],
-      "charges": "6<br/><!--",
+      "charges": "6",
       "ability_name": "Soul Invigoration",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Return up to two gems or relics you played this turn to your hand. Any ally draws a card and may prep a spell in hand to an opened or closed breach.",
@@ -10723,7 +10723,7 @@
       "expansions": [
         "Aeon's End (Core Box)"
       ],
-      "charges": "5<br/><!--",
+      "charges": "5",
       "ability_name": "Otherworldly Gate",
       "ability_activation": "Activate during any player's main phase:",
       "ability_effect": "That player may return up to three spells in their discard pile to their hand. That player may prep up to two spells to each of their opened breaches this turn.",
@@ -10760,7 +10760,7 @@
         "Legacy"
       ],
       "charges": "0",
-      "ability_name": "<!--",
+      "ability_name": "",
       "ability_activation": "",
       "ability_effect": "",
       "unique_cards": [],
@@ -11662,9 +11662,9 @@
       "difficulty": "6",
       "expedition_battle": "3",
       "unleash": "The player with the Target token gains two Cracked Onyx. That player passes the Target token to the player on their left.",
-      "increased_difficulty": "<b>RULES:</b> When Shatter (disambiguation)|Shatter resolves, add 1 less power token to it. It costs players an additional 1 <span class=\"aether\">&AElig;</span> to force The Wailing to lose a nemesis token.",
+      "increased_difficulty": "<b>RULES:</b> When Shatter resolves, add 1 less power token to it. It costs players an additional 1 <span class=\"aether\">&AElig;</span> to force The Wailing to lose a nemesis token.",
       "rules": "During any player's main phase, that player may spend 7 <span class=\"aether\">&AElig;</span> to force The Wailing to lose a nemesis token. If you are playing solo with one mage, it costs 2 <span class=\"aether\">&AElig;</span> less to force The Wailing to lose a nemesis token.<br/>When a player would gain a Cracked Onyx and that supply pile is empty, that player suffers 1 damage instead.",
-      "setup": "Add an additional supply pile consisting of twenty Cracked Onyx.<br/>Give player 1 that Target token.<br/>Place into play the version of Shatter (disambiguation)|Shatter that corresponds to your player count as indicated on the bottom of Shatter.<br/>The Wailing gains one nemesis token.",
+      "setup": "Add an additional supply pile consisting of twenty Cracked Onyx.<br/>Give player 1 that Target token.<br/>Place into play the version of Shatter that corresponds to your player count as indicated on the bottom of Shatter.<br/>The Wailing gains one nemesis token.",
       "expansions": [
         "Shattered Dreams"
       ],
@@ -11872,9 +11872,9 @@
       "difficulty": "5",
       "expedition_battle": "3;5",
       "unleash": "The Endless Decay gains a nemesis token.",
-      "increased_difficulty": "<b>SETUP:</b> Remove 2 power tokens from Deteriorate (disambiguation)|Deteriorate.<br/><b>RULES:</b> When Deteriorate (disambiguation)|Deteriorate resolves, add 1 power token less to it.",
-      "rules": "At the end of The Endless Decay's turn, if it has 4 nemesis tokens or more, The Endless Decay refracts. Remove 4 nemesis tokens from The Endless Decay and resolve the nemesis main phase again. The Endless Decay can only refract once per turn.<br/>During any player's main phase, they may pay 4 <span class=\"aether\">&AElig;</span> to add a power token to Deteriorate (disambiguation)|Deteriorate.<br/>Entropy cards do not resolve the turn they come into play.<br/>Entropy cards cannot be removed from play.<br/>If you would draw an entropy card and cannot, the players lose.",
-      "setup": "Place into play the version of Deteriorate (disambiguation)|Deteriorate that corresponds to your player count as indicated on the bottom of Deteriorate (disambiguation)|Deteriorate.<br/>Shuffle the entropy cards together facedown to form the entropy deck.",
+      "increased_difficulty": "<b>SETUP:</b> Remove 2 power tokens from Deteriorate.<br/><b>RULES:</b> When Deteriorate resolves, add 1 power token less to it.",
+      "rules": "At the end of The Endless Decay's turn, if it has 4 nemesis tokens or more, The Endless Decay refracts. Remove 4 nemesis tokens from The Endless Decay and resolve the nemesis main phase again. The Endless Decay can only refract once per turn.<br/>During any player's main phase, they may pay 4 <span class=\"aether\">&AElig;</span> to add a power token to Deteriorate.<br/>Entropy cards do not resolve the turn they come into play.<br/>Entropy cards cannot be removed from play.<br/>If you would draw an entropy card and cannot, the players lose.",
+      "setup": "Place into play the version of Deteriorate that corresponds to your player count as indicated on the bottom of Deteriorate.<br/>Shuffle the entropy cards together facedown to form the entropy deck.",
       "expansions": [
         "Origins"
       ],
@@ -12111,10 +12111,10 @@
       "health": "*",
       "difficulty": "5",
       "expedition_battle": "2",
-      "unleash": "Remove 1 power token from either Diatribe of Despair (disambiguation)|Diatribe of Despair or Melody of Madness (disambiguation)|Melody of Madness.",
-      "increased_difficulty": "<b>RULES:</b> After Diatribe of Despair (disambiguation)|Diatribe of Despair or Melody of Madness (disambiguation)|Melody of Madness finishes resolving, Unleash twice.",
-      "rules": "Prevent all damage dealt to The Coven.<br/>Do not discard Diatribe of Despair (disambiguation)|Diatribe of Despair or Melody of Madness (disambiguation)|Melody of Madness even if one of the witches is defeated.<br/>Daughter of Doom and Matron of Malice are minions and witches.<br/>When Daughter of Doom or Matron of Malice is defeated, turn it facedown. When both Daughter of Doom and Matron of Malice are facedown, the players win the game.",
-      "setup": "Place Daughter of Doom and Matron of Malice into play. Then, place into play the correct version of Diatribe of Despair (disambiguation)|Diatribe of Despair and Melody of Madness (disambiguation)|Melody of Madness based on player count.",
+      "unleash": "Remove 1 power token from either Diatribe of Despair or Melody of Madness.",
+      "increased_difficulty": "<b>RULES:</b> After Diatribe of Despair or Melody of Madness finishes resolving, Unleash twice.",
+      "rules": "Prevent all damage dealt to The Coven.<br/>Do not discard Diatribe of Despair or Melody of Madness even if one of the witches is defeated.<br/>Daughter of Doom and Matron of Malice are minions and witches.<br/>When Daughter of Doom or Matron of Malice is defeated, turn it facedown. When both Daughter of Doom and Matron of Malice are facedown, the players win the game.",
+      "setup": "Place Daughter of Doom and Matron of Malice into play. Then, place into play the correct version of Diatribe of Despair and Melody of Madness based on player count.",
       "expansions": [
         "The Descent"
       ],
@@ -12664,7 +12664,7 @@
       "name": "Sonic Skinwing",
       "type": "Minion",
       "tier": "2",
-      "effect": "<b>PERSISTENT:</b> Remove one power token from Shatter (disambiguation)|Shatter. <i>(If this removes the last power token from Shatter (disambiguation)|Shatter, resolve it immediately.)</i>",
+      "effect": "<b>PERSISTENT:</b> Remove one power token from Shatter. <i>(If this removes the last power token from Shatter, resolve it immediately.)</i>",
       "nemesis": "The Wailing",
       "id": "SD-102",
       "expansions": [
@@ -14091,7 +14091,7 @@
       "name": "Shrapnel Skinwing",
       "type": "Minion",
       "tier": "3",
-      "effect": "<b>PERSISTENT:</b> The player with the most Cracked Onyx in hand suffers 3 damage. Remove one power token from Shatter (disambiguation)|Shatter. <i>(If this removes the last power token from Shatter (disambiguation)|Shatter, resolve it immediately.)</i>",
+      "effect": "<b>PERSISTENT:</b> The player with the most Cracked Onyx in hand suffers 3 damage. Remove one power token from Shatter. <i>(If this removes the last power token from Shatter, resolve it immediately.)</i>",
       "nemesis": "The Wailing",
       "id": "SD-105",
       "expansions": [
@@ -15994,7 +15994,7 @@
       "name": "Barrage",
       "type": "Attack",
       "tier": "2",
-      "effect": "Unleash.<br/>If Shatter (disambiguation)|Shatter has five or more power tokens, The Wailing gains one nemesis token. Otherwise, remove two power tokens from Shatter (disambiguation)|Shatter. <i>(If this removes the last power token from Shatter (disambiguation)|Shatter, resolve it immediately.)</i>",
+      "effect": "Unleash.<br/>If Shatter has five or more power tokens, The Wailing gains one nemesis token. Otherwise, remove two power tokens from Shatter. <i>(If this removes the last power token from Shatter, resolve it immediately.)</i>",
       "nemesis": "The Wailing",
       "id": "SD-101",
       "expansions": [
@@ -17056,7 +17056,7 @@
       "name": "Daughter of Doom",
       "type": "Minion;witch",
       "tier": "0",
-      "effect": "When this is dealt 2 or less damage in a single instance, place a barrier token on Diatribe of Despair (disambiguation)|Diatribe of Despair.",
+      "effect": "When this is dealt 2 or less damage in a single instance, place a barrier token on Diatribe of Despair.",
       "nemesis": "The Coven",
       "id": "ATD-2a-25",
       "expansions": [
@@ -17068,7 +17068,7 @@
       "name": "Matron of Malice",
       "type": "Minion;witch",
       "tier": "0",
-      "effect": "When this is dealt 3 or more damage in a single instance, place a barrier token on Melody of Madness (disambiguation)|Melody of Madness.",
+      "effect": "When this is dealt 3 or more damage in a single instance, place a barrier token on Melody of Madness.",
       "nemesis": "The Coven",
       "id": "ATD-2a-26",
       "expansions": [
@@ -17106,7 +17106,7 @@
       "name": "Croon",
       "type": "Attack",
       "tier": "1",
-      "effect": "Remove 2 power tokens from Melody of Madness (disambiguation)|Melody of Madness.<br/><b>OR</b><br/>Unleash. Any player discards three gems in hand.",
+      "effect": "Remove 2 power tokens from Melody of Madness.<br/><b>OR</b><br/>Unleash. Any player discards three gems in hand.",
       "nemesis": "The Coven",
       "id": "ATD-2a-29",
       "expansions": [
@@ -17181,7 +17181,7 @@
       "name": "Final Chord",
       "type": "Power",
       "tier": "3",
-      "effect": "<b>POWER 1</b>: Remove all power tokens from Diatribe of Despair (disambiguation)|Diatribe of Despair or Melody of Madness (disambiguation)|Melody of Madness.",
+      "effect": "<b>POWER 1</b>: Remove all power tokens from Diatribe of Despair or Melody of Madness.",
       "nemesis": "The Coven",
       "id": "ATD-2a-34",
       "expansions": [
@@ -17867,7 +17867,7 @@
       "name": "Spectreghast",
       "type": "Minion",
       "tier": "2",
-      "effect": "<b>PERSISTENT</b>: Any player suffers 2 damage.<br/><b>OR</b><br/>Remove 1 power token from Deteriorate (disambiguation)|Deteriorate.",
+      "effect": "<b>PERSISTENT</b>: Any player suffers 2 damage.<br/><b>OR</b><br/>Remove 1 power token from Deteriorate.",
       "nemesis": "The Endless Decay",
       "id": "ORI-55",
       "expansions": [
@@ -17893,7 +17893,7 @@
       "name": "Vitality Drain",
       "type": "Power",
       "tier": "1",
-      "effect": "<b>TO DISCARD</b>: Spend 6 <span class=\"aether\">&AElig;</span>.<br/><b>POWER 3:</b> Remove 1 power token from Deteriorate (disambiguation)|Deteriorate. The players collectively discard three cards.",
+      "effect": "<b>TO DISCARD</b>: Spend 6 <span class=\"aether\">&AElig;</span>.<br/><b>POWER 3:</b> Remove 1 power token from Deteriorate. The players collectively discard three cards.",
       "nemesis": "The Endless Decay",
       "id": "ORI-53",
       "expansions": [
@@ -17906,7 +17906,7 @@
       "name": "Memory Decay",
       "type": "Power",
       "tier": "1",
-      "effect": "<b>TO DISCARD</b>: Spend 5 <span class=\"aether\">&AElig;</span>.<br/><b>POWER 2:</b> Unleash three times. Place 1 power token on Deteriorate (disambiguation)|Deteriorate.",
+      "effect": "<b>TO DISCARD</b>: Spend 5 <span class=\"aether\">&AElig;</span>.<br/><b>POWER 2:</b> Unleash three times. Place 1 power token on Deteriorate.",
       "nemesis": "The Endless Decay",
       "id": "ORI-54",
       "expansions": [
@@ -17919,7 +17919,7 @@
       "name": "Waste Away",
       "type": "Power",
       "tier": "2",
-      "effect": "<b>POWER 2:</b> If there are no entropy cards in play, draw a card from the entropy deck and place it into play.<br/>Otherwise, place 1 power token on Deteriorate (disambiguation)|Deteriorate and Unleash three times.",
+      "effect": "<b>POWER 2:</b> If there are no entropy cards in play, draw a card from the entropy deck and place it into play.<br/>Otherwise, place 1 power token on Deteriorate and Unleash three times.",
       "nemesis": "The Endless Decay",
       "id": "ORI-56",
       "expansions": [
@@ -17932,7 +17932,7 @@
       "name": "Last Gasp",
       "type": "Power",
       "tier": "2",
-      "effect": "<b>TO DISCARD</b>: Spend 7 <span class=\"aether\">&AElig;</span>. <b>POWER 2:</b> Remove 2 power tokens from Deteriorate (disambiguation)|Deteriorate. Gravehold or any player suffers 3 damage.",
+      "effect": "<b>TO DISCARD</b>: Spend 7 <span class=\"aether\">&AElig;</span>. <b>POWER 2:</b> Remove 2 power tokens from Deteriorate. Gravehold or any player suffers 3 damage.",
       "nemesis": "The Endless Decay",
       "id": "ORI-57",
       "expansions": [
@@ -17945,7 +17945,7 @@
       "name": "Entangled Fate",
       "type": "Power",
       "tier": "3",
-      "effect": "When a power token is removed from this, remove a power token from Deteriorate (disambiguation)|Deteriorate. <b>POWER 2:</b> Gravehold or any player suffers 5 damage.",
+      "effect": "When a power token is removed from this, remove a power token from Deteriorate. <b>POWER 2:</b> Gravehold or any player suffers 5 damage.",
       "nemesis": "The Endless Decay",
       "id": "ORI-60",
       "expansions": [
@@ -22014,7 +22014,7 @@
       "name": "Swarm Protocol",
       "type": "Power",
       "tier": "1",
-      "effect": "<b>IMMEDIATELY:</b> Read card Targeting Protocol|L2-E-22.<br/><b>TO DISCARD</b>: Discard a prepped spell that costs 5 <span class=\"aether\">&AElig;</span> or more.<br/><b>POWER 3</b>: Place three rustborn into play.",
+      "effect": "<b>IMMEDIATELY:</b> Read card L2-E-22.<br/><b>TO DISCARD</b>: Discard a prepped spell that costs 5 <span class=\"aether\">&AElig;</span> or more.<br/><b>POWER 3</b>: Place three rustborn into play.",
       "nemesis": "Mother of Rust",
       "id": "L2-END-021, L2-MR-28",
       "expansions": [
@@ -22187,7 +22187,7 @@
       "name": "Phantom Reaver",
       "type": "Minion",
       "tier": "2",
-      "effect": "<b>IMMEDIATELY:</b> Read card Collateral Damage|L2-E-23.<br/><b>PERSISTENT:</b> The player with the most expensive gem in hand suffers 2 damage and discards two gems.",
+      "effect": "<b>IMMEDIATELY:</b> Read card L2-E-23.<br/><b>PERSISTENT:</b> The player with the most expensive gem in hand suffers 2 damage and discards two gems.",
       "nemesis": "Paradox of Bone",
       "id": "L2-END-104",
       "expansions": [
@@ -22463,7 +22463,7 @@
       "name": "Kiryra",
       "type": "Minion;villager",
       "tier": "0",
-      "effect": "<b>PERSISTENT:</b> Add a fire token on your location on the map. If Tyreesia is in play, any player also loses a charge and if you haven't read card Tethered|L2-E-24, read it.",
+      "effect": "<b>PERSISTENT:</b> Add a fire token on your location on the map. If Tyreesia is in play, any player also loses a charge and if you haven't read card L2-E-24, read it.",
       "nemesis": "Paradox of Myth",
       "id": "L2-END-023, L2-PY-06",
       "expansions": [
@@ -22726,7 +22726,7 @@
       "name": "Arc of Destruction",
       "type": "Power",
       "tier": "3",
-      "effect": "<b>POWER 2:</b> Any player suffers 3 damage. Remove two power tokens from Shatter (disambiguation)|Shatter. <i>(If this removes the last power token from Shatter (disambiguation)|Shatter, resolve it immediately.)</i>",
+      "effect": "<b>POWER 2:</b> Any player suffers 3 damage. Remove two power tokens from Shatter. <i>(If this removes the last power token from Shatter, resolve it immediately.)</i>",
       "nemesis": "The Wailing",
       "id": "SD-106",
       "expansions": [
@@ -26868,7 +26868,7 @@
       "name": "Grasp",
       "type": "Attack",
       "tier": "2",
-      "effect": "Draw card Voracious Spell Fetter (Campaign)|L2-E-21 and play it.<br/>Destroy an uncovered supply pile.<br/>Any player suffers 2 damage.",
+      "effect": "Draw card L2-E-21 and play it.<br/>Destroy an uncovered supply pile.<br/>Any player suffers 2 damage.",
       "nemesis": "Griefweaver",
       "id": "L2-GW-21",
       "expansions": [
@@ -26880,7 +26880,7 @@
       "name": "Enrage (Campaign)",
       "type": "Attack",
       "tier": "2",
-      "effect": "Bone Unleashes twice.<br/>If Bone has less life than Myth, add a fire token to your location on the map and read card Restrained|L2-E-20",
+      "effect": "Bone Unleashes twice.<br/>If Bone has less life than Myth, add a fire token to your location on the map and read card L2-E-20",
       "nemesis": "Paradox of Myth and Bone",
       "id": "L2-PM-07",
       "expansions": [
@@ -26892,7 +26892,7 @@
       "name": "Phlayl (Campaign)",
       "type": "Minion",
       "tier": "2",
-      "effect": "<b>IMMEDIATELY:</b> Read card A Snarl from the Shadows|L2-E-29.<br/><b>PERSISTENT:</b> The player with the most breaches with syphons on them suffers 2 damage.",
+      "effect": "<b>IMMEDIATELY:</b> Read card L2-E-29.<br/><b>PERSISTENT:</b> The player with the most breaches with syphons on them suffers 2 damage.",
       "nemesis": "Rust Superion",
       "id": "L2-RS-23",
       "expansions": [
@@ -27752,7 +27752,7 @@
       "name": "Chomp",
       "type": "",
       "tier": "3",
-      "effect": "Remove 1 power token from Enrage (Rampaging Vin)|Enrage. Repeat this. Gravehold suffers 4 damage.",
+      "effect": "Remove 1 power token from Enrage. Repeat this. Gravehold suffers 4 damage.",
       "nemesis": "Rampaging Vin",
       "id": "TR-099",
       "expansions": [
@@ -28604,7 +28604,7 @@
       "name": "Accelerate",
       "type": "Attack",
       "tier": "1",
-      "effect": "Unleash.<br/>Remove one power token from Shatter (disambiguation)|Shatter. <i>(If this removes the last power token from Shatter (disambiguation)|Shatter, resolve it immediately.)</i>",
+      "effect": "Unleash.<br/>Remove one power token from Shatter. <i>(If this removes the last power token from Shatter, resolve it immediately.)</i>",
       "nemesis": "The Wailing",
       "id": "SD-098",
       "expansions": [
