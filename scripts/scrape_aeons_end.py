@@ -648,67 +648,36 @@ def scrape(args: argparse.Namespace) -> None:
         "nemesis_cards": [],
     }
 
-    by_expansion: Dict[str, Dict[str, List[Dict[str, Any]]]] = {}
-
     for item in scraped_items:
         cat = item.pop("category", "")
+        if args.expansion:
+            target = args.expansion.lower()
+            item_exps = [e.lower() for e in item.get("expansions", [])]
+            if not any(target in e for e in item_exps):
+                continue
         if cat in by_category:
             by_category[cat].append(item)
 
-        expansions = item.get("expansions", ["Unknown"])
-        for exp in expansions:
-            if exp not in by_expansion:
-                by_expansion[exp] = {
-                    "supply": [],
-                    "unique_starters": [],
-                    "mages": [],
-                    "nemeses": [],
-                    "nemesis_cards": [],
-                }
-            if cat in by_expansion[exp]:
-                by_expansion[exp][cat].append(item)
-
-    # If an expansion filter was specified:
     if args.expansion:
-        target = args.expansion.lower()
-        by_expansion = {k: v for k, v in by_expansion.items() if target in k.lower()}
-        print(f"Filtered to expansion(s) matching '{args.expansion}': {list(by_expansion.keys())}")
+        print(f"Filtered records to expansion matching '{args.expansion}'")
 
     # Step 5: Save output files
     os.makedirs(args.output_dir, exist_ok=True)
-    expansions_dir = os.path.join(args.output_dir, "expansions")
-    os.makedirs(expansions_dir, exist_ok=True)
 
-    # 1. Master by-expansion JSON
-    by_exp_path = os.path.join(args.output_dir, "aeons_end_by_expansion.json")
-    with open(by_exp_path, "w", encoding="utf-8") as f:
-        json.dump(by_expansion, f, indent=2, ensure_ascii=False)
-    print(f"\nSaved master by-expansion JSON: {by_exp_path}")
-
-    # 2. Master flat category JSON
+    # Flat category JSON (aeons_end_all.json)
     all_path = os.path.join(args.output_dir, "aeons_end_all.json")
     with open(all_path, "w", encoding="utf-8") as f:
         json.dump(by_category, f, indent=2, ensure_ascii=False)
-    print(f"Saved master categories JSON: {all_path}")
-
-    # 3. Individual expansion JSON files
-    for exp_name, exp_data in by_expansion.items():
-        slug = re.sub(r"[^\w\-]+", "_", exp_name.strip()).strip("_").lower()
-        exp_file = os.path.join(expansions_dir, f"{slug}.json")
-        with open(exp_file, "w", encoding="utf-8") as f:
-            json.dump({exp_name: exp_data}, f, indent=2, ensure_ascii=False)
-
-    print(f"Saved {len(by_expansion)} individual expansion files in {expansions_dir}/\n")
+    print(f"\nSaved master JSON: {all_path}\n")
 
     # Step 6: Summary Printout
     print("=== Scraping Summary ===")
+    total_saved = 0
     for cat, items in by_category.items():
         print(f"  {cat:18}: {len(items)} items")
-    print(f"\nTotal Expansions Found: {len(by_expansion)}")
-    for exp, exp_dict in sorted(by_expansion.items()):
-        total_exp_items = sum(len(v) for v in exp_dict.values())
-        print(f"  - {exp:28}: {total_exp_items:3} items (Supply:{len(exp_dict['supply'])}, M:{len(exp_dict['mages'])}, US:{len(exp_dict['unique_starters'])}, N:{len(exp_dict['nemeses'])}, NC:{len(exp_dict['nemesis_cards'])})")
-    print("\nScraping complete!")
+        total_saved += len(items)
+    print(f"\nTotal Items Saved: {total_saved}")
+    print("Scraping complete!")
 
 
 def main():
