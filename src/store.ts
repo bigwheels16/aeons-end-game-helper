@@ -2,11 +2,11 @@
 import { create, StateCreator } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { z } from 'zod';
-import { Card, CardType, generateDeck, shuffleDeck } from './deckEngine';
+import { CARD_TYPES, Card, CardType, generateDeck, shuffleDeck } from './deckEngine';
 
 export type VisibilityOption = 'current' | 'next' | 'all';
 
-const CardTypeSchema = z.enum(['Player 1', 'Player 2', 'Player 3', 'Player 4', 'Nemesis', 'Wild']);
+const CardTypeSchema = z.enum(CARD_TYPES);
 
 const CardSchema = z.object({
   id: z.string(),

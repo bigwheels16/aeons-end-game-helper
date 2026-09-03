@@ -8,7 +8,18 @@
 /**
  * Valid card types in the Aeon's End turn order deck.
  */
-export type CardType = 'Player 1' | 'Player 2' | 'Player 3' | 'Player 4' | 'Nemesis' | 'Wild' | 'Player 1/2' | 'Player 3/4';
+export const CARD_TYPES = [
+  'Player 1',
+  'Player 2',
+  'Player 3',
+  'Player 4',
+  'Nemesis',
+  'Wild',
+  'Player 1/2',
+  'Player 3/4',
+] as const;
+
+export type CardType = (typeof CARD_TYPES)[number];
 
 /**
  * Represents a single turn order card.

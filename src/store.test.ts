@@ -163,6 +163,15 @@ describe('useGameStore custom actions', () => {
       expect(nextState.searchFilters.costRange).toEqual([2, 5]);
       expect(nextState.searchFilters.selectedTypes).toEqual(['Gem']);
     });
+
+    it('should support custom decks containing Player 1/2 and Player 3/4', () => {
+      useGameStore.getState().setCustomDeck(['Player 1/2', 'Player 3/4', 'Nemesis']);
+      useGameStore.getState().setPlayerCount('custom');
+
+      const state = useGameStore.getState();
+      expect(state.customDeck).toEqual(['Player 1/2', 'Player 3/4', 'Nemesis']);
+      expect(state.playerCount).toBe('custom');
+    });
   });
 });
 
