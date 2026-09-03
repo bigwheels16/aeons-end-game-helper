@@ -208,18 +208,21 @@ export default function CardSearchScreen() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
             {filteredCards.map((card, idx) => (
               <div key={`${card.id || card.name}-${idx}`} style={{ backgroundColor: '#222', padding: '1rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
-                    <h3 style={{ margin: '0 0 0.5rem 0' }}>
-                      <a 
-                        href={card.page_url || `https://aeonsend.wiki.gg/wiki/${card.name.replace(/ /g, '_')}`} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        style={{ color: '#4CAF50', textDecoration: 'none' }}
-                      >
-                        {card.name}
-                      </a>
-                    </h3>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
+                      <h3 style={{ margin: 0 }}>
+                        <a 
+                          href={card.page_url || `https://aeonsend.wiki.gg/wiki/${card.name.replace(/ /g, '_')}`} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          style={{ color: '#4CAF50', textDecoration: 'none' }}
+                        >
+                          {card.name}
+                        </a>
+                      </h3>
+                      <span style={{ fontSize: '0.8rem', color: '#aaa', marginLeft: '0.5rem', flexShrink: 0 }}>{card.type}</span>
+                    </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: '#aaa', marginBottom: '0.5rem' }}>
-                      <span>{card.type} | {card.expansions?.join(', ') || 'Unknown'}</span>
+                      <span>{card.expansions?.join(', ') || 'Unknown'}</span>
                       <span>Cost: {card.cost}</span>
                     </div>
                     <div 

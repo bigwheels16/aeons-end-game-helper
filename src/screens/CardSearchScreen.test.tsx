@@ -92,7 +92,7 @@ describe('CardSearchScreen', () => {
   it('filters by expansion', async () => {
     render(<CardSearchScreen />);
     
-    const expansionButton = screen.getByText('Promo');
+    const expansionButton = screen.getByRole('button', { name: 'Promo' });
     fireEvent.click(expansionButton);
 
     await waitFor(() => {
@@ -105,7 +105,7 @@ describe('CardSearchScreen', () => {
   it('filters by card type', async () => {
     render(<CardSearchScreen />);
     
-    const typeButton = screen.getByText('Relic');
+    const typeButton = screen.getByRole('button', { name: 'Relic' });
     fireEvent.click(typeButton);
 
     await waitFor(() => {
@@ -119,7 +119,7 @@ describe('CardSearchScreen', () => {
   it('clears all filters', async () => {
     render(<CardSearchScreen />);
     
-    const typeButton = screen.getByText('Relic');
+    const typeButton = screen.getByRole('button', { name: 'Relic' });
     fireEvent.click(typeButton);
 
     await waitFor(() => {
