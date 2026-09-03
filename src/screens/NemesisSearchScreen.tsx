@@ -1,8 +1,12 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useMemo } from 'react';
 import DOMPurify from 'dompurify';
 import scrapedData from '../../data/scraped/aeons_end_all.json';
 import { useGameStore } from '../store';
 import ExpansionFilter from '../components/ExpansionFilter';
+import { useDebounce } from '../hooks/useDebounce';
+import { useToggleSet } from '../hooks/useToggleSet';
+import { stripHtml } from '../utils/text';
+import { getUniqueExpansions } from '../utils/cards';
 
 interface ScrapedNemesis {
   name: string;
@@ -25,35 +29,10 @@ export default function NemesisSearchScreen() {
   const setNemesisSearchFilters = useGameStore((state) => state.setNemesisSearchFilters);
 
   const { nemesisQuery, selectedNemesisExpansions } = nemesisSearchFilters;
-  const [visibleImages, setVisibleImages] = useState<Set<string>>(new Set());
+  const visibleImages = useToggleSet();
+  const debouncedQuery = useDebounce(nemesisQuery);
 
-  const toggleImage = (id: string) => {
-    setVisibleImages(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) newSet.delete(id);
-      else newSet.add(id);
-      return newSet;
-    });
-  };
-  
-  const [debouncedQuery, setDebouncedQuery] = useState('');
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(nemesisQuery);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [nemesisQuery]);
-
-  const allExpansions = useMemo(() => {
-    const exps = new Set<string>();
-    allNemeses.forEach(n => {
-      n.expansions?.forEach(e => {
-        if (e) exps.add(e);
-      });
-    });
-    return Array.from(exps).sort();
-  }, []);
+  const allExpansions = useMemo(() => getUniqueExpansions(allNemeses), []);
 
   const toggleExpansion = (exp: string) => {
     setNemesisSearchFilters({
@@ -68,12 +47,6 @@ export default function NemesisSearchScreen() {
       nemesisQuery: '',
       selectedNemesisExpansions: [],
     });
-    setDebouncedQuery('');
-  };
-
-  const stripHtml = (html: string) => {
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    return doc.body.textContent || '';
   };
 
   const filteredNemeses = useMemo(() => {
@@ -221,7 +194,7 @@ export default function NemesisSearchScreen() {
                     )}
 
                     <button 
-                      onClick={() => toggleImage(nemesis.name)}
+                      onClick={() => visibleImages.toggle(nemesis.name)}
                       style={{ marginTop: '1rem', background: 'none', border: 'none', color: '#2196F3', cursor: 'pointer', padding: 0, fontSize: '0.875rem' }}
                     >
                       {visibleImages.has(nemesis.name) ? 'Hide Mat Images' : 'Show Mat Images'}

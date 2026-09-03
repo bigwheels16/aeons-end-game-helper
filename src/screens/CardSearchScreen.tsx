@@ -1,8 +1,12 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useMemo } from 'react';
 import DOMPurify from 'dompurify';
 import scrapedData from '../../data/scraped/aeons_end_all.json';
 import { useGameStore } from '../store';
 import ExpansionFilter from '../components/ExpansionFilter';
+import { useDebounce } from '../hooks/useDebounce';
+import { useToggleSet } from '../hooks/useToggleSet';
+import { stripHtml } from '../utils/text';
+import { getUniqueExpansions } from '../utils/cards';
 
 interface ScrapedSupplyCard {
   id?: string;
@@ -31,37 +35,11 @@ export default function CardSearchScreen() {
   const setSearchFilters = useGameStore((state) => state.setSearchFilters);
 
   const { cardQuery, selectedExpansions, selectedTypes, costRange } = searchFilters;
-  const [visibleImages, setVisibleImages] = useState<Set<string>>(new Set());
-
-  const toggleImage = (id: string) => {
-    setVisibleImages(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) newSet.delete(id);
-      else newSet.add(id);
-      return newSet;
-    });
-  };
-  
-  // Use debounced values for search
-  const [debouncedQuery, setDebouncedQuery] = useState('');
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(cardQuery);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [cardQuery]);
+  const visibleImages = useToggleSet();
+  const debouncedQuery = useDebounce(cardQuery);
 
   // Extract all available expansions
-  const allExpansions = useMemo(() => {
-    const exps = new Set<string>();
-    allCards.forEach(c => {
-      c.expansions?.forEach(e => {
-        if (e) exps.add(e);
-      });
-    });
-    return Array.from(exps).sort();
-  }, []);
+  const allExpansions = useMemo(() => getUniqueExpansions(allCards), []);
 
   const toggleExpansion = (exp: string) => {
     setSearchFilters({
@@ -86,12 +64,6 @@ export default function CardSearchScreen() {
       selectedTypes: [],
       costRange: [0, 10]
     });
-    setDebouncedQuery('');
-  };
-
-  const stripHtml = (html: string) => {
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    return doc.body.textContent || '';
   };
 
   const filteredCards = useMemo(() => {
@@ -264,7 +236,7 @@ export default function CardSearchScreen() {
                         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(card.effect || '') }} 
                       />
                       <button 
-                        onClick={() => toggleImage(card.id || card.name)}
+                        onClick={() => visibleImages.toggle(card.id || card.name)}
                         style={{ background: 'none', border: 'none', color: '#2196F3', cursor: 'pointer', padding: 0, fontSize: '0.875rem' }}
                       >
                         {visibleImages.has(card.id || card.name) ? 'Hide Image' : 'Show Image'}

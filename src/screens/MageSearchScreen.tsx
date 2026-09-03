@@ -1,8 +1,12 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useMemo } from 'react';
 import DOMPurify from 'dompurify';
 import scrapedData from '../../data/scraped/aeons_end_all.json';
 import { useGameStore } from '../store';
 import ExpansionFilter from '../components/ExpansionFilter';
+import { useDebounce } from '../hooks/useDebounce';
+import { useToggleSet } from '../hooks/useToggleSet';
+import { stripHtml } from '../utils/text';
+import { getUniqueExpansions } from '../utils/cards';
 
 interface ScrapedUniqueStarter {
   name: string;
@@ -39,35 +43,9 @@ export default function MageSearchScreen() {
 
   const { mageQuery, selectedMageExpansions } = mageSearchFilters;
   
-  const [visibleMats, setVisibleMats] = useState<Set<string>>(new Set());
-  const [visibleStarters, setVisibleStarters] = useState<Set<string>>(new Set());
-
-  const toggleMat = (id: string) => {
-    setVisibleMats(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) newSet.delete(id);
-      else newSet.add(id);
-      return newSet;
-    });
-  };
-
-  const toggleStarter = (id: string) => {
-    setVisibleStarters(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) newSet.delete(id);
-      else newSet.add(id);
-      return newSet;
-    });
-  };
-
-  const [debouncedQuery, setDebouncedQuery] = useState('');
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(mageQuery);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [mageQuery]);
+  const visibleMats = useToggleSet();
+  const visibleStarters = useToggleSet();
+  const debouncedQuery = useDebounce(mageQuery);
 
   const startersByName = useMemo(() => {
     const map = new Map<string, ScrapedUniqueStarter>();
@@ -112,15 +90,7 @@ export default function MageSearchScreen() {
     return result;
   };
 
-  const allExpansions = useMemo(() => {
-    const exps = new Set<string>();
-    allMages.forEach(m => {
-      m.expansions?.forEach(e => {
-        if (e) exps.add(e);
-      });
-    });
-    return Array.from(exps).sort();
-  }, []);
+  const allExpansions = useMemo(() => getUniqueExpansions(allMages), []);
 
   const toggleExpansion = (exp: string) => {
     setMageSearchFilters({
@@ -135,12 +105,6 @@ export default function MageSearchScreen() {
       mageQuery: '',
       selectedMageExpansions: [],
     });
-    setDebouncedQuery('');
-  };
-
-  const stripHtml = (html: string) => {
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    return doc.body.textContent || '';
   };
 
   const filteredMages = useMemo(() => {
@@ -266,7 +230,7 @@ export default function MageSearchScreen() {
                     )}
 
                     <button 
-                      onClick={() => toggleMat(mage.name)}
+                      onClick={() => visibleMats.toggle(mage.name)}
                       style={{ marginBottom: '1rem', background: 'none', border: 'none', color: '#2196F3', cursor: 'pointer', padding: 0, fontSize: '0.875rem' }}
                     >
                       {visibleMats.has(mage.name) ? 'Hide Mat Images' : 'Show Mat Images'}
@@ -316,7 +280,7 @@ export default function MageSearchScreen() {
                                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(starter.effect || '') }} 
                               />
                               <button 
-                                onClick={() => toggleStarter(starter.name)}
+                                onClick={() => visibleStarters.toggle(starter.name)}
                                 style={{ marginTop: '0.5rem', background: 'none', border: 'none', color: '#2196F3', cursor: 'pointer', padding: 0, fontSize: '0.875rem' }}
                               >
                                 {visibleStarters.has(starter.name) ? 'Hide Image' : 'Show Image'}
