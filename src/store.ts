@@ -73,12 +73,17 @@ export interface ConfigSlice {
   setVisibilityOption: (opt: VisibilityOption) => void;
 }
 
+export interface TurnHistoryEntry {
+  roundNumber: number;
+  card: Card;
+}
+
 export interface PlaySlice {
   isPlaying: boolean;
   drawPile: Card[];
   discardPile: Card[];
   roundNumber: number;
-  turnHistory: { roundNumber: number; card: Card }[];
+  turnHistory: TurnHistoryEntry[];
   startGame: () => void;
   nextTurn: () => void;
   endGame: () => void;
@@ -146,6 +151,15 @@ const applyVisibility = (drawPile: Card[], visibilityOption: VisibilityOption): 
   }
   return newPile;
 };
+
+const updateRoundHistory = (
+  turnHistory: TurnHistoryEntry[],
+  roundNumber: number,
+  cards: Card[]
+): TurnHistoryEntry[] => [
+  ...turnHistory.filter(h => h.roundNumber !== roundNumber),
+  ...cards.map(card => ({ roundNumber, card }))
+];
 
 const createConfigSlice: StateCreator<GameState, [], [], ConfigSlice> = (set, get) => ({
   playerCount: 1,
@@ -306,9 +320,7 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
       discardPile.push(cardToMove);
     }
 
-    const prevHistory = state.turnHistory.filter(h => h.roundNumber !== state.roundNumber);
-    const newHistory = discardPile.map(card => ({ roundNumber: state.roundNumber, card }));
-    const turnHistory = [...prevHistory, ...newHistory];
+    const turnHistory = updateRoundHistory(state.turnHistory, state.roundNumber, discardPile);
 
     set({ drawPile, discardPile, turnHistory });
   },
@@ -325,9 +337,7 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
     newDiscardPile = newDiscardPile.map(c => ({ ...c, isRevealed: true }));
     newDrawPile = applyVisibility(newDrawPile, state.visibilityOption);
 
-    const prevHistory = state.turnHistory.filter(h => h.roundNumber !== state.roundNumber);
-    const newHistory = newDiscardPile.map(card => ({ roundNumber: state.roundNumber, card }));
-    const turnHistory = [...prevHistory, ...newHistory];
+    const turnHistory = updateRoundHistory(state.turnHistory, state.roundNumber, newDiscardPile);
 
     set({ drawPile: newDrawPile, discardPile: newDiscardPile, turnHistory });
     return true;

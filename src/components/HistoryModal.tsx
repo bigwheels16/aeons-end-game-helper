@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, ModalButton } from './Modal';
 import { useGameStore } from '../store';
-
+import { Card } from '../deckEngine';
 
 interface HistoryModalProps {
   isOpen: boolean;
@@ -20,7 +20,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose }) =
     }
     acc[curr.roundNumber].push(curr.card);
     return acc;
-  }, {} as Record<number, any[]>);
+  }, {} as Record<number, Card[]>);
 
 
 
