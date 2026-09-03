@@ -23,5 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
+data/scraped/.cache
+
 # Testing
 coverage

@@ -1,8 +1,20 @@
 import { useState, useMemo, useEffect } from 'react';
 import DOMPurify from 'dompurify';
-import { allCards } from '../data/allCards';
+import scrapedData from '../../data/scraped/aeons_end_all.json';
 import { useGameStore } from '../store';
 import ExpansionFilter from '../components/ExpansionFilter';
+
+interface ScrapedSupplyCard {
+  id?: string;
+  name: string;
+  type: string;
+  cost?: string | number;
+  effect?: string;
+  expansions?: string[];
+  page_url?: string;
+}
+
+const allCards: ScrapedSupplyCard[] = scrapedData.supply || [];
 
 /**
  * Card Search Screen Component.
@@ -44,7 +56,9 @@ export default function CardSearchScreen() {
   const allExpansions = useMemo(() => {
     const exps = new Set<string>();
     allCards.forEach(c => {
-      if (c.expansion) exps.add(c.expansion);
+      c.expansions?.forEach(e => {
+        if (e) exps.add(e);
+      });
     });
     return Array.from(exps).sort();
   }, []);
@@ -99,7 +113,7 @@ export default function CardSearchScreen() {
       }
 
       // Expansion filter
-      if (selectedExpansions.length > 0 && (!card.expansion || !selectedExpansions.includes(card.expansion))) {
+      if (selectedExpansions.length > 0 && (!card.expansions || !card.expansions.some(e => selectedExpansions.includes(e)))) {
         return false;
       }
 
@@ -109,15 +123,15 @@ export default function CardSearchScreen() {
       }
 
       // Cost filter
-      const cardCost = card.cost !== undefined ? Number(card.cost) : 0;
+      const cardCost = card.cost !== undefined ? Number(card.cost) || 0 : 0;
       if (cardCost < costRange[0] || cardCost > costRange[1]) {
         return false;
       }
 
       return true;
     }).sort((a, b) => {
-      const costA = a.cost !== undefined ? Number(a.cost) : 0;
-      const costB = b.cost !== undefined ? Number(b.cost) : 0;
+      const costA = a.cost !== undefined ? Number(a.cost) || 0 : 0;
+      const costB = b.cost !== undefined ? Number(b.cost) || 0 : 0;
       return costA - costB;
     });
   }, [debouncedQuery, selectedExpansions, selectedTypes, costRange]);
@@ -230,10 +244,10 @@ export default function CardSearchScreen() {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
             {filteredCards.map((card, idx) => (
-              <div key={card.id || idx} style={{ backgroundColor: '#222', padding: '1rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
+              <div key={`${card.id || card.name}-${idx}`} style={{ backgroundColor: '#222', padding: '1rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
                     <h3 style={{ margin: '0 0 0.5rem 0' }}>
                       <a 
-                        href={`https://aeonsend.wiki.gg/wiki/${card.name.replace(/ /g, '_')}`} 
+                        href={card.page_url || `https://aeonsend.wiki.gg/wiki/${card.name.replace(/ /g, '_')}`} 
                         target="_blank" 
                         rel="noopener noreferrer"
                         style={{ color: '#4CAF50', textDecoration: 'none' }}
@@ -242,7 +256,7 @@ export default function CardSearchScreen() {
                       </a>
                     </h3>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: '#aaa', marginBottom: '0.5rem' }}>
-                      <span>{card.type} | {card.expansion}</span>
+                      <span>{card.type} | {card.expansions?.join(', ') || 'Unknown'}</span>
                       <span>Cost: {card.cost}</span>
                     </div>
                     <div 
@@ -250,12 +264,12 @@ export default function CardSearchScreen() {
                         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(card.effect || '') }} 
                       />
                       <button 
-                        onClick={() => toggleImage(card.id)}
+                        onClick={() => toggleImage(card.id || card.name)}
                         style={{ background: 'none', border: 'none', color: '#2196F3', cursor: 'pointer', padding: 0, fontSize: '0.875rem' }}
                       >
-                        {visibleImages.has(card.id) ? 'Hide Image' : 'Show Image'}
+                        {visibleImages.has(card.id || card.name) ? 'Hide Image' : 'Show Image'}
                       </button>
-                      {visibleImages.has(card.id) && (
+                      {visibleImages.has(card.id || card.name) && (
                         <div style={{ marginTop: '0.5rem' }}>
                           <a href={`https://aeonsend.wiki.gg/images/${card.name.replace(/ /g, '_')}.jpg`} target="_blank" rel="noopener noreferrer">
                               <img 

@@ -1,8 +1,37 @@
 import { useState, useMemo, useEffect } from 'react';
 import DOMPurify from 'dompurify';
-import { allMages } from '../data/allMages';
+import scrapedData from '../../data/scraped/aeons_end_all.json';
 import { useGameStore } from '../store';
 import ExpansionFilter from '../components/ExpansionFilter';
+
+interface ScrapedUniqueStarter {
+  name: string;
+  type: string;
+  cost?: string | number;
+  effect?: string;
+  expansions?: string[];
+  mage?: string;
+  page_url?: string;
+}
+
+interface ScrapedMage {
+  name: string;
+  type: string;
+  title?: string;
+  expansions?: string[];
+  charges?: string | number;
+  ability_name?: string;
+  ability_activation?: string;
+  ability_effect?: string;
+  unique_cards?: string[];
+  starting_hand?: string;
+  starting_deck?: string;
+  breaches?: string[][];
+  page_url?: string;
+}
+
+const allMages: ScrapedMage[] = scrapedData.mages || [];
+const allUniqueStarters: ScrapedUniqueStarter[] = scrapedData.unique_starters || [];
 
 export default function MageSearchScreen() {
   const mageSearchFilters = useGameStore((state) => state.mageSearchFilters);
@@ -40,10 +69,55 @@ export default function MageSearchScreen() {
     return () => clearTimeout(timer);
   }, [mageQuery]);
 
+  const startersByName = useMemo(() => {
+    const map = new Map<string, ScrapedUniqueStarter>();
+    allUniqueStarters.forEach(s => {
+      map.set(s.name.toLowerCase(), s);
+    });
+    return map;
+  }, []);
+
+  const startersByMage = useMemo(() => {
+    const map = new Map<string, ScrapedUniqueStarter[]>();
+    allUniqueStarters.forEach(s => {
+      if (s.mage) {
+        const key = s.mage.toLowerCase();
+        if (!map.has(key)) map.set(key, []);
+        map.get(key)!.push(s);
+      }
+    });
+    return map;
+  }, []);
+
+  const getMageStarters = (mage: ScrapedMage): ScrapedUniqueStarter[] => {
+    const result: ScrapedUniqueStarter[] = [];
+    const seen = new Set<string>();
+
+    (mage.unique_cards || []).forEach(name => {
+      const match = startersByName.get(name.toLowerCase());
+      if (match && !seen.has(match.name)) {
+        seen.add(match.name);
+        result.push(match);
+      }
+    });
+
+    const byMage = startersByMage.get(mage.name.toLowerCase()) || [];
+    byMage.forEach(s => {
+      if (!seen.has(s.name)) {
+        seen.add(s.name);
+        result.push(s);
+      }
+    });
+
+    return result;
+  };
+
   const allExpansions = useMemo(() => {
     const exps = new Set<string>();
     allMages.forEach(m => {
-      if (m.expansion) exps.add(m.expansion);
+      m.expansions?.forEach(e => {
+        if (e) exps.add(e);
+      });
     });
     return Array.from(exps).sort();
   }, []);
@@ -75,15 +149,17 @@ export default function MageSearchScreen() {
 
       if (debouncedQuery) {
         const terms = debouncedQuery.toLowerCase().split(/\s+/).filter(Boolean);
-        const startersText = (mage.uniqueStarters || [])
+        const starters = getMageStarters(mage);
+        const startersText = starters
           .map(s => `${s.name} ${s.effect ? stripHtml(s.effect) : ''}`)
           .join(' ');
 
         const searchableText = [
           mage.name,
-          mage.abilityName,
-          mage.abilityActivation,
-          mage.abilityEffect ? stripHtml(mage.abilityEffect) : '',
+          mage.title,
+          mage.ability_name,
+          mage.ability_activation,
+          mage.ability_effect ? stripHtml(mage.ability_effect) : '',
           startersText
         ].join(' ').toLowerCase();
         
@@ -92,7 +168,7 @@ export default function MageSearchScreen() {
         }
       }
 
-      if (selectedMageExpansions.length > 0 && (!mage.expansion || !selectedMageExpansions.includes(mage.expansion))) {
+      if (selectedMageExpansions.length > 0 && (!mage.expansions || !mage.expansions.some(e => selectedMageExpansions.includes(e)))) {
         return false;
       }
 
@@ -149,11 +225,13 @@ export default function MageSearchScreen() {
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem' }}>
-              {filteredMages.map((mage, idx) => (
-                <div key={mage.id || idx} style={{ backgroundColor: '#222', padding: '1.5rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
+              {filteredMages.map((mage, idx) => {
+                const starters = getMageStarters(mage);
+                return (
+                  <div key={`${mage.name}-${idx}`} style={{ backgroundColor: '#222', padding: '1.5rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
                     <h2 style={{ margin: '0 0 0.25rem 0' }}>
                       <a 
-                        href={`https://aeonsend.wiki.gg/wiki/${mage.name.replace(/ /g, '_')}`} 
+                        href={mage.page_url || `https://aeonsend.wiki.gg/wiki/${encodeURIComponent(mage.name.replace(/ /g, '_'))}`} 
                         target="_blank" 
                         rel="noopener noreferrer"
                         style={{ color: '#4CAF50', textDecoration: 'none' }}
@@ -162,17 +240,30 @@ export default function MageSearchScreen() {
                       </a>
                     </h2>
                     <h4 style={{ margin: '0 0 1rem 0', color: '#aaa', fontWeight: 'normal', fontStyle: 'italic' }}>
-                      {mage.mageTitle} | {mage.expansion}
+                      {mage.title ? `${mage.title} | ` : ''}{mage.expansions?.join(', ') || 'Unknown'}
                     </h4>
 
                     <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: '#1a1a1a', borderRadius: '4px', borderLeft: '4px solid #4CAF50' }}>
-                      <h4 style={{ margin: '0 0 0.5rem 0', color: '#fff' }}>{mage.abilityName} ({mage.numberOfCharges} Charges)</h4>
-                      <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.85rem', color: '#bbb' }}><em>{mage.abilityActivation}</em></p>
+                      <h4 style={{ margin: '0 0 0.5rem 0', color: '#fff' }}>{mage.ability_name} ({mage.charges} Charges)</h4>
+                      {mage.ability_activation && (
+                        <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.85rem', color: '#bbb' }}><em>{mage.ability_activation}</em></p>
+                      )}
                       <div 
                         style={{ fontSize: '0.9rem', color: '#ddd' }}
-                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(mage.abilityEffect || '') }} 
+                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(mage.ability_effect || '') }} 
                       />
                     </div>
+
+                    {mage.breaches && mage.breaches.length > 0 && (
+                      <div style={{ marginBottom: '1rem', fontSize: '0.85rem', color: '#bbb' }}>
+                        <strong style={{ color: '#ccc' }}>Breaches: </strong>
+                        {mage.breaches.map(([type, pos], i) => (
+                          <span key={i} style={{ marginRight: '0.5rem' }}>
+                            {type}: <span style={{ color: pos === 'open' ? '#4CAF50' : '#ffa726' }}>{pos}</span>
+                          </span>
+                        ))}
+                      </div>
+                    )}
 
                     <button 
                       onClick={() => toggleMat(mage.name)}
@@ -182,17 +273,17 @@ export default function MageSearchScreen() {
                     </button>
                     {visibleMats.has(mage.name) && (
                       <div style={{ marginBottom: '1rem', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                        <a href={`https://aeonsend.wiki.gg/images/${mage.name.replace(/ /g, '_')}_Front.jpg`} target="_blank" rel="noopener noreferrer">
+                        <a href={`https://aeonsend.wiki.gg/images/${encodeURIComponent(mage.name.replace(/ /g, '_'))}_Front.jpg`} target="_blank" rel="noopener noreferrer">
                             <img 
-                              src={`https://aeonsend.wiki.gg/images/${mage.name.replace(/ /g, '_')}_Front.jpg`} 
+                              src={`https://aeonsend.wiki.gg/images/${encodeURIComponent(mage.name.replace(/ /g, '_'))}_Front.jpg`} 
                               alt={`${mage.name} Front`}
                               loading="lazy"
                               style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
                             />
                           </a>
-                        <a href={`https://aeonsend.wiki.gg/images/${mage.name.replace(/ /g, '_')}_Back.jpg`} target="_blank" rel="noopener noreferrer">
+                        <a href={`https://aeonsend.wiki.gg/images/${encodeURIComponent(mage.name.replace(/ /g, '_'))}_Back.jpg`} target="_blank" rel="noopener noreferrer">
                             <img 
-                              src={`https://aeonsend.wiki.gg/images/${mage.name.replace(/ /g, '_')}_Back.jpg`} 
+                              src={`https://aeonsend.wiki.gg/images/${encodeURIComponent(mage.name.replace(/ /g, '_'))}_Back.jpg`} 
                               alt={`${mage.name} Back`}
                               loading="lazy"
                               style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
@@ -201,14 +292,23 @@ export default function MageSearchScreen() {
                       </div>
                     )}
 
-                    {mage.uniqueStarters && mage.uniqueStarters.length > 0 && (
+                    {starters.length > 0 && (
                       <div>
                         <strong style={{ color: '#ccc', display: 'block', marginBottom: '0.5rem' }}>Unique Starters:</strong>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                          {mage.uniqueStarters.map((starter, sIdx) => (
+                          {starters.map((starter, sIdx) => (
                             <div key={sIdx} style={{ backgroundColor: '#333', padding: '0.75rem', borderRadius: '4px', border: '1px solid #444' }}>
                               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                                <strong style={{ color: '#fff' }}>{starter.name}</strong>
+                                <strong style={{ color: '#fff' }}>
+                                  <a 
+                                    href={starter.page_url || `https://aeonsend.wiki.gg/wiki/${encodeURIComponent(starter.name.replace(/ /g, '_'))}`} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    style={{ color: '#4CAF50', textDecoration: 'none' }}
+                                  >
+                                    {starter.name}
+                                  </a>
+                                </strong>
                                 <span style={{ fontSize: '0.8rem', color: '#aaa' }}>{starter.type}</span>
                               </div>
                               <div 
@@ -223,9 +323,9 @@ export default function MageSearchScreen() {
                               </button>
                               {visibleStarters.has(starter.name) && (
                                 <div style={{ marginTop: '0.5rem' }}>
-                                  <a href={`https://aeonsend.wiki.gg/images/${starter.name.replace(/ /g, '_')}.jpg`} target="_blank" rel="noopener noreferrer">
+                                  <a href={`https://aeonsend.wiki.gg/images/${encodeURIComponent(starter.name.replace(/ /g, '_'))}.jpg`} target="_blank" rel="noopener noreferrer">
                                     <img 
-                                      src={`https://aeonsend.wiki.gg/images/${starter.name.replace(/ /g, '_')}.jpg`} 
+                                      src={`https://aeonsend.wiki.gg/images/${encodeURIComponent(starter.name.replace(/ /g, '_'))}.jpg`} 
                                       alt={starter.name}
                                       loading="lazy"
                                       style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
@@ -239,7 +339,8 @@ export default function MageSearchScreen() {
                       </div>
                     )}
                   </div>
-              ))}
+                );
+              })}
             </div>
         )}
       </div>

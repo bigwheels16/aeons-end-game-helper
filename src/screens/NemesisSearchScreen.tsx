@@ -1,8 +1,24 @@
 import { useState, useMemo, useEffect } from 'react';
 import DOMPurify from 'dompurify';
-import { allNemeses } from '../data/allNemeses';
+import scrapedData from '../../data/scraped/aeons_end_all.json';
 import { useGameStore } from '../store';
 import ExpansionFilter from '../components/ExpansionFilter';
+
+interface ScrapedNemesis {
+  name: string;
+  type: string;
+  health?: string;
+  difficulty?: string;
+  expedition_battle?: string;
+  unleash?: string;
+  increased_difficulty?: string;
+  rules?: string;
+  setup?: string;
+  expansions?: string[];
+  page_url?: string;
+}
+
+const allNemeses: ScrapedNemesis[] = scrapedData.nemeses || [];
 
 export default function NemesisSearchScreen() {
   const nemesisSearchFilters = useGameStore((state) => state.nemesisSearchFilters);
@@ -32,7 +48,9 @@ export default function NemesisSearchScreen() {
   const allExpansions = useMemo(() => {
     const exps = new Set<string>();
     allNemeses.forEach(n => {
-      if (n.expansion) exps.add(n.expansion);
+      n.expansions?.forEach(e => {
+        if (e) exps.add(e);
+      });
     });
     return Array.from(exps).sort();
   }, []);
@@ -66,7 +84,10 @@ export default function NemesisSearchScreen() {
         const terms = debouncedQuery.toLowerCase().split(/\s+/).filter(Boolean);
         const searchableText = [
           nemesis.name,
-          nemesis.additionalInfo ? stripHtml(nemesis.additionalInfo) : ''
+          nemesis.unleash ? stripHtml(nemesis.unleash) : '',
+          nemesis.rules ? stripHtml(nemesis.rules) : '',
+          nemesis.setup ? stripHtml(nemesis.setup) : '',
+          nemesis.increased_difficulty ? stripHtml(nemesis.increased_difficulty) : ''
         ].join(' ').toLowerCase();
         
         if (!terms.every(term => searchableText.includes(term))) {
@@ -74,14 +95,14 @@ export default function NemesisSearchScreen() {
         }
       }
 
-      if (selectedNemesisExpansions.length > 0 && (!nemesis.expansion || !selectedNemesisExpansions.includes(nemesis.expansion))) {
+      if (selectedNemesisExpansions.length > 0 && (!nemesis.expansions || !nemesis.expansions.some(e => selectedNemesisExpansions.includes(e)))) {
         return false;
       }
 
       return true;
     }).sort((a, b) => {
-      const diffA = a.difficulty !== undefined ? Number(a.difficulty) : 0;
-      const diffB = b.difficulty !== undefined ? Number(b.difficulty) : 0;
+      const diffA = a.difficulty !== undefined ? Number(a.difficulty) || 0 : 0;
+      const diffB = b.difficulty !== undefined ? Number(b.difficulty) || 0 : 0;
       return diffA - diffB;
     });
   }, [debouncedQuery, selectedNemesisExpansions]);
@@ -134,10 +155,10 @@ export default function NemesisSearchScreen() {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem' }}>
               {filteredNemeses.map((nemesis, idx) => (
-                <div key={nemesis.id || idx} style={{ backgroundColor: '#222', padding: '1.5rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
+                <div key={`${nemesis.name}-${idx}`} style={{ backgroundColor: '#222', padding: '1.5rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
                     <h2 style={{ margin: '0 0 0.25rem 0' }}>
                       <a 
-                        href={`https://aeonsend.wiki.gg/wiki/${nemesis.name.replace(/ /g, '_')}`} 
+                        href={nemesis.page_url || `https://aeonsend.wiki.gg/wiki/${encodeURIComponent(nemesis.name.replace(/ /g, '_'))}`} 
                         target="_blank" 
                         rel="noopener noreferrer"
                         style={{ color: '#4CAF50', textDecoration: 'none' }}
@@ -146,7 +167,7 @@ export default function NemesisSearchScreen() {
                       </a>
                     </h2>
                     <h4 style={{ margin: '0 0 1rem 0', color: '#aaa', fontWeight: 'normal', fontStyle: 'italic' }}>
-                      {nemesis.expansion}
+                      {nemesis.expansions?.join(', ') || 'Unknown'}
                     </h4>
 
                     <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: '#1a1a1a', borderRadius: '4px', borderLeft: '4px solid #f44336' }}>
@@ -155,19 +176,50 @@ export default function NemesisSearchScreen() {
                         <strong style={{ color: '#fff' }}>Difficulty: {nemesis.difficulty}</strong>
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ color: '#bbb', fontSize: '0.9rem' }}>Expedition Rating: {nemesis.expeditionRating}</span>
+                        <span style={{ color: '#bbb', fontSize: '0.9rem' }}>Expedition Battle: {nemesis.expedition_battle || 'N/A'}</span>
                       </div>
                     </div>
 
-                    {nemesis.additionalInfo && (
-                      <div>
-                        <strong style={{ color: '#ccc', display: 'block', marginBottom: '0.5rem' }}>Additional Info:</strong>
+                    {nemesis.unleash && (
+                      <div style={{ marginBottom: '0.75rem' }}>
+                        <strong style={{ color: '#ff7043', display: 'block', marginBottom: '0.25rem' }}>Unleash:</strong>
                         <div 
                           style={{ fontSize: '0.9rem', color: '#ddd' }}
-                          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(nemesis.additionalInfo) }} 
+                          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(nemesis.unleash) }} 
                         />
                       </div>
                     )}
+
+                    {nemesis.increased_difficulty && (
+                      <div style={{ marginBottom: '0.75rem' }}>
+                        <strong style={{ color: '#ef5350', display: 'block', marginBottom: '0.25rem' }}>Increased Difficulty:</strong>
+                        <div 
+                          style={{ fontSize: '0.9rem', color: '#ddd' }}
+                          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(nemesis.increased_difficulty) }} 
+                        />
+                      </div>
+                    )}
+
+                    {nemesis.rules && (
+                      <div style={{ marginBottom: '0.75rem' }}>
+                        <strong style={{ color: '#42a5f5', display: 'block', marginBottom: '0.25rem' }}>Rules:</strong>
+                        <div 
+                          style={{ fontSize: '0.9rem', color: '#ddd' }}
+                          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(nemesis.rules) }} 
+                        />
+                      </div>
+                    )}
+
+                    {nemesis.setup && (
+                      <div style={{ marginBottom: '0.75rem' }}>
+                        <strong style={{ color: '#ffa726', display: 'block', marginBottom: '0.25rem' }}>Setup:</strong>
+                        <div 
+                          style={{ fontSize: '0.9rem', color: '#ddd' }}
+                          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(nemesis.setup) }} 
+                        />
+                      </div>
+                    )}
+
                     <button 
                       onClick={() => toggleImage(nemesis.name)}
                       style={{ marginTop: '1rem', background: 'none', border: 'none', color: '#2196F3', cursor: 'pointer', padding: 0, fontSize: '0.875rem' }}
@@ -176,17 +228,17 @@ export default function NemesisSearchScreen() {
                     </button>
                     {visibleImages.has(nemesis.name) && (
                       <div style={{ marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                        <a href={`https://aeonsend.wiki.gg/images/${nemesis.name.replace(/ /g, '_')}_Front.jpg`} target="_blank" rel="noopener noreferrer">
+                        <a href={`https://aeonsend.wiki.gg/images/${encodeURIComponent(nemesis.name.replace(/ /g, '_'))}_Front.jpg`} target="_blank" rel="noopener noreferrer">
                           <img 
-                            src={`https://aeonsend.wiki.gg/images/${nemesis.name.replace(/ /g, '_')}_Front.jpg`} 
+                            src={`https://aeonsend.wiki.gg/images/${encodeURIComponent(nemesis.name.replace(/ /g, '_'))}_Front.jpg`} 
                             alt={`${nemesis.name} Front`}
                             loading="lazy"
                             style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
                           />
                         </a>
-                        <a href={`https://aeonsend.wiki.gg/images/${nemesis.name.replace(/ /g, '_')}_Back.jpg`} target="_blank" rel="noopener noreferrer">
+                        <a href={`https://aeonsend.wiki.gg/images/${encodeURIComponent(nemesis.name.replace(/ /g, '_'))}_Back.jpg`} target="_blank" rel="noopener noreferrer">
                           <img 
-                            src={`https://aeonsend.wiki.gg/images/${nemesis.name.replace(/ /g, '_')}_Back.jpg`} 
+                            src={`https://aeonsend.wiki.gg/images/${encodeURIComponent(nemesis.name.replace(/ /g, '_'))}_Back.jpg`} 
                             alt={`${nemesis.name} Back`}
                             loading="lazy"
                             style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 

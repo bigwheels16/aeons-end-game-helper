@@ -3,42 +3,44 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import CardSearchScreen from './CardSearchScreen';
 import { useGameStore } from '../store';
 
-// Mock the cards data to keep the test predictable and fast
-vi.mock('../data/allCards', () => ({
-  allCards: [
-    {
-      id: 'Jade',
-      name: 'Jade',
-      type: 'Gem',
-      expansion: 'Base',
-      cost: 2,
-      effect: 'Gain 2 aether.'
-    },
-    {
-      id: 'Ruby',
-      name: 'Ruby',
-      type: 'Gem',
-      expansion: 'Base',
-      cost: 4,
-      effect: 'Gain 3 aether.'
-    },
-    {
-      id: 'Spark',
-      name: 'Spark',
-      type: 'Spell',
-      expansion: 'Promo',
-      cost: 1,
-      effect: 'Deal 1 damage.'
-    },
-    {
-      id: 'Staff',
-      name: 'Staff',
-      type: 'Relic',
-      expansion: 'ExpansionX',
-      cost: 5,
-      effect: 'Gain 1 charge.'
-    }
-  ]
+// Mock the scraped data to keep the test predictable and fast
+vi.mock('../../data/scraped/aeons_end_all.json', () => ({
+  default: {
+    supply: [
+      {
+        id: 'Jade',
+        name: 'Jade',
+        type: 'Gem',
+        expansions: ['Base'],
+        cost: '2',
+        effect: 'Gain 2 aether.'
+      },
+      {
+        id: 'Ruby',
+        name: 'Ruby',
+        type: 'Gem',
+        expansions: ['Base'],
+        cost: '4',
+        effect: 'Gain 3 aether.'
+      },
+      {
+        id: 'Spark',
+        name: 'Spark',
+        type: 'Spell',
+        expansions: ['Promo'],
+        cost: '1',
+        effect: 'Deal 1 damage.'
+      },
+      {
+        id: 'Staff',
+        name: 'Staff',
+        type: 'Relic',
+        expansions: ['ExpansionX'],
+        cost: '5',
+        effect: 'Gain 1 charge.'
+      }
+    ]
+  }
 }));
 
 describe('CardSearchScreen', () => {
