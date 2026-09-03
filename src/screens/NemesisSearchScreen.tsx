@@ -7,20 +7,7 @@ import { useDebounce } from '../hooks/useDebounce';
 import { useToggleSet } from '../hooks/useToggleSet';
 import { stripHtml } from '../utils/text';
 import { getUniqueExpansions } from '../utils/cards';
-
-interface ScrapedNemesis {
-  name: string;
-  type: string;
-  health?: string;
-  difficulty?: string;
-  expedition_battle?: string;
-  unleash?: string;
-  increased_difficulty?: string;
-  rules?: string;
-  setup?: string;
-  expansions?: string[];
-  page_url?: string;
-}
+import { ScrapedNemesis } from '../types/scraped';
 
 const allNemeses: ScrapedNemesis[] = scrapedData.nemeses || [];
 

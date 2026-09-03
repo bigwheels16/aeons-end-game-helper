@@ -7,32 +7,7 @@ import { useDebounce } from '../hooks/useDebounce';
 import { useToggleSet } from '../hooks/useToggleSet';
 import { stripHtml } from '../utils/text';
 import { getUniqueExpansions } from '../utils/cards';
-
-interface ScrapedUniqueStarter {
-  name: string;
-  type: string;
-  cost?: string | number;
-  effect?: string;
-  expansions?: string[];
-  mage?: string;
-  page_url?: string;
-}
-
-interface ScrapedMage {
-  name: string;
-  type: string;
-  title?: string;
-  expansions?: string[];
-  charges?: string | number;
-  ability_name?: string;
-  ability_activation?: string;
-  ability_effect?: string;
-  unique_cards?: string[];
-  starting_hand?: string;
-  starting_deck?: string;
-  breaches?: string[][];
-  page_url?: string;
-}
+import { ScrapedMage, ScrapedUniqueStarter } from '../types/scraped';
 
 const allMages: ScrapedMage[] = scrapedData.mages || [];
 const allUniqueStarters: ScrapedUniqueStarter[] = scrapedData.unique_starters || [];

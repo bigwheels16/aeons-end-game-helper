@@ -7,16 +7,7 @@ import { useDebounce } from '../hooks/useDebounce';
 import { useToggleSet } from '../hooks/useToggleSet';
 import { stripHtml } from '../utils/text';
 import { getUniqueExpansions } from '../utils/cards';
-
-interface ScrapedSupplyCard {
-  id?: string;
-  name: string;
-  type: string;
-  cost?: string | number;
-  effect?: string;
-  expansions?: string[];
-  page_url?: string;
-}
+import { ScrapedSupplyCard } from '../types/scraped';
 
 const allCards: ScrapedSupplyCard[] = scrapedData.supply || [];
 
