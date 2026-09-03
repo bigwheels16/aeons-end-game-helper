@@ -224,7 +224,7 @@
       "name": "Mica Shard",
       "type": "Gem",
       "cost": "4",
-      "effect": "When you gain this, you may <b>Conjure</b> to one of your closed or opened breaches.<hr />Gain 2 <span class=\"aether\">&AElig;</span>.",
+      "effect": "When you gain this, you may <b>Conjure</b> to one of your closed or opened breaches.<hr/>Gain 2 <span class=\"aether\">&AElig;</span>.",
       "expansions": [
         "Past and Future"
       ],
@@ -411,7 +411,7 @@
       "name": "Electinium",
       "type": "Gem",
       "cost": "3",
-      "effect": "<div style=\"text-align: center;\">When you gain this, place an electrify token on any enemy.<hr />Gain 2 <span class=\"aether\">&AElig;</span>.</div>",
+      "effect": "<div style=\"text-align: center;\">When you gain this, place an electrify token on any enemy.<hr/>Gain 2 <span class=\"aether\">&AElig;</span>.</div>",
       "expansions": [
         "The Caverns"
       ],
@@ -741,7 +741,7 @@
       "name": "Carbonize",
       "type": "Spell",
       "cost": "4",
-      "effect": "<div style=\"text-align:center;\"><b>Cast:</b> Deal 3 damage.<br/>Reveal the top card of the turn order deck. You may place that card on the bottom of the turn order deck.</div>",
+      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 3 damage.<br/>Reveal the top card of the turn order deck. You may place that card on the bottom of the turn order deck.</div>",
       "expansions": [
         "War Eternal"
       ],
@@ -796,7 +796,7 @@
       "name": "Thoughtform Familiar",
       "type": "Spell",
       "cost": "3",
-      "effect": "<div style=\"text-align:center;\"><b>Cast:</b> Deal 2 damage.<br/>Deal 1 additional damage for each of your other prepped spells.</div>",
+      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 2 damage.<br/>Deal 1 additional damage for each of your other prepped spells.</div>",
       "expansions": [
         "War Eternal"
       ],
@@ -1489,7 +1489,7 @@
       "name": "Hungry Avite",
       "type": "Gem",
       "cost": "6",
-      "effect": "If you have 2 or more charges, you may gain or develop this for 1 less <span class=\"aether\">&AElig;</span>.<hr />When you develop this, focus a breach.<hr />Gain 3 <span class=\"aether\">&AElig;</span>.",
+      "effect": "If you have 2 or more charges, you may gain or develop this for 1 less <span class=\"aether\">&AElig;</span>.<hr/>When you develop this, focus a breach.<hr/>Gain 3 <span class=\"aether\">&AElig;</span>.",
       "expansions": [
         "The Descent"
       ],
@@ -1654,7 +1654,7 @@
       "name": "Kindle",
       "type": "Spell",
       "cost": "4",
-      "effect": "<div style=\"text-align:center;\">While prepped, during your main phase you may also prep one Spark to the breach this spell is prepped to. <i>(You cannot use this effect while there is a Spark prepped to this breach.)</i><br/><b>Cast:</b> Deal 3 damage.</div>",
+      "effect": "<div style=\"text-align: center;\">While prepped, during your main phase you may also prep one Spark to the breach this spell is prepped to. <i>(You cannot use this effect while there is a Spark prepped to this breach.)</i><br/><b>Cast:</b> Deal 3 damage.</div>",
       "expansions": [
         "War Eternal"
       ],
@@ -2303,7 +2303,7 @@
       "name": "Flame Geyser",
       "type": "Spell",
       "cost": "5",
-      "effect": "<div style=\"text-align: center;\">When you develop this, place an immolate token on any enemy.<hr /><b>Cast:</b> Place a venom token on an enemy and deal 2 damage to it.</div>",
+      "effect": "<div style=\"text-align: center;\">When you develop this, place an immolate token on any enemy.<hr/><b>Cast:</b> Place a venom token on an enemy and deal 2 damage to it.</div>",
       "expansions": [
         "The Descent"
       ],
@@ -2347,7 +2347,7 @@
       "name": "Celestial Spire",
       "type": "Spell",
       "cost": "5",
-      "effect": "<div style=\"text-align:center;\"><b>Cast:</b> Deal 3 damage.<br/>If this card's supply pile is empty, any ally draws a card.</div>",
+      "effect": "<div style=\"text-align: center;\"><b>Cast:</b> Deal 3 damage.<br/>If this card's supply pile is empty, any ally draws a card.</div>",
       "expansions": [
         "War Eternal"
       ],
@@ -2611,7 +2611,7 @@
       "name": "Crescent Greave",
       "type": "Relic",
       "cost": "8",
-      "effect": "When you Develop this, draw an additional card at the end of this turn.<hr />Gain 2 charges.<br/>Draw an additional card at the end of this turn.",
+      "effect": "When you Develop this, draw an additional card at the end of this turn.<hr/>Gain 2 charges.<br/>Draw an additional card at the end of this turn.",
       "expansions": [
         "Evolution"
       ],
@@ -2842,7 +2842,7 @@
       "name": "Mage's Totem",
       "type": "Relic",
       "cost": "2",
-      "effect": "<div style=\"text-align:center;\">Destroy a gem or relic you played this turn.<br/><b>OR</b><br/>Destroy this. Gravehold gains 1 life.</div>",
+      "effect": "<div style=\"text-align: center;\">Destroy a gem or relic you played this turn.<br/><b>OR</b><br/>Destroy this. Gravehold gains 1 life.</div>",
       "expansions": [
         "War Eternal"
       ],
@@ -2974,7 +2974,7 @@
       "name": "Defensive Dome",
       "type": "Relic",
       "cost": "7",
-      "effect": "When an attack is drawn from the nemesis deck, you may reveal and destroy this to discard that attack without resolving it.<hr />Any player gains 2 life.",
+      "effect": "When an attack is drawn from the nemesis deck, you may reveal and destroy this to discard that attack without resolving it.<hr/>Any player gains 2 life.",
       "expansions": [
         "The Descent"
       ],
@@ -2985,7 +2985,7 @@
       "name": "Fall Lantern",
       "type": "Relic",
       "cost": "5",
-      "effect": "When you Develop this, deal 2 damage.<hr /><b>Attach</b> this to any player's breach. When a spell is cast from this breach, any ally may prep a spell to one of their closed or opened breaches.",
+      "effect": "When you Develop this, deal 2 damage.<hr/><b>Attach</b> this to any player's breach. When a spell is cast from this breach, any ally may prep a spell to one of their closed or opened breaches.",
       "expansions": [
         "Evolution"
       ],
@@ -3062,7 +3062,7 @@
       "name": "Splintered Garnet",
       "type": "Gem",
       "cost": "5",
-      "effect": "When you Develop this, destroy a gem you played this turn.<hr />Gain 3 <span class=\"aether\">&AElig;</span>.",
+      "effect": "When you Develop this, destroy a gem you played this turn.<hr/>Gain 3 <span class=\"aether\">&AElig;</span>.",
       "expansions": [
         "Past and Future"
       ],
@@ -3436,7 +3436,7 @@
       "name": "Taluna Branch",
       "type": "Relic",
       "cost": "6",
-      "effect": "When you Develop this, any ally gains an <span class=\"aether\">&AElig;</span> token.<hr />Focus any player's breach.<br/>Any player may destroy a card in hand or in their discard pile.",
+      "effect": "When you Develop this, any ally gains an <span class=\"aether\">&AElig;</span> token.<hr/>Focus any player's breach.<br/>Any player may destroy a card in hand or in their discard pile.",
       "expansions": [
         "Past and Future"
       ],
@@ -3744,7 +3744,7 @@
       "name": "Aurora",
       "type": "Spell",
       "cost": "5",
-      "effect": "<div style=\"text-align:center;\">While prepped, once per turn during your main phase you may gain 1 charge.<br/><b>Cast:</b> Deal 3 damage.</div>",
+      "effect": "<div style=\"text-align: center;\">While prepped, once per turn during your main phase you may gain 1 charge.<br/><b>Cast:</b> Deal 3 damage.</div>",
       "expansions": [
         "War Eternal"
       ],
@@ -4008,7 +4008,7 @@
       "name": "Omen Loop",
       "type": "Relic",
       "cost": "3",
-      "effect": "When you Develop this, gain 2 pulse tokens.<hr />Destroy this. Reveal the turn order deck. Return it in any order. You may lose 1 pulse token. If you do, any ally draws a card.",
+      "effect": "When you Develop this, gain 2 pulse tokens.<hr/>Destroy this. Reveal the turn order deck. Return it in any order. You may lose 1 pulse token. If you do, any ally draws a card.",
       "expansions": [
         "Beyond the Breach"
       ],
@@ -4019,7 +4019,7 @@
       "name": "Chronoid",
       "type": "Relic",
       "cost": "5",
-      "effect": "Any ally gains 3 s.<hr /> Look at the top card of the turn order deck. You may place that card on the bottom or the top of the turn order deck.",
+      "effect": "Any ally gains 3 s.<hr/> Look at the top card of the turn order deck. You may place that card on the bottom or the top of the turn order deck.",
       "expansions": [
         "Beyond the Breach"
       ],
@@ -4041,7 +4041,7 @@
       "name": "Tearstone Amulet",
       "type": "Relic",
       "cost": "4",
-      "effect": "When you Develop this, gain 1 charge.<hr /><b>Attach</b> this to any player's breach.<br/>When a player casts a spell from this breach, any ally may <b>Conjure</b>.",
+      "effect": "When you Develop this, gain 1 charge.<hr/><b>Attach</b> this to any player's breach.<br/>When a player casts a spell from this breach, any ally may <b>Conjure</b>.",
       "expansions": [
         "Beyond the Breach"
       ],
@@ -4052,7 +4052,7 @@
       "name": "Thought Totem",
       "type": "Relic",
       "cost": "7",
-      "effect": "When you Develop this, any ally gains 2 s.<hr />Gain 2 charges. Reveal the top three cards of your deck. Discard any number of them. Return the rest to the top of your deck in any order.",
+      "effect": "When you Develop this, any ally gains 2 s.<hr/>Gain 2 charges. Reveal the top three cards of your deck. Discard any number of them. Return the rest to the top of your deck in any order.",
       "expansions": [
         "Beyond the Breach"
       ],
@@ -4569,7 +4569,7 @@
       "name": "Coruscating Mirror",
       "type": "Relic",
       "cost": "3",
-      "effect": "When a minion is drawn from the nemesis deck, you may reveal this from hand to place an electrify token on that minion.<hr />Any ally draws a card and gains an .",
+      "effect": "When a minion is drawn from the nemesis deck, you may reveal this from hand to place an electrify token on that minion.<hr/>Any ally draws a card and gains an .",
       "expansions": [
         "The Descent"
       ],
@@ -4624,7 +4624,7 @@
       "name": "Nova Forge",
       "type": "Spell",
       "cost": "6",
-      "effect": "<div style=\"text-align:center;\">While prepped, once per turn during your main phase you may gain 2 <span class=\"aether\">&AElig;</span> that can only be used to gain a spell.<br/><b>Cast:</b> Deal 4 damage.</div>",
+      "effect": "<div style=\"text-align: center;\">While prepped, once per turn during your main phase you may gain 2 <span class=\"aether\">&AElig;</span> that can only be used to gain a spell.<br/><b>Cast:</b> Deal 4 damage.</div>",
       "expansions": [
         "War Eternal"
       ],
@@ -5474,7 +5474,7 @@
       "name": "Rose",
       "type": "Spell",
       "cost": "0",
-      "effect": "<b>Cast:</b> Deal 1 damage.<hr />When this is Harvested, focus one of your breaches.",
+      "effect": "<b>Cast:</b> Deal 1 damage.<hr/>When this is Harvested, focus one of your breaches.",
       "expansions": [
         "Legacy of Gravehold"
       ],
@@ -5643,7 +5643,7 @@
       "name": "Iron Infusion",
       "type": "Relic",
       "cost": "7",
-      "effect": "If this is destroyed, deal 5 damage.<hr /><b>Attach</b> this to any player's breach. When a spell is cast from this breach, Janti gains 1 charge.<br/><i>Use this card only when playing with Janti.</i>",
+      "effect": "If this is destroyed, deal 5 damage.<hr/><b>Attach</b> this to any player's breach. When a spell is cast from this breach, Janti gains 1 charge.<br/><i>Use this card only when playing with Janti.</i>",
       "expansions": [
         "The Descent"
       ],
@@ -6960,7 +6960,7 @@
       "name": "Infuser",
       "type": "Gem",
       "cost": "0",
-      "effect": "During any player's turn, when that player focuses or opens a breach, you may discard this. If you do, gain 2 s.<hr />Gain 1 <span class=\"aether\">&AElig;</span>.",
+      "effect": "During any player's turn, when that player focuses or opens a breach, you may discard this. If you do, gain 2 s.<hr/>Gain 1 <span class=\"aether\">&AElig;</span>.",
       "expansions": [
         "The Descent"
       ],
@@ -11613,7 +11613,7 @@
     {
       "name": "Experiment 153",
       "type": "Nemesis",
-      "health": "<nowiki>*</nowiki>",
+      "health": "*",
       "difficulty": "3",
       "expedition_battle": "1",
       "unleash": "Move any maw token two spaces forward toward the end of its track.",
@@ -11958,7 +11958,7 @@
     {
       "name": "Mother of Rust",
       "type": "Nemesis",
-      "health": "<nowiki>*</nowiki>",
+      "health": "*",
       "difficulty": "4",
       "expedition_battle": "2",
       "unleash": "Mother of Rust gains a nemesis token.<br/>Draw a card from the rustborn deck and place it into play.",
@@ -12108,7 +12108,7 @@
     {
       "name": "The Coven",
       "type": "Nemesis",
-      "health": "<nowiki>*</nowiki>",
+      "health": "*",
       "difficulty": "5",
       "expedition_battle": "2",
       "unleash": "Remove 1 power token from either Diatribe of Despair (disambiguation)|Diatribe of Despair or Melody of Madness (disambiguation)|Melody of Madness.",
@@ -12837,7 +12837,7 @@
         "Aeon's End (Core Box)"
       ],
       "page_url": "https://aeonsend.wiki.gg/wiki/Maggot_Engine",
-      "life": "<nowiki>*</nowiki>"
+      "life": "*"
     },
     {
       "name": "Channeled Focus",
@@ -15367,7 +15367,7 @@
         "Legacy"
       ],
       "page_url": "https://aeonsend.wiki.gg/wiki/Breeding_Chamber",
-      "life": "<nowiki>*</nowiki>"
+      "life": "*"
     },
     {
       "name": "Shape Death",
@@ -16363,7 +16363,7 @@
         "Aeon's End (Core Box)"
       ],
       "page_url": "https://aeonsend.wiki.gg/wiki/Mindguzzler",
-      "life": "<nowiki>*</nowiki>"
+      "life": "*"
     },
     {
       "name": "Aether Extract",
@@ -28139,7 +28139,7 @@
         "Beyond the Breach"
       ],
       "page_url": "https://aeonsend.wiki.gg/wiki/Pupil_of_Oblivion",
-      "life": "<nowiki>*</nowiki>"
+      "life": "*"
     },
     {
       "name": "Lost Watcher",

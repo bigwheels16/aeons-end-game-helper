@@ -61,8 +61,72 @@ KNOWN_EXPANSIONS = [
 ]
 
 
+ALLOWED_HTML_TAGS = {"b", "i", "em", "strong", "br", "span", "div", "hr", "small"}
+
+
+def sanitize_html_markup(html: str) -> str:
+    """
+    Sanitizes HTML markup from wiki content:
+    - Strips executable/active tags and their contents (script, style, iframe, object, embed, etc.)
+    - Removes MediaWiki <nowiki> tags
+    - Enforces strict whitelist of formatting tags (b, i, em, strong, br, span, div, hr, small)
+    - Strips all JavaScript event handlers (on*) and unsafe URI schemes (javascript:, data:)
+    - Preserves only safe attributes (class="aether", safe text-align styles)
+    """
+    if not html:
+        return ""
+
+    # Strip dangerous container elements and their contents
+    html = re.sub(
+        r"<(script|style|iframe|object|embed|applet|form)[^>]*>.*?</\1>",
+        "",
+        html,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+    # Strip dangerous self-closing/void tags
+    html = re.sub(
+        r"<(script|style|iframe|object|embed|applet|form|input|button|svg|img|link|meta|base)[^>]*>",
+        "",
+        html,
+        flags=re.IGNORECASE,
+    )
+    # Strip <nowiki> tags
+    html = re.sub(r"</?nowiki\s*>", "", html, flags=re.IGNORECASE)
+
+    # Filter remaining HTML tags against allowed whitelist
+    def clean_tag(match: re.Match) -> str:
+        is_closing = bool(match.group(1))
+        tag_name = match.group(2).lower()
+        raw_attrs = match.group(3) or ""
+        is_self_closing = bool(match.group(4))
+
+        if tag_name not in ALLOWED_HTML_TAGS:
+            return ""
+
+        if is_closing:
+            return f"</{tag_name}>"
+
+        if tag_name in ("br", "hr") or is_self_closing:
+            return f"<{tag_name}/>"
+
+        # Block any inline event handlers (on*) or javascript: URIs
+        if re.search(r"\bon\w+\s*=", raw_attrs, re.IGNORECASE) or "javascript:" in raw_attrs.lower():
+            return f"<{tag_name}>"
+
+        safe_attrs = []
+        if re.search(r'\bclass=[\'"]aether[\'"]', raw_attrs, re.IGNORECASE):
+            safe_attrs.append('class="aether"')
+        if re.search(r'\bstyle=[\'"][^"\']*text-align:\s*(center|left|right)[^"\']*[\'"]', raw_attrs, re.IGNORECASE):
+            safe_attrs.append('style="text-align: center;"')
+
+        attr_str = (" " + " ".join(safe_attrs)) if safe_attrs else ""
+        return f"<{tag_name}{attr_str}>"
+
+    return re.sub(r"<(/)?([a-zA-Z0-9]+)(?:\s+([^>]*?))?\s*(/)?>", clean_tag, html)
+
+
 def clean_wikitext(text: Optional[str]) -> str:
-    """Cleans MediaWiki markup into readable text/HTML."""
+    """Cleans MediaWiki markup into safe readable text/HTML."""
     if not text:
         return ""
     # Normalize any existing <br> or <br/> tags to newlines for consistent splitting
@@ -83,14 +147,20 @@ def clean_wikitext(text: Optional[str]) -> str:
     text = re.sub(r"''(.*?)''", r"<i>\1</i>", text)
     # Clean generic remaining templates that aren't needed
     text = re.sub(r"\{\{[^}]+\}\}", "", text)
+    # Sanitize any raw HTML and strip disallowed tags/handlers
+    text = sanitize_html_markup(text)
     # Normalize lines and join with <br/>
     lines = [l.strip() for l in text.splitlines()]
     return "<br/>".join(l for l in lines if l).strip()
 
 
 def make_page_url(title: str) -> str:
-    """Returns the canonical wiki URL for a given page title."""
-    return f"{BASE_PAGE_URL}{urllib.parse.quote(title.replace(' ', '_'))}"
+    """Returns the canonical, validated HTTPS wiki URL for a given page title."""
+    encoded_title = urllib.parse.quote(title.replace(" ", "_"))
+    url = f"{BASE_PAGE_URL}{encoded_title}"
+    if not url.startswith("https://"):
+        raise ValueError(f"Insecure URL scheme: {url}")
+    return url
 
 
 def get_clean(params: Dict[str, str], key: str, default: str = "") -> str:
@@ -190,25 +260,34 @@ def load_page_cache(cache_dir: str) -> Dict[str, Dict[str, Any]]:
 
 
 def save_page_file(cache_dir: str, page_data: Dict[str, Any]) -> str:
-    """Atomically saves an individual page into a dedicated JSON file named after its page ID."""
+    """Atomically and safely saves an individual page into a dedicated JSON file in the cache directory."""
     os.makedirs(cache_dir, exist_ok=True)
-    page_id = page_data.get("pageid")
-    if page_id is None:
-        page_id = re.sub(r"[^\w\-]+", "_", page_data.get("title", "unknown")).lower()
-    page_path = os.path.join(cache_dir, f"page_{page_id}.json")
-    tmp_path = f"{page_path}.tmp"
+    raw_page_id = str(page_data.get("pageid", ""))
+    if not raw_page_id.isdigit():
+        raw_page_id = re.sub(r"[^\w\-]+", "_", str(page_data.get("title", "unknown"))).lower()
+
+    safe_filename = f"page_{os.path.basename(raw_page_id)}.json"
+    cache_root = os.path.realpath(cache_dir)
+    target_path = os.path.realpath(os.path.join(cache_root, safe_filename))
+
+    if not target_path.startswith(cache_root):
+        raise ValueError(f"Path traversal detected in cache filename: {safe_filename}")
+
+    tmp_path = f"{target_path}.tmp"
     with open(tmp_path, "w", encoding="utf-8") as f:
         json.dump(page_data, f, ensure_ascii=False)
-    os.replace(tmp_path, page_path)
-    return page_path
+    os.replace(tmp_path, target_path)
+    return target_path
 
 
 def api_get(params: Dict[str, Any], user_agent: str) -> Dict[str, Any]:
-    """Performs an HTTP GET request to the MediaWiki API."""
+    """Performs an HTTP GET request to the MediaWiki API with timeout and HTTPS enforcement."""
     params["format"] = "json"
     url = f"{API_URL}?{urllib.parse.urlencode(params)}"
+    if not url.startswith("https://"):
+        raise ValueError(f"Insecure API endpoint: {url}")
     req = urllib.request.Request(url, headers={"User-Agent": user_agent})
-    with urllib.request.urlopen(req) as resp:
+    with urllib.request.urlopen(req, timeout=30) as resp:
         return json.loads(resp.read().decode("utf-8"))
 
 
