@@ -218,7 +218,7 @@ export default function SupplySlot({
       <CardDisplayItem 
         card={assignedCard}
         headerExtra={menu}
-        containerStyle={{ border: '1px solid #4CAF50', position: 'relative' }}
+        containerStyle={{ border: '1px solid #444', position: 'relative' }}
       />
     );
   }
