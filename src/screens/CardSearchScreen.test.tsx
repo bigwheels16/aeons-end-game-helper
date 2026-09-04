@@ -92,8 +92,13 @@ describe('CardSearchScreen', () => {
   it('filters by expansion', async () => {
     render(<CardSearchScreen />);
     
-    const expansionButton = screen.getByRole('button', { name: 'Promo' });
-    fireEvent.click(expansionButton);
+    // Open the expansions dropdown
+    const dropdownTrigger = screen.getByRole('button', { name: /Expansions/i });
+    fireEvent.click(dropdownTrigger);
+
+    // Select Promo expansion checkbox
+    const promoOption = screen.getByLabelText('Promo');
+    fireEvent.click(promoOption);
 
     await waitFor(() => {
       expect(screen.queryByText('Jade')).toBeNull();

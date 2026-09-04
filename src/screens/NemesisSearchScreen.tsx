@@ -87,6 +87,8 @@ export default function NemesisSearchScreen() {
           allExpansions={allExpansions}
           selectedExpansions={selectedNemesisExpansions}
           onToggleExpansion={toggleExpansion}
+          onSelectAll={() => setNemesisSearchFilters({ selectedNemesisExpansions: allExpansions })}
+          onClearAll={() => setNemesisSearchFilters({ selectedNemesisExpansions: [] })}
         />
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>

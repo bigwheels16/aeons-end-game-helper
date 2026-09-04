@@ -121,6 +121,8 @@ export default function CardSearchScreen() {
           allExpansions={allExpansions}
           selectedExpansions={selectedExpansions}
           onToggleExpansion={toggleExpansion}
+          onSelectAll={() => setSearchFilters({ selectedExpansions: allExpansions })}
+          onClearAll={() => setSearchFilters({ selectedExpansions: [] })}
         />
 
         <div style={{ marginBottom: '1rem' }}>

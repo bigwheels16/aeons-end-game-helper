@@ -137,6 +137,8 @@ export default function MageSearchScreen() {
           allExpansions={allExpansions}
           selectedExpansions={selectedMageExpansions}
           onToggleExpansion={toggleExpansion}
+          onSelectAll={() => setMageSearchFilters({ selectedMageExpansions: allExpansions })}
+          onClearAll={() => setMageSearchFilters({ selectedMageExpansions: [] })}
         />
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
