@@ -48,13 +48,23 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectTool }) => {
     cursor: 'pointer',
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
     width: '100%',
-    maxWidth: '280px',
   };
 
   return (
-    <div style={{ padding: '2rem', textAlign: 'center', fontFamily: 'sans-serif' }}>
+    <div
+      style={{
+        padding: '2rem 1rem',
+        textAlign: 'center',
+        fontFamily: 'sans-serif',
+        maxWidth: '480px',
+        width: '100%',
+        margin: '0 auto',
+        boxSizing: 'border-box',
+        overflowY: 'auto',
+      }}
+    >
       <h1>Aeon's End Tools</h1>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'stretch' }}>
         <button
           onClick={() => onSelectTool('turn-order')}
           style={buttonStyle}

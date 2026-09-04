@@ -21,7 +21,7 @@ const ConfigScreen: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '400px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
+    <div style={{ padding: '20px', maxWidth: '480px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
       <h1 style={{ textAlign: 'center' }}>Aeon's End Setup</h1>
       
       <div style={{ marginBottom: '30px' }}>
