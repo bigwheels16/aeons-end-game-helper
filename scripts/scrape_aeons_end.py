@@ -61,7 +61,7 @@ KNOWN_EXPANSIONS = [
 ]
 
 
-ALLOWED_HTML_TAGS = {"b", "i", "em", "strong", "br", "span", "hr", "small"}
+ALLOWED_HTML_TAGS = {"b", "i", "em", "strong", "br", "span", "hr", "small", "img"}
 
 
 def sanitize_html_markup(html: str) -> str:
@@ -69,9 +69,9 @@ def sanitize_html_markup(html: str) -> str:
     Sanitizes HTML markup from wiki content:
     - Strips executable/active tags and their contents (script, style, iframe, object, embed, etc.)
     - Removes MediaWiki <nowiki> tags
-    - Enforces strict whitelist of formatting tags (b, i, em, strong, br, span, hr, small)
+    - Enforces strict whitelist of formatting tags (b, i, em, strong, br, span, hr, small, img)
     - Strips all JavaScript event handlers (on*) and unsafe URI schemes (javascript:, data:)
-    - Preserves only safe attributes (class="aether")
+    - Preserves only safe attributes (class="aether", trusted wiki images)
     """
     if not html:
         return ""
@@ -83,9 +83,9 @@ def sanitize_html_markup(html: str) -> str:
         html,
         flags=re.DOTALL | re.IGNORECASE,
     )
-    # Strip dangerous self-closing/void tags
+    # Strip dangerous self-closing/void tags (note: img is safely parsed in clean_tag)
     html = re.sub(
-        r"<(script|style|iframe|object|embed|applet|form|input|button|svg|img|link|meta|base)[^>]*>",
+        r"<(script|style|iframe|object|embed|applet|form|input|button|svg|link|meta|base)[^>]*>",
         "",
         html,
         flags=re.IGNORECASE,
@@ -106,8 +106,27 @@ def sanitize_html_markup(html: str) -> str:
         if is_closing:
             return f"</{tag_name}>"
 
-        if tag_name in ("br", "hr") or is_self_closing:
+        if tag_name in ("br", "hr") or (is_self_closing and tag_name != "img"):
             return f"<{tag_name}/>"
+
+        if tag_name == "img":
+            src_match = re.search(r'\bsrc=[\'"]([^\'"]+)[\'"]', raw_attrs, re.IGNORECASE)
+            if not src_match:
+                return ""
+            src = src_match.group(1)
+            # Strictly validate src points to trusted HTTPS wiki images
+            if not src.startswith("https://aeonsend.wiki.gg/images/"):
+                return ""
+            img_attrs = [f'src="{src}"']
+            alt_match = re.search(r'\balt=[\'"]([^\'"]*)[\'"]', raw_attrs, re.IGNORECASE)
+            if alt_match:
+                img_attrs.append(f'alt="{alt_match.group(1)}"')
+            width_match = re.search(r'\bwidth=[\'"](\d+)[\'"]', raw_attrs, re.IGNORECASE)
+            if width_match:
+                img_attrs.append(f'width="{width_match.group(1)}"')
+            img_attrs.append('style="display: block; margin: 0.5rem auto; max-width: 100%; height: auto;"')
+            img_attrs.append('loading="lazy"')
+            return f'<img {" ".join(img_attrs)}/>'
 
         # Block any inline event handlers (on*) or javascript: URIs
         if re.search(r"\bon\w+\s*=", raw_attrs, re.IGNORECASE) or "javascript:" in raw_attrs.lower():
@@ -140,10 +159,32 @@ def clean_wikitext(text: Optional[str]) -> str:
     text = re.sub(r"\{\{Recall\}\}", "<b>Recall:</b>", text, flags=re.IGNORECASE)
     # Replace Card reference templates {{Card|Target|Label}} -> Label, {{Card|Target}} -> Target
     text = re.sub(r"\{\{Card\|(?:[^|}]*\|)?([^}]+)\}\}", r"\1", text, flags=re.IGNORECASE)
+
+    # Process files / images markup e.g. [[File:Fury_token.png|50px|center]] BEFORE general wiki link replacement
+    def replace_file_markup(match: re.Match) -> str:
+        body = match.group(1)
+        parts = [p.strip() for p in body.split("|")]
+        filename = parts[0]
+        if not re.search(r"\.(png|jpg|jpeg|webp|svg)$", filename, re.IGNORECASE):
+            return ""
+
+        width = "50"
+        for p in parts[1:]:
+            w_match = re.match(r"^(\d+)px$", p, re.IGNORECASE)
+            if w_match:
+                width = w_match.group(1)
+                break
+
+        alt = re.sub(r"\.[^.]+$", "", filename).replace("_", " ")
+        encoded_file = urllib.parse.quote(filename.replace(" ", "_"))
+        return f'<img src="https://aeonsend.wiki.gg/images/{encoded_file}" alt="{alt}" width="{width}"/>'
+
+    text = re.sub(r"\[\[(?:File|Image):([^\]]+)\]\]", replace_file_markup, text, flags=re.IGNORECASE)
+    # Strip any orphaned layout artifacts (e.g. 50px|center)
+    text = re.sub(r"\b\d+px\|(?:center|left|right)\b", "", text, flags=re.IGNORECASE)
+
     # Replace wiki links [[Target|Label]] -> Label, [[Target]] -> Target
     text = re.sub(r"\[\[(?:[^|\]]*\|)?([^\]]+)\]\]", r"\1", text)
-    # Remove files / images markup e.g. [[File:...]]
-    text = re.sub(r"\[\[File:[^\]]+\]\]", "", text, flags=re.IGNORECASE)
     # Replace quotes and bold/italic markup
     text = re.sub(r"'''''(.*?)'''''", r"<b><i>\1</i></b>", text)
     text = re.sub(r"'''(.*?)'''", r"<b>\1</b>", text)
