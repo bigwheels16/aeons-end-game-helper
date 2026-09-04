@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { useGameStore } from '../store';
 import { CARD_BACK_URL, Card } from '../deckEngine';
@@ -88,17 +88,34 @@ interface CardPileProps {
 const CardPile = ({ cards, limit, emptyText, customClass, onCardClick, selectedIndices, dimUnselected, interactive, isDragMode, containerId }: CardPileProps) => {
   const displayCards = limit ? cards.slice(-limit) : cards;
   const offset = limit ? Math.max(0, cards.length - limit) : 0;
-  
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
   const { setNodeRef } = useDroppable({
     id: containerId,
     disabled: !isDragMode,
   });
 
+  // Auto-scroll discard pile to newest card (right edge) when a card is added
+  useEffect(() => {
+    if (isDragMode) return;
+    const el = containerRef.current;
+    if (el && containerId === 'discard-pile-container' && cards.length > 0) {
+      if (typeof el.scrollTo === 'function') {
+        el.scrollTo({ left: el.scrollWidth, behavior: 'smooth' });
+      } else {
+        el.scrollLeft = el.scrollWidth;
+      }
+    }
+  }, [cards.length, containerId, isDragMode]);
+
   const cardIds = displayCards.map(c => c.id);
 
   return (
     <div 
-      ref={setNodeRef}
+      ref={(node) => {
+        containerRef.current = node;
+        setNodeRef(node);
+      }}
       className={`${styles.pileContainer} ${customClass || ''}`.trim()} 
       aria-live="polite"
     >
@@ -443,7 +460,6 @@ const GameplayScreen: React.FC = () => {
         <CardPile 
           containerId="discard-pile-container"
           cards={activeDiscardPile} 
-          limit={specialMode === 'NONE' ? 6 : undefined} 
           emptyText="Discard Pile" 
           customClass={specialMode === 'MOVE' ? styles.interactivePile : ''}
           interactive={specialMode === 'MOVE'}

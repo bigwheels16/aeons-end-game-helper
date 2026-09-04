@@ -25,7 +25,7 @@ describe('GameplayScreen Component', () => {
     expect(screen.getByText('START NEW ROUND')).toBeDefined();
   });
 
-  it('should render cards in discard pile and limit to 6', () => {
+  it('should render all cards in discard pile without limiting to 6', () => {
     const generateCards = (num: number): Card[] => {
       return Array.from({ length: num }).map((_, i) => ({
         id: 'Player 1-' + i,
@@ -43,7 +43,7 @@ describe('GameplayScreen Component', () => {
     render(<GameplayScreen />);
     
     const images = screen.getAllByRole('img');
-    expect(images.length).toBe(7); // 6 in discard, 1 in current turn
+    expect(images.length).toBe(9); // 8 in discard, 1 in current turn
   });
 
   it('should render draw pile preview cards', () => {
