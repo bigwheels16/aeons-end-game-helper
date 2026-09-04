@@ -51,7 +51,7 @@ describe('App Integration', () => {
     render(<App />);
 
     // Click Card Search button on HomeScreen
-    const cardSearchBtn = screen.getByText('Card Search');
+    const cardSearchBtn = screen.getByText('Supply Card Search');
     fireEvent.click(cardSearchBtn);
 
     // Verify Card Search screen is shown
@@ -62,6 +62,6 @@ describe('App Integration', () => {
     fireEvent.click(backBtn);
     
     // Verify we are back on HomeScreen
-    expect(screen.getByText('Card Search')).toBeDefined();
+    expect(screen.getByText('Supply Card Search')).toBeDefined();
   });
 });

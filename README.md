@@ -2,9 +2,10 @@
 
 A mobile-optimized, client-side web application suite designed for the cooperative deck-building board game **Aeon's End**. The suite provides several core tools:
 1. **Turn Order Helper:** Randomizes, tracks, and manipulates turn order decks with official rules, visibility settings, drag-and-drop mid-round edits, and wake lock support.
-2. **Card Search:** A fast, multi-expansion card browser and lookup tool covering Gems, Relics, and Spells.
-3. **Mage Search:** A dedicated database for browsing all playable Mages, their starting abilities, unique starters, and official player mats.
-4. **Nemesis Search:** A quick reference for discovering and reviewing Nemeses and their mats across all expansions.
+2. **Supply Randomizer:** Generates tailored, balanced market setups with custom slot constraints, global expansion filters, and guaranteed unique card selection via constraint backtracking.
+3. **Card Search:** A fast, multi-expansion card browser and lookup tool covering Gems, Relics, and Spells.
+4. **Mage Search:** A dedicated database for browsing all playable Mages, their starting abilities, unique starters, and official player mats.
+5. **Nemesis Search:** A quick reference for discovering and reviewing Nemeses and their mats across all expansions.
 
 See a live version here: https://aeons-end.jkbff.com/
 
@@ -36,28 +37,41 @@ Supports card abilities, player relics/spells, and Nemesis effects that manipula
 
 ---
 
-### 2. Card Search Tool
+### 2. Supply Randomizer
+The **Supply Randomizer** tool automates creating randomized, balanced market setups (Gems, Relics, and Spells) tailored to custom game requirements.
+- **Global Expansion Filtering:** Constrain the eligible card pool to only chosen expansions with quick "Select All" and "Clear All" toggles.
+- **Configurable Card Slots:** Add or remove market slots dynamically to configure standard 9-card setups or custom supply structures.
+  - *Card Type Selectors:* Visual toggle pills to constrain slots to `Gem`, `Relic`, `Spell`, or `Any`.
+  - *Cost Range Sliders:* Dual min and max cost sliders (0–10) to enforce specific card cost thresholds.
+  - *Search Text Filters:* Instant keyword filtering against card names and rules/effect text.
+  - *Live Match Previews:* Real-time matching card counter and horizontally scrollable preview chips that immediately indicate whether constraints can be satisfied.
+- **Intelligent Backtracking Randomization:** Employs a depth-first constraint satisfaction solver using the Most Constrained Variable (MRV) heuristic. It guarantees 100% unique card selection across all slots with zero duplicate cards, fast execution, loop/timeout protection, and graceful error messaging if constraints cannot be met.
+- **Visual Card Preview & Full-Size Modal Viewer:** Upon randomization, each slot reveals the assigned card name, type, cost, and sanitized effect text. Players can click "View Image" on any assigned slot to inspect the official high-resolution card artwork in a modal overlay.
+
+---
+
+### 3. Card Search Tool
 The integrated **Card Search** tool allows quick browsing, searching, and filtering of player market cards (Gems, Relics, Spells).
 - **Advanced Filters:** Filter by card name, effect text, cost ranges, specific card types, and desired expansions.
 - **Inline Images:** Expand any card to see its full-resolution artwork, and click any expanded image to open it in a new tab for native zooming.
 
 ---
 
-### 3. Mage Search Tool
+### 4. Mage Search Tool
 The integrated **Mage Search** tool allows quick browsing of playable Mages.
 - **Ability Search:** Look up Mages by name or specific ability keywords.
 - **Mage Mats:** Expand to view a Mage's official Front/Back mats and their unique starter cards.
 
 ---
 
-### 4. Nemesis Search Tool
+### 5. Nemesis Search Tool
 The integrated **Nemesis Search** tool allows filtering of Nemeses.
 - **Expansion Filtering:** Easily find Nemeses by the box or expansion they came in.
 - **Nemesis Mats:** Instantly expand and view the official Front and Back mats for any Nemesis to review setup or unleash conditions.
 
 ---
 
-### 5. Offline & Session Persistence
+### 6. Offline & Session Persistence
 Once the tool has been loaded in the browser, no network connection is needed for core mechanics. All logic and text data executes locally, while images are lazily loaded on demand to save bandwidth.
 
 ---

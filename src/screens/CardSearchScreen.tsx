@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import DOMPurify from 'dompurify';
 import scrapedData from '../../data/scraped/aeons_end_all.json';
 import { useGameStore } from '../store';
 import ExpansionFilter from '../components/ExpansionFilter';
@@ -8,6 +7,7 @@ import { useToggleSet } from '../hooks/useToggleSet';
 import { stripHtml } from '../utils/text';
 import { getUniqueExpansions } from '../utils/cards';
 import { ScrapedSupplyCard } from '../types/scraped';
+import CardDisplayItem from '../components/CardDisplayItem';
 
 const allCards: ScrapedSupplyCard[] = scrapedData.supply || [];
 
@@ -209,48 +209,12 @@ export default function CardSearchScreen() {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
             {filteredCards.map((card, idx) => (
-              <div key={`${card.id || card.name}-${idx}`} style={{ backgroundColor: '#222', padding: '1rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
-                      <h3 style={{ margin: 0 }}>
-                        <a 
-                          href={card.page_url || `https://aeonsend.wiki.gg/wiki/${card.name.replace(/ /g, '_')}`} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          style={{ color: '#4CAF50', textDecoration: 'none' }}
-                        >
-                          {card.name}
-                        </a>
-                      </h3>
-                      <span style={{ fontSize: '0.8rem', color: '#aaa', marginLeft: '0.5rem', flexShrink: 0 }}>{card.type}</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: '#aaa', marginBottom: '0.5rem' }}>
-                      <span>{card.expansions?.join(', ') || 'Unknown'}</span>
-                      <span>Cost: {card.cost}</span>
-                    </div>
-                    <div 
-                        style={{ fontSize: '0.9rem', color: '#ddd', marginBottom: '0.5rem', textAlign: 'center' }}
-                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(card.effect || '') }} 
-                      />
-                      <button 
-                        onClick={() => visibleImages.toggle(card.id || card.name)}
-                        style={{ background: 'none', border: 'none', color: '#2196F3', cursor: 'pointer', padding: 0, fontSize: '0.875rem' }}
-                      >
-                        {visibleImages.has(card.id || card.name) ? 'Hide Image' : 'Show Image'}
-                      </button>
-                      {visibleImages.has(card.id || card.name) && (
-                        <div style={{ marginTop: '0.5rem' }}>
-                          <a href={`https://aeonsend.wiki.gg/images/${card.name.replace(/ /g, '_')}.jpg`} target="_blank" rel="noopener noreferrer">
-                              <img 
-                                src={`https://aeonsend.wiki.gg/images/${card.name.replace(/ /g, '_')}.jpg`} 
-                                alt={card.name}
-                                loading="lazy"
-                                style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
-                              />
-                            </a>
-                        </div>
-                      )}
-                    
-              </div>
+              <CardDisplayItem 
+                key={`${card.id || card.name}-${idx}`} 
+                card={card} 
+                isImageVisible={visibleImages.has(card.id || card.name)}
+                onToggleImage={() => visibleImages.toggle(card.id || card.name)}
+              />
             ))}
           </div>
         )}

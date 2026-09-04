@@ -7,6 +7,7 @@ import CardSearchScreen from './screens/CardSearchScreen';
 import MageSearchScreen from './screens/MageSearchScreen';
 import NemesisSearchScreen from './screens/NemesisSearchScreen';
 import CustomDeckBuilder from './components/CustomDeckBuilder';
+import SupplyRandomizerScreen from './screens/SupplyRandomizerScreen';
 
 import { useEffect, useState } from 'react';
 
@@ -73,6 +74,8 @@ function App() {
     content = <CardSearchScreen />;
   } else if (activeTool === 'custom-deck-builder') {
     content = <CustomDeckBuilder />;
+  } else if (activeTool === 'randomizer') {
+    content = <SupplyRandomizerScreen />;
   } else if (activeTool === 'mage-search') {
     content = <MageSearchScreen />;
   } else if (activeTool === 'nemesis-search') {

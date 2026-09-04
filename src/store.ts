@@ -45,6 +45,30 @@ const GameStateSchema = z.object({
     nemesisQuery: z.string(),
     selectedNemesisExpansions: z.array(z.string()),
   }).optional(),
+  randomizerExpansions: z.array(z.string()).optional(),
+  randomizerSlots: z.array(z.object({
+    id: z.string(),
+    cardTypes: z.array(z.enum(['Gem', 'Relic', 'Spell'])).optional(),
+    cardType: z.any().optional(),
+    costRange: z.tuple([z.number(), z.number()]),
+    searchTerm: z.string(),
+  }).transform((slot) => {
+    let types: ('Gem' | 'Relic' | 'Spell')[] = ['Gem', 'Relic', 'Spell'];
+    if (Array.isArray(slot.cardTypes)) {
+      types = slot.cardTypes;
+    } else if (typeof slot.cardType === 'string') {
+      if (['Gem', 'Relic', 'Spell'].includes(slot.cardType)) {
+        types = [slot.cardType as 'Gem' | 'Relic' | 'Spell'];
+      }
+    }
+    return {
+      id: slot.id,
+      cardTypes: types,
+      costRange: slot.costRange,
+      searchTerm: slot.searchTerm,
+    };
+  })).optional(),
+  randomizedResult: z.record(z.string(), z.any().nullable()).optional(),
 });
 
 /**
@@ -140,7 +164,47 @@ export interface SearchSlice {
   setNemesisSearchFilters: (filters: Partial<NemesisSearchFilters>) => void;
 }
 
-type GameState = ConfigSlice & PlaySlice & SearchSlice;
+/**
+ * Configuration criteria for an individual market supply slot in the Supply Randomizer.
+ */
+export interface SlotCriteria {
+  /** Unique identifier for the slot */
+  id: string;
+  /** Filter by card types (multi-select: Gem, Relic, Spell) */
+  cardTypes?: ('Gem' | 'Relic' | 'Spell')[];
+  /** Legacy single card type filter for backwards compatibility */
+  cardType?: 'Gem' | 'Relic' | 'Spell';
+  /** Range filter for card cost: [minCost, maxCost] */
+  costRange: [number, number];
+  /** Search string filter evaluated against card name and rules text */
+  searchTerm: string;
+}
+
+/**
+ * Zustand slice managing supply randomizer setup, slot criteria, and randomized results.
+ */
+export interface SupplyRandomizerSlice {
+  /** Active expansion filters for the supply randomizer pool */
+  randomizerExpansions: string[];
+  /** Configured criteria for each supply slot */
+  randomizerSlots: SlotCriteria[];
+  /** Map of slot IDs to assigned supply cards */
+  randomizedResult: Record<string, any | null>;
+  /** Updates the active expansion filter selection */
+  setRandomizerExpansions: (expansions: string[]) => void;
+  /** Adds a new slot with specified criteria */
+  addSlot: (slot: SlotCriteria) => void;
+  /** Removes a slot and its assigned card by ID */
+  removeSlot: (id: string) => void;
+  /** Updates criteria for a specific slot */
+  updateSlot: (id: string, updates: Partial<SlotCriteria>) => void;
+  /** Sets the randomized card assignments */
+  setRandomizedResult: (result: Record<string, any | null>) => void;
+  /** Clears all slots and results */
+  clearRandomizer: () => void;
+}
+
+type GameState = ConfigSlice & PlaySlice & SearchSlice & SupplyRandomizerSlice;
 
 const applyVisibility = (drawPile: Card[], visibilityOption: VisibilityOption): Card[] => {
   let newPile = drawPile.map(c => ({ ...c, isRevealed: !!c.isRevealed }));
@@ -373,12 +437,35 @@ const createSearchSlice: StateCreator<GameState, [], [], SearchSlice> = (set) =>
   })),
 });
 
+/**
+ * Creates the supply randomizer state slice with default empty slots and filters.
+ */
+const createRandomizerSlice: StateCreator<GameState, [], [], SupplyRandomizerSlice> = (set) => ({
+  randomizerExpansions: [],
+  randomizerSlots: [],
+  randomizedResult: {},
+  setRandomizerExpansions: (expansions) => set({ randomizerExpansions: expansions }),
+  addSlot: (slot) => set((state) => ({ randomizerSlots: [...state.randomizerSlots, slot] })),
+  removeSlot: (id) => set((state) => {
+    const newSlots = state.randomizerSlots.filter(s => s.id !== id);
+    const newResult = { ...state.randomizedResult };
+    delete newResult[id];
+    return { randomizerSlots: newSlots, randomizedResult: newResult };
+  }),
+  updateSlot: (id, updates) => set((state) => ({
+    randomizerSlots: state.randomizerSlots.map(s => s.id === id ? { ...s, ...updates } : s)
+  })),
+  setRandomizedResult: (result) => set({ randomizedResult: result }),
+  clearRandomizer: () => set({ randomizerSlots: [], randomizedResult: {} })
+});
+
 export const useGameStore = create<GameState>()(
   persist(
     (...a) => ({
       ...createConfigSlice(...a),
       ...createPlaySlice(...a),
       ...createSearchSlice(...a),
+      ...createRandomizerSlice(...a),
     }),
     {
       name: 'aeons-end-game-storage',

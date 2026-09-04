@@ -62,6 +62,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectTool }) => {
           Turn Order Helper
         </button>
         <button
+          onClick={() => onSelectTool('randomizer')}
+          style={buttonStyle}
+        >
+          Supply Randomizer
+        </button>
+        <button
           onClick={() => onSelectTool('card-search')}
           style={buttonStyle}
         >
