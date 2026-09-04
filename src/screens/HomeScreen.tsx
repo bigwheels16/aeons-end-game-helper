@@ -103,6 +103,15 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectTool }) => {
       <div style={{ marginTop: '1rem', fontSize: '0.8rem', color: '#666' }}>
         Last Updated at {formatBuildTime(import.meta.env.VITE_BUILD_TIME)}
       </div>
+
+      <div style={{ marginTop: '2rem', fontSize: '0.75rem', color: '#777', lineHeight: 1.5, textAlign: 'center' }}>
+        <p style={{ margin: '0 0 0.75rem 0' }}>
+          Disclaimer: This tool is an unofficial, fan-made project and is not affiliated with, endorsed, or sponsored by Indie Boards & Cards or Action Phase Games.
+        </p>
+        <p style={{ margin: 0 }}>
+          Aeon’s End and all associated logos, character names, card text, and artwork are trademarks and copyrights of Indie Boards & Cards. No copyright or trademark infringement is intended. All rights belong to their respective owners.
+        </p>
+      </div>
     </div>
   );
 };
