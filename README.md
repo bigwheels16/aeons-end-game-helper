@@ -7,8 +7,6 @@ A mobile-optimized, client-side web application suite designed for the cooperati
 4. **Mage Search:** A dedicated database for browsing all playable Mages, their starting abilities, unique starters, and official player mats.
 5. **Nemesis Search:** A quick reference for discovering and reviewing Nemeses and their mats across all expansions.
 
-See a live version here: https://aeons-end.jkbff.com/
-
 ---
 
 ## Features
