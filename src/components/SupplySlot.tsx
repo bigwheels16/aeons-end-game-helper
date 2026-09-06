@@ -243,8 +243,8 @@ export default function SupplySlot({
       <div>
         <strong style={{ color: '#ccc', display: 'block', marginBottom: '0.5rem' }}>Cost Range ({criteria.costRange[0]} - {criteria.costRange[1]}):</strong>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <input type="range" min="0" max="10" value={criteria.costRange[0]} onChange={handleCostMinChange} style={{ flex: 1 }} />
-          <input type="range" min="0" max="10" value={criteria.costRange[1]} onChange={handleCostMaxChange} style={{ flex: 1 }} />
+          <input type="range" min="0" max="10" value={criteria.costRange[0]} onChange={handleCostMinChange} style={{ flex: 1, minWidth: 0 }} />
+          <input type="range" min="0" max="10" value={criteria.costRange[1]} onChange={handleCostMaxChange} style={{ flex: 1, minWidth: 0 }} />
         </div>
       </div>
 

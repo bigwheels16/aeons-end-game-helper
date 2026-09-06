@@ -156,14 +156,14 @@ export default function CardSearchScreen() {
               min="0" max="10" 
               value={costRange[0]} 
               onChange={e => setSearchFilters({ costRange: [Math.min(Number(e.target.value), costRange[1]), costRange[1]] })}
-              style={{ flex: 1 }}
+              style={{ flex: 1, minWidth: 0 }}
             />
             <input 
               type="range" 
               min="0" max="10" 
               value={costRange[1]} 
               onChange={e => setSearchFilters({ costRange: [costRange[0], Math.max(Number(e.target.value), costRange[0])] })}
-              style={{ flex: 1 }}
+              style={{ flex: 1, minWidth: 0 }}
             />
           </div>
         </div>
