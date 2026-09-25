@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import DOMPurify from 'dompurify';
 import { ScrapedSupplyCard } from '../types/scraped';
+import FavoriteStar from './FavoriteStar';
 
 export interface CardDisplayItemProps {
   card: ScrapedSupplyCard;
@@ -12,7 +13,7 @@ export interface CardDisplayItemProps {
 
 /**
  * Standard card presentation component matching the layout and styling of CardSearchScreen.
- * Displays card title (wiki link), type, expansions, cost, sanitized effect,
+ * Displays card title (wiki link), type, favorite star, expansions, cost, sanitized effect,
  * and a collapsible image viewer.
  */
 export default function CardDisplayItem({
@@ -55,6 +56,7 @@ export default function CardDisplayItem({
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <span style={{ fontSize: '0.8rem', color: '#aaa', flexShrink: 0 }}>{card.type}</span>
           {headerExtra}
+          <FavoriteStar category="supply" name={card.name} />
         </div>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: '#aaa', marginBottom: '0.5rem' }}>

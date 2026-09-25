@@ -95,6 +95,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectTool }) => {
         >
           Nemesis Search
         </button>
+        <button
+          onClick={() => onSelectTool('favorites')}
+          style={buttonStyle}
+        >
+          Favorites
+        </button>
       </div>
 
       <div style={{ marginTop: '3rem', fontSize: '0.9rem', color: '#888' }}>

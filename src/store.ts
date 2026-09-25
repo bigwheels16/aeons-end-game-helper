@@ -46,6 +46,11 @@ const GameStateSchema = z.object({
     selectedNemesisExpansions: z.array(z.string()),
     difficultyRange: z.tuple([z.number(), z.number()]).optional().default([1, 10]),
   }).optional(),
+  favorites: z.object({
+    supply: z.array(z.string()).default([]),
+    mages: z.array(z.string()).default([]),
+    nemeses: z.array(z.string()).default([]),
+  }).optional(),
   randomizerExpansions: z.array(z.string()).optional(),
   randomizerSlots: z.array(z.object({
     id: z.string(),
@@ -148,6 +153,11 @@ export interface NemesisSearchFilters {
   difficultyRange: [number, number];
 }
 
+export type FavoriteCategory = 'supply' | 'mages' | 'nemeses';
+
+/** Names of favorited items, grouped by category. */
+export type Favorites = Record<FavoriteCategory, string[]>;
+
 /**
  * Zustand slice managing card search filter state.
  */
@@ -164,6 +174,10 @@ export interface SearchSlice {
   nemesisSearchFilters: NemesisSearchFilters;
   /** Updates the active nemesis search filter parameters */
   setNemesisSearchFilters: (filters: Partial<NemesisSearchFilters>) => void;
+  /** Persisted favorited supply cards, mages, and nemeses */
+  favorites: Favorites;
+  /** Adds the named item to its category's favorites, or removes it if already favorited */
+  toggleFavorite: (category: FavoriteCategory, name: string) => void;
 }
 
 /**
@@ -438,6 +452,18 @@ const createSearchSlice: StateCreator<GameState, [], [], SearchSlice> = (set) =>
   setNemesisSearchFilters: (filters) => set((state) => ({
     nemesisSearchFilters: { ...state.nemesisSearchFilters, ...filters }
   })),
+  favorites: {
+    supply: [],
+    mages: [],
+    nemeses: [],
+  },
+  toggleFavorite: (category, name) => set((state) => {
+    const current = state.favorites[category];
+    const updated = current.includes(name)
+      ? current.filter(n => n !== name)
+      : [...current, name];
+    return { favorites: { ...state.favorites, [category]: updated } };
+  }),
 });
 
 /**
