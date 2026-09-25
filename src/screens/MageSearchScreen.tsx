@@ -12,6 +12,14 @@ import { ScrapedMage, ScrapedUniqueStarter } from '../types/scraped';
 const allMages: ScrapedMage[] = scrapedData.mages || [];
 const allUniqueStarters: ScrapedUniqueStarter[] = scrapedData.unique_starters || [];
 
+const BREACH_POSITION_COLORS: Record<string, string> = {
+  open: '#4CAF50',
+  right: '#e53935',
+  down: '#e65100',
+  left: '#ffb74d',
+  up: '#fdd835',
+};
+
 export default function MageSearchScreen() {
   const mageSearchFilters = useGameStore((state) => state.mageSearchFilters);
   const setMageSearchFilters = useGameStore((state) => state.setMageSearchFilters);
@@ -200,7 +208,7 @@ export default function MageSearchScreen() {
                         <strong style={{ color: '#ccc' }}>Breaches: </strong>
                         {mage.breaches.map(([type, pos], i) => (
                           <span key={i} style={{ marginRight: '0.5rem' }}>
-                            {type}: <span style={{ color: pos === 'open' ? '#4CAF50' : '#ffa726' }}>{pos}</span>
+                            {type}: <span style={{ color: BREACH_POSITION_COLORS[pos] ?? '#bbb' }}>{pos}</span>
                           </span>
                         ))}
                       </div>
