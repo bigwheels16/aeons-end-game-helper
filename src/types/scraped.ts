@@ -29,6 +29,7 @@ export interface ScrapedMage {
   title?: string;
   expansions?: string[];
   charges?: string | number;
+  complexity?: string;
   ability_name?: string;
   ability_activation?: string;
   ability_effect?: string;

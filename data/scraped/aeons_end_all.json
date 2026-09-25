@@ -7603,6 +7603,7 @@
         "Outcasts"
       ],
       "charges": "5",
+      "complexity": "6",
       "ability_name": "Sustain",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "If you are not exhausted, gain 3 life. Otherwise, Gravehold gains 3 life.",
@@ -7640,6 +7641,7 @@
         "Aeon's End (Core Box)"
       ],
       "charges": "5",
+      "complexity": "",
       "ability_name": "Brink Siphon",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Any player gains 4 life.",
@@ -7677,6 +7679,7 @@
         "The Void"
       ],
       "charges": "5",
+      "complexity": "",
       "ability_name": "Eldritch Tether",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Focus any player's breach. Repeat this three additional times.<br/><b>OR</b><br/>Any ally with no closed breaches draws three cards and then preps up to three spells from their hand.",
@@ -7714,6 +7717,7 @@
         "Evolution"
       ],
       "charges": "4",
+      "complexity": "5",
       "ability_name": "Redesign",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Gain 3 <span class=\"aether\">&AElig;</span><br/>The next time you gain a spell this turn, prep it to any player's opened breach.",
@@ -7751,6 +7755,7 @@
         "Legacy of Gravehold"
       ],
       "charges": "5",
+      "complexity": "3",
       "ability_name": "Guardian's Strength",
       "ability_activation": "Activate during your turn:",
       "ability_effect": "Focus any player's breach or any ally preps a spell to one of their opened or closed breaches. Repeat this three times.",
@@ -7788,6 +7793,7 @@
         "Outcasts"
       ],
       "charges": "5",
+      "complexity": "5",
       "ability_name": "Shackles Unleashed",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Cast up to three spells prepped by any players. If you have three opened breaches, those spells deal 1 additional damage. If you have four opened breaches, you may cast up to four spells and those spells deal 2 additional damage instead.",
@@ -7825,6 +7831,7 @@
         "The Outer Dark"
       ],
       "charges": "5",
+      "complexity": "",
       "ability_name": "Ephemera Masque",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Any ally returns two cards in their discard pile to their hand.<br/><b>OR</b><br/>Gravehold gains 5 life.",
@@ -7862,6 +7869,7 @@
         "The Depths"
       ],
       "charges": "4",
+      "complexity": "",
       "ability_name": "Quelling Blade",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Deal 5 damage to a minion. Deal 3 damage to a different minion.",
@@ -7899,6 +7907,7 @@
         "The New Age"
       ],
       "charges": "4",
+      "complexity": "2",
       "ability_name": "Breach Siphon",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Focus any player's breach. Any player gains 1 life for each opened breach you have.",
@@ -7936,6 +7945,7 @@
         "Past and Future"
       ],
       "charges": "5",
+      "complexity": "7",
       "ability_name": "Wall Off",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Any player gains 3 life.<br/>If you have five or more cards that cost more than 0 <span class=\"aether\">&AElig;</span> in your discard pile, any ally gains a spell and places it into their hand.",
@@ -7976,6 +7986,7 @@
         "The Depths"
       ],
       "charges": "5",
+      "complexity": "",
       "ability_name": "Terminus Barrier",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Discard the top card of the nemesis deck. If you discarded an attack card, discard an additional card.",
@@ -8013,6 +8024,7 @@
         "Legacy of Gravehold"
       ],
       "charges": "4",
+      "complexity": "4",
       "ability_name": "Aetherial Echo",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Any player gains 3 life.<br/><b>OR</b><br/>The next time you gain a card this turn you may place it into any ally's hand. Then, any ally gains a copy of the same card and places it into their hand.",
@@ -8051,6 +8063,7 @@
         "Aeon's End (Core Box)"
       ],
       "charges": "5",
+      "complexity": "",
       "ability_name": "Aethereal Ward",
       "ability_activation": "Activate during the nemesis draw phase:",
       "ability_effect": "When a nemesis attack or power card is drawn but before it is resolved, you may discard it. It has no effect. <i>(The nemesis does not draw a replacement card)</i>",
@@ -8088,6 +8101,7 @@
         "Return To Gravehold"
       ],
       "charges": "6",
+      "complexity": "4",
       "ability_name": "Energize",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Gain a spell that costs 5 <span class=\"aether\">&AElig;</span> or less from a supply pile. You may lose two charges to gain any spell from a supply pile instead. You may lose a charge to prep a spell in your discard pile to one of your opened breaches.",
@@ -8125,6 +8139,7 @@
         "The Descent"
       ],
       "charges": "6",
+      "complexity": "6",
       "ability_name": "Manifest Monstrosity",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Place the Manifest token on your player mat so that it covers this ability and resolve its <b>\"IMMEDIATELY\"</b> effects. You cannot activate this ability again this game.",
@@ -8162,6 +8177,7 @@
         "Past and Future"
       ],
       "charges": "5",
+      "complexity": "6",
       "ability_name": "Execute Program",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Cast any number of spells prepped to breaches with relics attached to them without discarding those spells.",
@@ -8206,6 +8222,7 @@
         "The Depths"
       ],
       "charges": "5",
+      "complexity": "",
       "ability_name": "Sanctum Glyph",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Gravehold gains 7 life.",
@@ -8243,6 +8260,7 @@
         "Legacy of Gravehold"
       ],
       "charges": "5",
+      "complexity": "4",
       "ability_name": "Devour Magic",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Cast a spell prepped to an opened Incanted breach three times, then reset that breach to its starting position.",
@@ -8280,6 +8298,7 @@
         "Legacy of Gravehold"
       ],
       "charges": "5",
+      "complexity": "5",
       "ability_name": "Void Tear",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Return up to two spells from your discard pile to your hand. You may prep two additional spells to each of your opened breaches this turn.",
@@ -8318,6 +8337,7 @@
         "War Eternal"
       ],
       "charges": "5",
+      "complexity": "",
       "ability_name": "Colossal Force",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Discard up to four of your prepped spells.<br/>Deal 2 damage plus 4 additional damage for each spell you discarded divided however you choose to the nemesis or any number of minions.",
@@ -8355,6 +8375,7 @@
         "Aeon's End (Core Box)"
       ],
       "charges": "5",
+      "complexity": "",
       "ability_name": "Metaphysical Link",
       "ability_activation": "Activate during any player's main phase:",
       "ability_effect": "Allies collectively gain 4 charges. Reveal the turn order deck and return the revealed cards in any order.",
@@ -8392,6 +8413,7 @@
         "Aeon's End (Core Box)"
       ],
       "charges": "5",
+      "complexity": "",
       "ability_name": "Quicken Thought",
       "ability_activation": "Activate during any player's main phase:",
       "ability_effect": "Shuffle any player's turn order card into the turn order deck. That player suffers 1 damage.",
@@ -8429,6 +8451,7 @@
         "Legacy of Gravehold"
       ],
       "charges": "4",
+      "complexity": "4",
       "ability_name": "Feed the Corruption",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Any ally draws two cards. Any player destroys up to two cards in hand or discard pile.",
@@ -8467,6 +8490,7 @@
         "The Descent"
       ],
       "charges": "5",
+      "complexity": "2",
       "ability_name": "Regenerate",
       "ability_activation": "Activate during any player's main phase:",
       "ability_effect": "Gain 4 life.<br/>You may suffer 2 damage. If you do, Gravehold gains 4 life.",
@@ -8505,6 +8529,7 @@
         "The Ancients"
       ],
       "charges": "5",
+      "complexity": "8",
       "ability_name": "Duality Embrace",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "If you are in Destroyer form, cast up to two different spells prepped by any number of players, and then flip over the Form token. Otherwise, any player preps up to two spells in their discard pile to their opened breaches, and then flip over the Form token.",
@@ -8543,6 +8568,7 @@
         "Legacy of Gravehold"
       ],
       "charges": "5",
+      "complexity": "3",
       "ability_name": "Surge of Power",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Reveal the top four cards of your deck. Place any number of spells revealed this way into your hand. You may prep spells to closed breaches this turn. You may prep up to two spells to each of your breaches this turn.",
@@ -8581,6 +8607,7 @@
         "The Abyss"
       ],
       "charges": "4",
+      "complexity": "9",
       "ability_name": "Leech Power",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Gain 3 <span class=\"aether\">&AElig;</span>. You may place any cards<br/>you gain this turn into your hand.<br/>You may place a nemesis turn order card in the turn order discard pile on the<br/>bottom of the turn order deck.<br/>If you do, gain an additional 7 <span class=\"aether\">&AElig;</span>.",
@@ -8618,6 +8645,7 @@
         "The Descent"
       ],
       "charges": "5",
+      "complexity": "8",
       "ability_name": "Exhume",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Gain 4 Knowledge. Reveal the top three cards of the Forgotten Ritual deck. You may gain any number of the revealed cards by paying their cost using Knowledge. Place the gained cards into your hand. Place the rest on the bottom of the Forgotten Ritual deck.",
@@ -8656,6 +8684,7 @@
         "Past and Future"
       ],
       "charges": "6",
+      "complexity": "6",
       "ability_name": "Loop Data",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Gain up to two spells from the supply that cost 5 <span class=\"aether\">&AElig;</span> or less.<br/>You may place up to two spells from your discard pile into your hand.",
@@ -8693,6 +8722,7 @@
         "Aeon's End (Core Box)"
       ],
       "charges": "5",
+      "complexity": "",
       "ability_name": "Divine Augury",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Any ally draws 4 cards.",
@@ -8730,6 +8760,7 @@
         "Outcasts"
       ],
       "charges": "4",
+      "complexity": "7",
       "ability_name": "Void Vortex",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Any ally draws three cards. Then, place any number of cards in your hand into their hand. Then, that ally places the same number of cards in their hand into your hand.",
@@ -8767,6 +8798,7 @@
         "Legacy of Gravehold"
       ],
       "charges": "5",
+      "complexity": "4",
       "ability_name": "Burst of Inspiration",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Draw a card from the top or bottom of the Inventions deck and place it into an ally's hand.",
@@ -8812,6 +8844,7 @@
         "Past and Future"
       ],
       "charges": "5",
+      "complexity": "5",
       "ability_name": "Flash of Genius",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Gain 5 Knowledge. Cards you gain this turn may be placed on top of your deck.<br/><b>OR</b><br/>Gravehold Gains 5 life.",
@@ -8850,6 +8883,7 @@
         "Southern Village"
       ],
       "charges": "5",
+      "complexity": "5",
       "ability_name": "Missing Half",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Reveal your deck. Place up to two spells with the same name from your deck into your hand, and up to two spells with that same name from your discard into your hand. Return your deck in the same order.",
@@ -8887,6 +8921,7 @@
         "Past and Future"
       ],
       "charges": "5",
+      "complexity": "4",
       "ability_name": "Fusion Reaction",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Return up to two spells from your discard pile to your hand.<br/>Choose up to two of your prepped spells. Cast those spells.<br/>Then, cast one of your prepped spells.",
@@ -8924,6 +8959,7 @@
         "Tales of Old Gravehold"
       ],
       "charges": "4",
+      "complexity": "2",
       "ability_name": "Void Waltz",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "If Gravehold has 15 life or more, Gravehold suffers 2 damage and any player gains 6 <span class=\"aether\">&AElig;</span> tokens. Otherwise, Gravehold gains 5 life.",
@@ -8961,6 +8997,7 @@
         "The Descent"
       ],
       "charges": "5",
+      "complexity": "3",
       "ability_name": "Mantra of Earth",
       "ability_activation": "Activate during any player's main phase:",
       "ability_effect": "Gain a card that costs 4 <span class=\"aether\">&AElig;</span> or less from any supply pile. Any ally gains a destiny token.<br/><b>OR</b><br/>Any player returns a destiny token to its supply and draws five cards.",
@@ -8998,6 +9035,7 @@
         "The New Age"
       ],
       "charges": "4",
+      "complexity": "6",
       "ability_name": "Sublimate",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Return a card in your hand or discard pile to its supply pile. If you returned a relic, gain a card from any supply pile that costs up to 3 <span class=\"aether\">&AElig;</span> more than the returned card. Otherwise, gain a card from any supply pile that costs up to 2 <span class=\"aether\">&AElig;</span> more than the returned card. Either way, place the gained card into your hand.",
@@ -9035,6 +9073,7 @@
         "Shattered Dreams"
       ],
       "charges": "5",
+      "complexity": "9",
       "ability_name": "Condense Aether",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "You may destroy a card in your hand or discard pile. Gain 4 <span class=\"aether\">&AElig;</span>. You may place the next spell you gain this turn into your hand.",
@@ -9072,6 +9111,7 @@
         "Outcasts"
       ],
       "charges": "5",
+      "complexity": "3",
       "ability_name": "Inscribe",
       "ability_activation": "Activate during any player's main phase:",
       "ability_effect": "Gravehold gains 5 life. Place two glyph tokens on top of any card in the supply.",
@@ -9109,6 +9149,7 @@
         "War Eternal"
       ],
       "charges": "6",
+      "complexity": "",
       "ability_name": "Tempest Sigil",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Any player destroys an opened I or II breach and returns any spells prepped to that breach to their hand. That player gains a Sigil breach and places it where the destroyed breach was. Then, that player may prep a spell from their hand to a breach.",
@@ -9146,6 +9187,7 @@
         "Outcasts"
       ],
       "charges": "6",
+      "complexity": "3",
       "ability_name": "Expunge",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Cast any player's prepped spell. That spell deals 3 additional damage.",
@@ -9183,6 +9225,7 @@
         "Legacy of Gravehold"
       ],
       "charges": "5",
+      "complexity": "5",
       "ability_name": "Refine Prototype",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Either choose a side of a path token that is not on your mat and place it on your mat or flip over one of the path tokens on your mat. Then, if you have four path tokens on your mat, set one aside.<br/>Resolve all of the path tokens on your mat in any order.",
@@ -9220,6 +9263,7 @@
         "The Descent"
       ],
       "charges": "4",
+      "complexity": "5",
       "ability_name": "Interlace",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Gain the top card of the Infusion deck and place it into your hand.<br/><b>OR</b><br/>Destroy an Infusion in play. If you do, deal 8 damage.",
@@ -9263,6 +9307,7 @@
         "Aeon's End (Core Box)"
       ],
       "charges": "5",
+      "complexity": "",
       "ability_name": "Auspex Rune",
       "ability_activation": "Activate immediately after a turn order card is drawn:",
       "ability_effect": "Prevent any damage that the players or Gravehold would suffer during that turn.",
@@ -9300,6 +9345,7 @@
         "Origins"
       ],
       "charges": "5",
+      "complexity": "5",
       "ability_name": "Rain Fire",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Prep the top card of the Phoenix deck to the Phoenix breach. Cast that spell. Repeat this once.",
@@ -9346,6 +9392,7 @@
         "Legacy of Gravehold"
       ],
       "charges": "4",
+      "complexity": "3",
       "ability_name": "Encase in Steel",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Deal damage equal to the number of spells in your discard pile.",
@@ -9384,6 +9431,7 @@
         "Legacy of Gravehold"
       ],
       "charges": "4",
+      "complexity": "6",
       "ability_name": "Research",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Destroy a card with \"Mazra\" in its name in your hand. Gain a card with \"Mazra\" in its name from the personal upgrade deck that costs up to 3 <span class=\"aether\">&AElig;</span> more than the destroyed card and place that card into your hand.<br/><b>OR</b><br/>Return to your hand all cards with \"Mazra\" in their name in your discard pile.",
@@ -9429,6 +9477,7 @@
         "Past and Future"
       ],
       "charges": "4",
+      "complexity": "5",
       "ability_name": "Amplify",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Place a Link token on any opened breach.<br/><b>OR</b><br/>Cast all the spells prepped to one breach with a Link token on it.",
@@ -9466,6 +9515,7 @@
         "Legacy of Gravehold"
       ],
       "charges": "6",
+      "complexity": "4",
       "ability_name": "Expand Potential",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Look at and gain the top card of the Reckoning deck. Then, place it on top of your deck.<br/><b>OR</b><br/>Return one Reckoning card from your discard pile to your hand.",
@@ -9509,6 +9559,7 @@
         "Legacy of Gravehold"
       ],
       "charges": "5",
+      "complexity": "6",
       "ability_name": "Soaring Ash",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Cast any number of your prepped Sparks. Those spells deal 2 additional damage. You may destroy a Spark in your discard pile.",
@@ -9546,6 +9597,7 @@
         "Legacy of Gravehold"
       ],
       "charges": "5",
+      "complexity": "8",
       "ability_name": "Time Ripple",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Return up to three Crystals from your hand or discard pile to the Regularity deck. Place up to three Anomaly cards from the Regularity deck into your hand.",
@@ -9587,6 +9639,7 @@
         "War Eternal"
       ],
       "charges": "6",
+      "complexity": "",
       "ability_name": "Exalted Brand",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Cast up to three different spells prepped by any number of players. For each spell cast this way, place that spell into any ally's hand.",
@@ -9624,6 +9677,7 @@
         "The New Age"
       ],
       "charges": "4",
+      "complexity": "3",
       "ability_name": "Star Bind",
       "ability_activation": "Activate during your casting or main phase:",
       "ability_effect": "Reveal the top three cards of your deck. Place a spell revealed this way into your hand. If there are no spells prepped to your Celestial Breach, prep up to two spells in hand to your opened Celestial Breach.",
@@ -9661,6 +9715,7 @@
         "The Ancients"
       ],
       "charges": "4",
+      "complexity": "6",
       "ability_name": "Research",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Destroy a card with \"Mazra\" in its name in your hand. Gain a card with \"Mazra\" in its name from the personal upgrade deck that costs 3 <span class=\"aether\">&AElig;</span> more than the destroyed card and place that card into your hand.<br/><b>OR</b><br/>Return to your hand all cards with \"Mazra\" in their name in your discard pile.",
@@ -9702,6 +9757,7 @@
         "Legacy of Gravehold"
       ],
       "charges": "5",
+      "complexity": "5",
       "ability_name": "Tactician's Gambit",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Players collectively return up to two cards from their discard piles to their hands.<br/>Reveal the turn order deck and return it in any order.",
@@ -9740,6 +9796,7 @@
         "Past and Future"
       ],
       "charges": "4",
+      "complexity": "7",
       "ability_name": "Pack Tactics",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Return up to two minions from your discard pile to your hand. You may prep up to two spells to each of your opened breaches this turn.<br/><b>OR</b><br/>Deal 3 damage to a minion. If you defeat a minion from the nemesis deck this way, place it into your discard pile.",
@@ -9777,6 +9834,7 @@
         "The Caverns"
       ],
       "charges": "4",
+      "complexity": "7",
       "ability_name": "Restabilize",
       "ability_activation": "Activate during any ally's casting phase:",
       "ability_effect": "Destroy up to three cards in hand. Draw a card for each card destroyed this way.<br/><b>OR</b><br/>When a player casts a spell this turn, it deals 1 additional damage for each card that costs 1 <span class=\"aether\">&AElig;</span> or more in your hand. Alcheia may spend 4 charges during any ally's casting phase to activate this ability.",
@@ -9814,6 +9872,7 @@
         "Legacy of Gravehold"
       ],
       "charges": "5",
+      "complexity": "4",
       "ability_name": "Absorb Aether",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Any ally places up to two cards from their hand or discard pile into your discard pile. Then, if you have ten or more cards in your discard pile, shuffle any player's turn order card into the turn order deck.",
@@ -9852,6 +9911,7 @@
         "War Eternal"
       ],
       "charges": "5",
+      "complexity": "",
       "ability_name": "Vimcraft Oath",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Destroy up to two cards in your discard pile that cost 0 <span class=\"aether\">&AElig;</span>.<br/>Any ally draws one card and gains 2 life.",
@@ -9889,6 +9949,7 @@
         "The Nameless"
       ],
       "charges": "6",
+      "complexity": "",
       "ability_name": "Gift of Aether",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Gain a spell from any supply pile. You may prep that spell to any player's opened breach.",
@@ -9926,6 +9987,7 @@
         "Legacy of Gravehold"
       ],
       "charges": "5",
+      "complexity": "7",
       "ability_name": "Weaver's Web",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Return up to three cards that cost 4 <span class=\"aether\">&AElig;</span> or less from your discard pile to your hand.<br/><b>OR</b><br/>Any player gains 3 life.",
@@ -9963,6 +10025,7 @@
         "War Eternal"
       ],
       "charges": "5",
+      "complexity": "",
       "ability_name": "Quietus Vow",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Deal 2 damage for each Trophy token you have.",
@@ -10000,6 +10063,7 @@
         "The Void"
       ],
       "charges": "5",
+      "complexity": "",
       "ability_name": "Praetorian Halo",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Any ally gains 1 charge and discards a random card in hand. Focus one of your breaches. Gain 1 life. Destroy a card in your hand or discard pile.",
@@ -10037,6 +10101,7 @@
         "The New Age"
       ],
       "charges": "4",
+      "complexity": "4",
       "ability_name": "Energized Sigil",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Place an Energize token on any player's breach that doesn't have one.<br/><b>OR</b><br/>Discard an Energize token on any player's breach. That player gains 4 life.",
@@ -10074,6 +10139,7 @@
         "Return To Gravehold"
       ],
       "charges": "4",
+      "complexity": "4",
       "ability_name": "Enrapture",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Ohat mode: Suffer 2 damage. Any ally draws five cards and discards two cards in hand.<br/>Ulgimor mode: Cast a spell prepped to Ulgimor's IV Breach without discarding it.",
@@ -10111,6 +10177,7 @@
         "War Eternal"
       ],
       "charges": "4",
+      "complexity": "",
       "ability_name": "Underearth Mantra",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "You may gain a gem that costs 4 <span class=\"aether\">&AElig;</span> or less from any supply pile.<br/>Gravehold gains 4 life.",
@@ -10148,6 +10215,7 @@
         "Legacy of Gravehold"
       ],
       "charges": "6",
+      "complexity": "5",
       "ability_name": "Reanimate Magic",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Cast up to two spells from your discard pile. You may destroy a card in your discard pile.",
@@ -10186,6 +10254,7 @@
         "Past and Future"
       ],
       "charges": "4",
+      "complexity": "6",
       "ability_name": "Building Power",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Cast one of your prepped spells without discarding it.<br/>Then, resolve all effects on cards in the ability zone in any order.",
@@ -10228,6 +10297,7 @@
         "Legacy of Gravehold"
       ],
       "charges": "5",
+      "complexity": "6",
       "ability_name": "Uproot",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Harvest up to two cards in your hand or discard pile. Resolve the Harvest effects of these cards twice.<br/><b>OR</b><br/>Gravehold gains 5 life.",
@@ -10270,6 +10340,7 @@
         "Legacy of Gravehold"
       ],
       "charges": "4",
+      "complexity": "7",
       "ability_name": "Train Rip",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Destroy a card with \"Rip\" in its name in your hand. Gain a card with \"Rip\" in its name from the personal upgrade deck that costs 3 <span class=\"aether\">&AElig;</span> more than the destroyed card and place that card into your hand.<br/><b>OR</b><br/>Return to your hand all cards with \"Rip\" in their name you have played this turn or are in your discard pile.",
@@ -10315,6 +10386,7 @@
         "The New Age"
       ],
       "charges": "5",
+      "complexity": "3",
       "ability_name": "High Tide",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Place a Surge token on your Ancient Breach.<br/><b>OR</b><br/>Cast a spell prepped to your Ancient Breach. Gain 2 charges.",
@@ -10352,6 +10424,7 @@
         "Aeon's End (Core Box)"
       ],
       "charges": "4",
+      "complexity": "",
       "ability_name": "Black Mirror",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Cast any player's prepped spell without discarding it.<br/>Then cast that prepped spell again.<br/><i>(Discard it afterward)</i>",
@@ -10389,6 +10462,7 @@
         "Promo Pack 1 (Digital)"
       ],
       "charges": "4",
+      "complexity": "",
       "ability_name": "Spell Storm",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Cast one of your prepped Vortex deck spells three times and then destroy it.",
@@ -10426,6 +10500,7 @@
         "Legacy of Gravehold"
       ],
       "charges": "6",
+      "complexity": "3",
       "ability_name": "Sever Reality",
       "ability_activation": "Activate after the turn order deck is shuffled:",
       "ability_effect": "Reveal cards from the top of the turn order deck equal to the number of opened breaches you have. Return those cards to the top of the turn order deck in any order. You may place the top card of the turn order deck in the turn order discard pile.",
@@ -10463,6 +10538,7 @@
         "Into The Wild"
       ],
       "charges": "4",
+      "complexity": "7",
       "ability_name": "Train Rip",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Destroy a card with \"Rip\" in its name in your hand. Gain a card with \"Rip\" in its name from the personal upgrade deck that costs 3 <span class=\"aether\">&AElig;</span> more than the destroyed card and place that card into your hand.<br/><b>OR</b><br/>Return to your hand all cards with \"Rip\" in their name you have played this turn or are in your discard pile.",
@@ -10504,6 +10580,7 @@
         "Outcasts"
       ],
       "charges": "5",
+      "complexity": "4",
       "ability_name": "Life Embrace",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Cast all of your prepped spells without discarding them. Any ally returns a card in their discard pile to their hand.",
@@ -10542,6 +10619,7 @@
         "War Eternal"
       ],
       "charges": "6",
+      "complexity": "",
       "ability_name": "Eidolon Shroud",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Gain 6 life.<br/>If you are exhausted, any ally gains 5 life instead.",
@@ -10579,6 +10657,7 @@
         "The Caverns"
       ],
       "charges": "6",
+      "complexity": "3",
       "ability_name": "Acquire Target",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Place the top card of the Challenger deck on top of the nemesis deck. Then, resolve any effects added to your ability by minions in your ability zone.",
@@ -10620,6 +10699,7 @@
         "The New Age"
       ],
       "charges": "5",
+      "complexity": "5",
       "ability_name": "Meek's Might",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Return up to four cards that cost 0 <span class=\"aether\">&AElig;</span> in your discard pile to your hand.",
@@ -10659,6 +10739,7 @@
         "Outcasts"
       ],
       "charges": "4",
+      "complexity": "7",
       "ability_name": "Combust Aether",
       "ability_activation": "Activate at the end of your draw phase:",
       "ability_effect": "Draw three cards.",
@@ -10696,6 +10777,7 @@
         "Legacy of Gravehold"
       ],
       "charges": "5",
+      "complexity": "4",
       "ability_name": "Contained Burst",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Cast two of your prepped spells without discarding them.",
@@ -10733,6 +10815,7 @@
         "Outcasts"
       ],
       "charges": "6",
+      "complexity": "4",
       "ability_name": "Soul Invigoration",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Return up to two gems or relics you played this turn to your hand. Any ally draws a card and may prep a spell in hand to an opened or closed breach.",
@@ -10771,6 +10854,7 @@
         "The New Age"
       ],
       "charges": "5",
+      "complexity": "6",
       "ability_name": "Soaring Ash",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Destroy two Sparks in hand. If you do, shuffle your turn order card into the turn order deck.<br/><b>OR</b><br/>Gravehold gains 5 life.",
@@ -10808,6 +10892,7 @@
         "Aeon's End (Core Box)"
       ],
       "charges": "5",
+      "complexity": "",
       "ability_name": "Otherworldly Gate",
       "ability_activation": "Activate during any player's main phase:",
       "ability_effect": "That player may return up to three spells in their discard pile to their hand. That player may prep up to two spells to each of their opened breaches this turn.",
@@ -10845,6 +10930,7 @@
         "Legacy"
       ],
       "charges": "0",
+      "complexity": "",
       "ability_name": "",
       "ability_activation": "",
       "ability_effect": "",
@@ -10880,6 +10966,7 @@
         "The Outer Dark"
       ],
       "charges": "4",
+      "complexity": "",
       "ability_name": "Pyromancer's Guile",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Cast any number of spells in hand. Those spells each deal 1 additional damage.<br/>You may destroy a card in your discard pile.",
@@ -10917,6 +11004,7 @@
         "Into The Wild"
       ],
       "charges": "5",
+      "complexity": "4",
       "ability_name": "Massive Growth",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Cast any number of Rose Thorns prepped by any number of players. Those spells deal 2 additional damage.",
@@ -10955,6 +11043,7 @@
         "Past and Future"
       ],
       "charges": "6",
+      "complexity": "4",
       "ability_name": "Redirect Flow",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "After the end of your turn, before another card is drawn from the turn order deck, your Tether takes a turn.",
@@ -10993,6 +11082,7 @@
         "The Descent"
       ],
       "charges": "4",
+      "complexity": "3",
       "ability_name": "Reality Warp",
       "ability_activation": "Activate during any player's main phase:",
       "ability_effect": "That player focuses a breach. Then, you gain a card from the supply that costs up to twice the focus cost of their opened breach with the highest focus cost.<br/><b>OR</b><br/>If that player has no closed breaches, deal 8 damage.",
@@ -11030,6 +11120,7 @@
         "Past and Future"
       ],
       "charges": "4",
+      "complexity": "5",
       "ability_name": "Experiment",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Any ally draws two cards.<br/>Gain 3 Knowledge.",
@@ -11071,6 +11162,7 @@
         "Beyond the Breach"
       ],
       "charges": "4",
+      "complexity": "7",
       "ability_name": "Pilfer the Past",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Reveal the top two cards of Dezmodia's Stash and choose one to put into play and one to put on the bottom of that deck.<br/><b>OR</b><br/>Any player gains 3 life.",
@@ -11116,6 +11208,7 @@
         "The Surface"
       ],
       "charges": "5",
+      "complexity": "4",
       "ability_name": "Massive Growth",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Cast any player's prepped spell. Two different players reveal their decks. They each place up to two Firethorns from their deck and discard pile into their hand. They return their decks in the same order.",
@@ -11158,6 +11251,7 @@
         "Beyond the Breach"
       ],
       "charges": "4",
+      "complexity": "6",
       "ability_name": "Rupture Time",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Place up to three cards with Crystal or Spark in their name in your hand or discard pile into the Swap zone. Gain a card from the Swap zone with Crystal or Spark in its name.",
@@ -11202,6 +11296,7 @@
         "Beyond the Breach"
       ],
       "charges": "4",
+      "complexity": "8",
       "ability_name": "Tinker",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Return a spell in your discard pile to hand. Until end of turn, you may prep any number of spells to your breach.<br/><b>OR</b><br/>Choose a set-aside breach upgrade. Spend Knowledge equal to its cost. Then, add that card and its effect to the Prototype breach.",
@@ -11245,6 +11340,7 @@
         "Beyond the Breach"
       ],
       "charges": "4",
+      "complexity": "6",
       "ability_name": "Aegis of Hope",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Lose all of your doom.<br/>Any ally draws a card. Repeat this for each doom lost this way.",
@@ -11283,6 +11379,7 @@
         "Beyond the Breach"
       ],
       "charges": "4",
+      "complexity": "3",
       "ability_name": "Rebuild Matter",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Return up to two spells from your discard pile to your hand. You may prep one additional spell to your III and IV breaches this turn.<br/><b>OR</b><br/>Gravehold gains 4 life.",
@@ -11320,6 +11417,7 @@
         "Beyond the Breach"
       ],
       "charges": "5",
+      "complexity": "4",
       "ability_name": "Pyromancer's Guile",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Cast a spell in any ally's hand without discarding it. Then, cast it again.<br/><b>OR</b><br/>Gain 5 <span class=\"aether\">&AElig;</span> that can only be used to gain a spell.",
@@ -11357,6 +11455,7 @@
         "The Surface"
       ],
       "charges": "4",
+      "complexity": "4",
       "ability_name": "Twinned Retrieval",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "If you are in Giver Form, allies collectively draw three cards. Flip over the Form card.<br/>Otherwise, cast any ally's prepped spell and place it into your hand. Flip over the Form card.",
@@ -11394,6 +11493,7 @@
         "The Returned"
       ],
       "charges": "5",
+      "complexity": "4",
       "ability_name": "Void Touch",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Gain a card from any supply pile. Any ally may reset one of their opened III or IV breaches to its starting position. If they do, that ally gains a card from any supply pile and places that card on top of their deck.",
@@ -11431,6 +11531,7 @@
         "The Returned"
       ],
       "charges": "4",
+      "complexity": "9",
       "ability_name": "Reconnect Tissue",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Any ally gains 2 charges and may destroy a card in hand or discard pile.<br/>You may place one of your level 3 treasures in play on the bottom of Tressa's Vault. If you do, place the top card of Tressa's Vault into play. If the new card has an effect that resolves \"At the start of your first turn of the game,\" resolve that effect now.",
@@ -11474,6 +11575,7 @@
         "The New Age"
       ],
       "charges": "5",
+      "complexity": "5",
       "ability_name": "Aeplosion",
       "ability_activation": "Activate during any ally's main phase:",
       "ability_effect": "That ally gains 2 <span class=\"aether\">&AElig;</span>. The next time that ally gains a card from a supply pile this turn, you gain a copy of that card from the supply pile.<br/><b>OR</b><br/>That ally gains 5 <span class=\"aether\">&AElig;</span>.",
@@ -11511,6 +11613,7 @@
         "War Eternal"
       ],
       "charges": "5",
+      "complexity": "",
       "ability_name": "Imperium Ritual",
       "ability_activation": "Activate during your main phase:",
       "ability_effect": "Gain a card from any supply pile. If you have four opened breaches, any ally gains a card from any supply pile and places it on top of their deck.",
@@ -11548,6 +11651,7 @@
         "Southern Village"
       ],
       "charges": "5",
+      "complexity": "7",
       "ability_name": "Magnetism",
       "ability_activation": "Activate during your casting phase:",
       "ability_effect": "Open all of your breaches. Prep any number of spells in hand to your opened breaches.",

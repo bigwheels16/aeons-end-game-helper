@@ -212,6 +212,12 @@ export default function MageSearchScreen() {
                       )}
                     </div>
 
+                    {mage.complexity && (
+                      <div style={{ marginBottom: '0.5rem', fontSize: '0.85rem', color: '#bbb' }}>
+                        <strong style={{ color: '#ccc' }}>Complexity: </strong>{mage.complexity}
+                      </div>
+                    )}
+
                     {mage.breaches && mage.breaches.length > 0 && (
                       <div style={{ marginBottom: '1rem', fontSize: '0.85rem', color: '#bbb' }}>
                         <strong style={{ color: '#ccc' }}>Breaches: </strong>

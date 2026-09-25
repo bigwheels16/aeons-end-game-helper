@@ -560,6 +560,7 @@ def process_mage(title: str, page_data: Dict[str, Any]) -> Optional[Tuple[str, D
         "title": get_clean(params, "title"),
         "expansions": expansions,
         "charges": charges,
+        "complexity": get_clean(params, "complexity"),
         "ability_name": get_clean(params, "name"),
         "ability_activation": clean_wikitext(activation),
         "ability_effect": clean_wikitext(effect_body),
