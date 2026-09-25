@@ -15,7 +15,7 @@ export default function NemesisSearchScreen() {
   const nemesisSearchFilters = useGameStore((state) => state.nemesisSearchFilters);
   const setNemesisSearchFilters = useGameStore((state) => state.setNemesisSearchFilters);
 
-  const { nemesisQuery, selectedNemesisExpansions } = nemesisSearchFilters;
+  const { nemesisQuery, selectedNemesisExpansions, difficultyRange } = nemesisSearchFilters;
   const visibleImages = useToggleSet();
   const debouncedQuery = useDebounce(nemesisQuery);
 
@@ -33,6 +33,7 @@ export default function NemesisSearchScreen() {
     setNemesisSearchFilters({
       nemesisQuery: '',
       selectedNemesisExpansions: [],
+      difficultyRange: [1, 10],
     });
   };
 
@@ -59,13 +60,18 @@ export default function NemesisSearchScreen() {
         return false;
       }
 
+      const difficulty = Number(nemesis.difficulty);
+      if (nemesis.difficulty !== undefined && !Number.isNaN(difficulty) && (difficulty < difficultyRange[0] || difficulty > difficultyRange[1])) {
+        return false;
+      }
+
       return true;
     }).sort((a, b) => {
       const diffA = a.difficulty !== undefined ? Number(a.difficulty) || 0 : 0;
       const diffB = b.difficulty !== undefined ? Number(b.difficulty) || 0 : 0;
       return diffA - diffB;
     });
-  }, [debouncedQuery, selectedNemesisExpansions]);
+  }, [debouncedQuery, selectedNemesisExpansions, difficultyRange]);
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto', backgroundColor: '#1a1a1a' }}>
@@ -90,6 +96,28 @@ export default function NemesisSearchScreen() {
           onSelectAll={() => setNemesisSearchFilters({ selectedNemesisExpansions: allExpansions })}
           onClearAll={() => setNemesisSearchFilters({ selectedNemesisExpansions: [] })}
         />
+
+        <div style={{ marginBottom: '1rem' }}>
+          <strong style={{ color: '#ccc' }}>Difficulty Range ({difficultyRange[0]} - {difficultyRange[1]})</strong>
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem', alignItems: 'center' }}>
+            <input 
+              type="range" 
+              min="1" max="10" 
+              value={difficultyRange[0]} 
+              onChange={e => setNemesisSearchFilters({ difficultyRange: [Math.min(Number(e.target.value), difficultyRange[1]), difficultyRange[1]] })}
+              aria-label="Minimum difficulty"
+              style={{ flex: 1, minWidth: 0 }}
+            />
+            <input 
+              type="range" 
+              min="1" max="10" 
+              value={difficultyRange[1]} 
+              onChange={e => setNemesisSearchFilters({ difficultyRange: [difficultyRange[0], Math.max(Number(e.target.value), difficultyRange[0])] })}
+              aria-label="Maximum difficulty"
+              style={{ flex: 1, minWidth: 0 }}
+            />
+          </div>
+        </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <button 

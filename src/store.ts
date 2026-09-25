@@ -44,6 +44,7 @@ const GameStateSchema = z.object({
   nemesisSearchFilters: z.object({
     nemesisQuery: z.string(),
     selectedNemesisExpansions: z.array(z.string()),
+    difficultyRange: z.tuple([z.number(), z.number()]).optional().default([1, 10]),
   }).optional(),
   randomizerExpansions: z.array(z.string()).optional(),
   randomizerSlots: z.array(z.object({
@@ -144,6 +145,7 @@ export interface MageSearchFilters {
 export interface NemesisSearchFilters {
   nemesisQuery: string;
   selectedNemesisExpansions: string[];
+  difficultyRange: [number, number];
 }
 
 /**
@@ -431,6 +433,7 @@ const createSearchSlice: StateCreator<GameState, [], [], SearchSlice> = (set) =>
   nemesisSearchFilters: {
     nemesisQuery: '',
     selectedNemesisExpansions: [],
+    difficultyRange: [1, 10],
   },
   setNemesisSearchFilters: (filters) => set((state) => ({
     nemesisSearchFilters: { ...state.nemesisSearchFilters, ...filters }
