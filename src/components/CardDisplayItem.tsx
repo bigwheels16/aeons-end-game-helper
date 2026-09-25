@@ -34,7 +34,7 @@ export default function CardDisplayItem({
     <div 
       style={{ 
         backgroundColor: '#222', 
-        padding: '1rem', 
+        padding: '0.5rem', 
         borderRadius: '8px', 
         border: '1px solid #444', 
         color: 'white', 

@@ -18,7 +18,7 @@ export default function NemesisDisplayItem({
   onToggleImages
 }: NemesisDisplayItemProps) {
   return (
-    <div style={{ backgroundColor: '#222', padding: '1.5rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
+    <div style={{ backgroundColor: '#222', padding: '0.75rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem', margin: '0 0 0.25rem 0' }}>
         <h2 style={{ margin: 0 }}>
           <a 
