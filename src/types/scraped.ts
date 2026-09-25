@@ -36,6 +36,7 @@ export interface ScrapedMage {
   starting_hand?: string;
   starting_deck?: string;
   breaches?: string[][];
+  additional_rules?: string;
   page_url?: string;
 }
 

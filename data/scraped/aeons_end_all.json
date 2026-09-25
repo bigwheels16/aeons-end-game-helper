@@ -7629,6 +7629,7 @@
           "down"
         ]
       ],
+      "additional_rules": "On the left side of the front of this mat, there is a barrier track. Place the barrier token on \"Any ally draws a card.\" of the barrier track. When Taqren suffers damage, or is exhausted and would suffer damage, move the barrier token to a different space on the barrier track and resolves the listed effects. When Taqren is exhausted, Gravehold suffers 1 damage per 1 damage Taqren suffers instead of 2.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Taqren_%28Outcasts%29"
     },
     {
@@ -7665,6 +7666,7 @@
           "left"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Brama"
     },
     {
@@ -7701,6 +7703,7 @@
           "right"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Sparrow"
     },
     {
@@ -7737,6 +7740,7 @@
           "right"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Dorian"
     },
     {
@@ -7773,6 +7777,7 @@
           "right"
         ]
       ],
+      "additional_rules": "Taqren's III breach is the Fortified breach. When a spell is cast through the Fortified breach, the player who cast the spell gains <span class=\"aether\">&AElig;</span> equal to the nemesis tier. Taqren's IV breach is the Garrison breach. When a spell is cast through the Garrison breach, it deals additional damage equal to the nemesis tier.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Taqren_%28Legacy_of_Gravehold%29"
     },
     {
@@ -7809,6 +7814,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Thraxir's I breach is the Forged breach. When opened, Thraxir gains a card that costs 4 <span class=\"aether\">&AElig;</span> or less from any supply pile. Thraxir's II breach is the Honed breach. When opened, Thraxir gains a spell that costs 5 <span class=\"aether\">&AElig;</span> or less from any supply pile. Thraxir's III breach is the Refined breach. When opened, shuffle Thraxir's turn order card into the turn order deck. Thraxir's IV breach is the Serrated breach. When opened, Thraxir gains a spell from any supply pile.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Thraxir"
     },
     {
@@ -7845,6 +7851,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Remnant"
     },
     {
@@ -7881,6 +7888,7 @@
           "left"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Reeve"
     },
     {
@@ -7917,6 +7925,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Taqren's IV Breach is the Defender Breach. When a spell is cast from an opened Defender Breach, Gravehold gains 1 life.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Taqren"
     },
     {
@@ -7956,6 +7965,7 @@
           "right"
         ]
       ],
+      "additional_rules": "Place Legacy Coin and Spectralite in the Swap zone.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Nadea"
     },
     {
@@ -7992,6 +8002,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Nym"
     },
     {
@@ -8029,6 +8040,7 @@
           "right"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Claudia_%28Legacy_of_Gravehold%29"
     },
     {
@@ -8065,6 +8077,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Adelheim"
     },
     {
@@ -8101,6 +8114,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Cairna's ability can be used when she has 3 or more charges. When Cairna uses her ability, she loses 3 charges.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Cairna"
     },
     {
@@ -8137,6 +8151,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Shuffle the Giga Inferno, Hulking Comet, Mountain Gust, Titanic Jasmite, and Towering Obelisk cards together facedown to form the Ultimate Form deck and place it next to this mat. Cards can only be gained from the Ultimate Form deck using Leisan's ability.<br/>Place the Manifest token next to your mat; it does not begin in play.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Leisan"
     },
     {
@@ -8180,6 +8195,7 @@
           "down"
         ]
       ],
+      "additional_rules": "During setup, place Aether Infuser, Structure Stabilizer, Energy Router, and Heliocopter in the Swap zone.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Auren"
     },
     {
@@ -8216,6 +8232,7 @@
           "up"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Z%27hana"
     },
     {
@@ -8252,6 +8269,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Yan Magda's III and IV breaches are the Incanted breaches. Incanted breaches have no special effects.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Yan_Magda_%28Legacy_of_Gravehold%29"
     },
     {
@@ -8289,6 +8307,7 @@
           "none"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Dezmodia_%28Legacy_of_Gravehold%29"
     },
     {
@@ -8325,6 +8344,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Garu"
     },
     {
@@ -8361,6 +8381,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Xaxos"
     },
     {
@@ -8397,6 +8418,7 @@
           "left"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Lash"
     },
     {
@@ -8434,6 +8456,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Set the builder and destroyer tokens on your mat with the side labeled \"Start\" faceup.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Qu_%28Legacy_of_Gravehold%29"
     },
     {
@@ -8471,6 +8494,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Brama_%28The_Descent%29"
     },
     {
@@ -8508,6 +8532,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Place the Form token on the front of this mat with the Destroyer Form side faceup. All of the gems played and spells cast by Qu are affected by the faceup side of the Form token.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Qu"
     },
     {
@@ -8545,6 +8570,7 @@
           "right"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Ilya_%28Legacy_of_Gravehold%29"
     },
     {
@@ -8581,6 +8607,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Xaxos_%28The_Abyss%29"
     },
     {
@@ -8618,6 +8645,7 @@
           "down"
         ]
       ],
+      "additional_rules": "<b>Setup:</b> Shuffle the Forgotten Ritual deck, place it next to this mat, and reveal the top card of that deck.<br/><b>Rules:</b> The top card of the Forgotten Ritual deck is always revealed. Cards can only be gained from the Forgotten Ritual deck through Raven's cards and ability.<br/>Raven's breaches are the Archive breaches. When a spell is cast from an open Archive breach, Raven gains 1 Knowledge.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Raven"
     },
     {
@@ -8654,6 +8682,7 @@
           "none"
         ]
       ],
+      "additional_rules": "<b>Setup:</b> Set aside the Artificial breaches and cost counters.<br/><b>Rules:</b> At the start of your main phase, if you have no closed breaches, choose an Artificial breach and place it closed side up along the top of your mat. Place a number of cost counters equal to that breach's cost on the breach.<br/>During your main phase, you may spend <span class=\"aether\">&AElig;</span> to remove cost counters from a breach. Any effect that focuses an Artificial breach removes 3 cost counters from it instead.<br/>When all cost counters are removed, open that breach.<br/>If you have removed at least 3 cost counters from a closed Artificial breach this turn, you may prep a spell to it. Rhys can have up to six breaches.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Rhys"
     },
     {
@@ -8690,6 +8719,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Mist"
     },
     {
@@ -8726,6 +8756,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Dezmodia's IV breach is the Void breach. Any number of spells may be prepped to an opened Void breach. When Dezmodia is exhausted, she does not discard her Void breach.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Dezmodia_%28Outcasts%29"
     },
     {
@@ -8770,6 +8801,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Shuffle all of the Invention cards together facedown to form the Inventions deck. Cards in this deck can only be gained using Malastar's Burst of Inspiration ability.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Malastar_%28Legacy_of_Gravehold%29"
     },
     {
@@ -8807,6 +8839,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Willow"
     },
     {
@@ -8843,6 +8876,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Reth's III breach is the Unbound breach. Any number of spells with the same name may be prepped to an opened Unbound breach. When a spell is cast from an opened Unbound breach, that spell deals 1 additional damage for each other spell prepped to that breach.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Reth"
     },
     {
@@ -8879,6 +8913,7 @@
           "right"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Bayli"
     },
     {
@@ -8915,6 +8950,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Kain's III breach is the Spirit breach. When a spell is cast from Kain's open Spirit breach, it deals an additional 1 damage and any ally gains an <span class=\"aether\">&AElig;</span> token.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Kain"
     },
     {
@@ -8951,6 +8987,7 @@
           "down"
         ]
       ],
+      "additional_rules": "<b>Setup:</b> Set aside the destiny tokens.<br/><b>Rules:</b> When a player gains a destiny token, they place that token in front of them. For the rest of the game, that player resolves all of their destiny tokens at the end of their turn after refilling their hand.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Mazahaedron_%28The_Descent%29"
     },
     {
@@ -8987,6 +9024,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Rhia"
     },
     {
@@ -9023,6 +9061,7 @@
           "none"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Nook"
     },
     {
@@ -9059,6 +9098,7 @@
           "up"
         ]
       ],
+      "additional_rules": "Set all the glyph tokens next to this mat. When an ally gains a card with a glyph token on it, that ally or Z'hana resolves that token's effect. Then, that token is returned to Z'hana. When Z'hana gains a card with a glyph token on it, place that glyph token on any card in the supply unless you are playing with one mage. When a card with one or more glyph tokens is removed from the supply, return those glyph tokens to Z'hana.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Z%27hana_%28Outcasts%29"
     },
     {
@@ -9095,6 +9135,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Dezmodia"
     },
     {
@@ -9131,6 +9172,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Xaxos: Outcast cannot gain charges Arachnos would gain from Convergence.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Arachnos_%28Outcasts%29"
     },
     {
@@ -9167,6 +9209,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Set aside all of the Path tokens.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Kadir_%28Legacy_of_Gravehold%29"
     },
     {
@@ -9209,6 +9252,7 @@
           "left"
         ]
       ],
+      "additional_rules": "Shuffle the Golden Infusion, Infernal Infusion, Sapphire Infusion, Mirrored Infusion, Iron Infusion, and Spirit Infusion cards facedown to form the Infusion deck and place it next to this mat.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Janti"
     },
     {
@@ -9245,6 +9289,7 @@
           "left"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Phaedraxa"
     },
     {
@@ -9290,6 +9335,7 @@
           "left"
         ]
       ],
+      "additional_rules": "Place all the Phoenix spell cards that cost 3 or more in the Swap zone. Set the Phoenix mat to the side of Kiri's Mat. Shuffle Phoenix Spark, Phoenix Ember, and Phoenix Flare and place them facedown to the left of the Phoenix mat to create the Phoenix deck.<br/>The Phoenix breach and Kiri's breach both cannot be destroyed.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Kiri_and_Phoenix"
     },
     {
@@ -9327,6 +9373,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Lost_%28Legacy_of_Gravehold%29"
     },
     {
@@ -9371,6 +9418,7 @@
           "right"
         ]
       ],
+      "additional_rules": "Mazra's III breach is the Research Breach. When a spell is cast from an opened Research Breach, the player who cast that spell gains 1 charge. Set aside all cards with \"Mazra's\" in their name that cost more than 0 <span class=\"aether\">&AElig;</span>. These form Mazra's personal upgrade deck. Cards in this deck can only be gained using Mazra's Research ability.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Mazra_%28Legacy_of_Gravehold%29"
     },
     {
@@ -9407,6 +9455,7 @@
           "down"
         ]
       ],
+      "additional_rules": "<b>Setup:</b> Set aside the Link tokens.<br/><b>Rules:</b> Naftir's I breach is the Consuming breach. Spells cast from the Consuming breach are not discarded. Place spells cast from the Consuming breach underneath it. When you place a third spell under this breach, deal 3 damage and then discard all cards beneath the Consuming breach in any order.<br/>A Link token allows two spells to be prepped to the breach it is on. Only 1 Link token can be placed on a breach. When there are no more Link tokens to be placed, Naftir cannot resolve the first option on his ability.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Naftir"
     },
     {
@@ -9449,6 +9498,7 @@
           "right"
         ]
       ],
+      "additional_rules": "Shuffle all of the Reckoning cards together facedown to form the Reckoning deck. Cards in this deck can only be gained using Xaxos's Expand Potential ability.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Xaxos_%28Legacy_of_Gravehold%29"
     },
     {
@@ -9485,6 +9535,7 @@
           "right"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Talix_%28Legacy_of_Gravehold%29"
     },
     {
@@ -9525,6 +9576,7 @@
           "right"
         ]
       ],
+      "additional_rules": "Set four Crystals and one Spark next to this mat to form the Regularity deck.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Nook_%28Legacy_of_Gravehold%29"
     },
     {
@@ -9561,6 +9613,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Mist_%28War_Eternal%29"
     },
     {
@@ -9597,6 +9650,7 @@
           "right"
         ]
       ],
+      "additional_rules": "Sahala's IV Breach is the Celestial Breach. When a spell is cast from an opened Celestial Breach, that spell deals 2 additional damage.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Sahala"
     },
     {
@@ -9637,6 +9691,7 @@
           "right"
         ]
       ],
+      "additional_rules": "Mazra's III breach is the Research Breach. When a spell is cast from an opened Research Breach, the player who cast that spell gains 1 charge. Set aside all cards with \"Mazra's\" in their name that cost more than 0 <span class=\"aether\">&AElig;</span>. These form Mazra's personal upgrade deck. Cards in this deck can only be gained using Mazra's Research ability.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Mazra"
     },
     {
@@ -9674,6 +9729,7 @@
           "right"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Soskel_%28Legacy_of_Gravehold%29"
     },
     {
@@ -9710,6 +9766,7 @@
           "right"
         ]
       ],
+      "additional_rules": "Minions in your hand, deck, discard pile, and prepped to your breaches are considered spells with a cost of 0 <span class=\"aether\">&AElig;</span>.<br/>When a minion is cast, it deals damage based on its nemesis tier. Tier 1 minions deal 3 damage. Tier 2 minions deal 6 damage. Tier 3 minions deal 9 damage.<br/>If an ally has a minion in their hand, they place that minion in the nemesis discard pile and draw a card.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Lilly"
     },
     {
@@ -9746,6 +9803,7 @@
           "down"
         ]
       ],
+      "additional_rules": "<b>Setup:</b> Shuffle all of the facet cards together facedown to form the facet deck.<br/><b>Rules:</b> When a facet is destroyed, place it on the bottom of the facet deck.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Alcheia"
     },
     {
@@ -9783,6 +9841,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Kel_%28Legacy_of_Gravehold%29"
     },
     {
@@ -9819,6 +9878,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Gex"
     },
     {
@@ -9855,6 +9915,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Malastar"
     },
     {
@@ -9891,6 +9952,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Arachnos_%28Legacy_of_Gravehold%29"
     },
     {
@@ -9927,6 +9989,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Quilius"
     },
     {
@@ -9963,6 +10026,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Xaxos_%28The_Void%29"
     },
     {
@@ -9999,6 +10063,7 @@
           "right"
         ]
       ],
+      "additional_rules": "When a player casts a spell from a breach that has an Energize token on it, that player gains 1 charge.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Soskel"
     },
     {
@@ -10035,6 +10100,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Ohat and Ulgimor's IV Breach is the Essence Breach. When a spell is cast from an opened Essence Breach, the player who cast that spell gains 1 life. Place the Ohat/Ulgimor token on the front of this mat with the Ohat side faceup. When you have 5 or more life, you are in Ohat mode. When you have 4 or less life, you are in Ulgimor mode. When you become exhausted, do not resolve any on-exhaust effects. You can gain life when you have 0 life to become unexhausted.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Ohat_and_Ulgimor"
     },
     {
@@ -10071,6 +10137,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Mazahaedron"
     },
     {
@@ -10108,6 +10175,7 @@
           "none"
         ]
       ],
+      "additional_rules": "When you cast a spell from your discard pile, leave it where it is in your discard pile.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Indira_%28Legacy_of_Gravehold%29"
     },
     {
@@ -10149,6 +10217,7 @@
           "down"
         ]
       ],
+      "additional_rules": "<b>Setup:</b> Place Overwhelm, Sustain and Destroy in the Swap zone. No cards begin in Ona's ability zone.<br/><b>Rules:</b> Cards in Ona's ability zone always have their ability active and are never discarded.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Ona"
     },
     {
@@ -10190,6 +10259,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Only cards that start the game in Inco's hand or deck can be Harvested. When a card is harvested, destroy it.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Inco_%28Legacy_of_Gravehold%29"
     },
     {
@@ -10234,6 +10304,7 @@
           "right"
         ]
       ],
+      "additional_rules": "Set aside all cards with \"Rip\" in their name that cost more than 0 <span class=\"aether\">&AElig;</span>. These form Razra's personal upgrade deck. Cards in this deck can only be gained using Razra's Train Rip ability.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Razra_%28Legacy_of_Gravehold%29"
     },
     {
@@ -10270,6 +10341,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Gygar's I Breach is the Ancient Breach. Up to ten Surge tokens can be placed on this breach. When a spell is cast from an Ancient Breach, that spell deals 1 additional damage for each Surge token placed on that breach.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Gygar"
     },
     {
@@ -10306,6 +10378,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Jian"
     },
     {
@@ -10342,6 +10415,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Xae"
     },
     {
@@ -10378,6 +10452,7 @@
           "right"
         ]
       ],
+      "additional_rules": "Thraxir's I breach is the Memory breach. When a spell is cast from the Memory breach, focus any player's closed breach with the lowest focus cost.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Thraxir_%28Legacy_of_Gravehold%29"
     },
     {
@@ -10418,6 +10493,7 @@
           "right"
         ]
       ],
+      "additional_rules": "Set aside all cards with \"Rip\" in their name that cost more than 0 <span class=\"aether\">&AElig;</span>. These form Razra's personal upgrade deck. Cards in this deck can only be gained using Razra's Train Rip ability.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Razra"
     },
     {
@@ -10455,6 +10531,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Ilya"
     },
     {
@@ -10491,6 +10568,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Ulgimor"
     },
     {
@@ -10531,6 +10609,7 @@
           "down"
         ]
       ],
+      "additional_rules": "<b>Setup:</b> Shuffle Armored Bylek, Leviathan Hatchling, Pentagram Beetle, and Swift Snapper together facedown to form the Challenger deck.<br/><b>Rules:</b> Cards in Quilius's ability zone are never discarded. Do not resolve their Persistent effects.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Quilius_%28The_Caverns%29"
     },
     {
@@ -10569,6 +10648,7 @@
           "right"
         ]
       ],
+      "additional_rules": "Set aside all of the Forged Crystal and Forged Spark cards. These form the Forged Deck. Cards in this deck can only be gained using Lost's Heart Forge. Forged Sparks and Forged Crystals count as Sparks and Crystals respectively.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Lost"
     },
     {
@@ -10605,6 +10685,7 @@
           "right"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Qu_%28Outcasts%29"
     },
     {
@@ -10641,6 +10722,7 @@
           "down"
         ]
       ],
+      "additional_rules": "At the end of your casting phase, place a storm token on each of your prepped spells. When a spell is cast, it deals +1 damage for each storm token on it. When a spell with storm tokens on it is discarded, discard the storm tokens on it. Each spell can have no more than 3 storm tokens at once.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Gygar_%28Legacy_of_Gravehold%29"
     },
     {
@@ -10678,6 +10760,7 @@
           "right"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Kel"
     },
     {
@@ -10714,6 +10797,7 @@
           "down"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Talix"
     },
     {
@@ -10750,6 +10834,7 @@
           "left"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Kadir"
     },
     {
@@ -10784,6 +10869,7 @@
           "none"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Legacy_Mage"
     },
     {
@@ -10820,6 +10906,7 @@
           "none"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Indira"
     },
     {
@@ -10857,6 +10944,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Set aside all of the Rose Thorn cards. These cards form the Rose Thorn deck. This is not a supply pile. Cards in this deck can be gained using Inco's Verdant Emerald. Additionally, Inco may spend 2 <span class=\"aether\">&AElig;</span> to gain a card from this deck.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Inco"
     },
     {
@@ -10894,6 +10982,7 @@
           "right"
         ]
       ],
+      "additional_rules": "At the beginning of the game, choose any ally. Give that ally the Tether token. That ally will be your Tether for the rest of the game. That ally replaces a Crystal in their starting deck with Soul Facet. If that ally has no Crystals in their starting deck, they replace any card in their deck with Soul Facet.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Shoshana"
     },
     {
@@ -10930,6 +11019,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Thraxir's IV breach is the Judgment breach. Spells cast from the Judgment breach deal +1 damage for each other opened breach Thraxir has.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Thraxir_%28The_Descent%29"
     },
     {
@@ -10970,6 +11060,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Place Brain Lance and Soulstone in the Swap zone.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Kavoc"
     },
     {
@@ -11014,6 +11105,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Shuffle and place the seven level 2 treasures that come with Dezmodia next to her mat facedown to form Dezmodia's Stash. You may customize this deck with other level 2 treasures from your collection, but it must start with at least seven level 2 treasures.<br/>If you place a treasure that resolves \"at the start of the game\" into play using Dezmodia's ability, resolve that effect immediately. If you place a treasure that resolves \"after a player has finished resolving their ability\" into play using Dezmodia's ability, resolve that effect immediately as well.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Dezmodia_%28Beyond_the_Breach%29"
     },
     {
@@ -11055,6 +11147,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Shuffle the Firethorn cards together to form the Firethorn deck. This is not a supply pile. The top card of this deck is always revealed. Inco may spend 5 <span class=\"aether\">&AElig;</span> to gain the top card from this deck.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Inco_%28The_Surface%29"
     },
     {
@@ -11098,6 +11191,7 @@
           "right"
         ]
       ],
+      "additional_rules": "<b>Setup:</b> Place the Infused, Dim, and Empty Crystals and Sparks in the Swap zone.<br/><b>Rules:</b> To swap a card, place it in the Swap zone. Then place the card you are swapping into on top of your discard pile. When swapping, if the card being swapped to isn't in the Swap zone, place the card being swapped into the Swap zone without gaining the card it would have swapped to.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Nook_%28Beyond_the_Breach%29"
     },
     {
@@ -11140,6 +11234,7 @@
           "down"
         ]
       ],
+      "additional_rules": "During setup, set aside all of Stake's breach upgrade cards.<br/>Stake's IV breach is the Prototype breach. When a spell is cast from the opened Prototype breach, Stake gains 1 Knowledge. Stake's Prototype breach cannot be destroyed.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Stake"
     },
     {
@@ -11177,6 +11272,7 @@
           "right"
         ]
       ],
+      "additional_rules": "During setup, set aside the 5 doom tokens.<br/>When you have 5 or more doom, each minion and the nemesis each suffer 10 damage. Then, you suffer 10 damage and lose all of your doom.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Wolf"
     },
     {
@@ -11213,6 +11309,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Remnant's III and IV breaches are the Rift breaches. When a spell is cast from an opened Rift breach, any ally draws a card.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Remnant_%28Beyond_the_Breach%29"
     },
     {
@@ -11249,6 +11346,7 @@
           "none"
         ]
       ],
+      "additional_rules": "Indira's III breach is the Transfer breach. When a spell is cast from the opened Transfer breach, that spell deals 1 additional damage and is placed into any ally's hand.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Indira_%28Beyond_the_Breach%29"
     },
     {
@@ -11285,6 +11383,7 @@
           "down"
         ]
       ],
+      "additional_rules": "During setup, place Qu's Form card on your mat with the Giver side faceup.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Qu_%28The_Surface%29"
     },
     {
@@ -11321,6 +11420,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Yan Magda's III and IV breaches are the Intoned breaches. When a spell is cast from an opened Intoned breach, any player focuses a breach. Spells cast from opened Intoned breaches deal 1 additional damage.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Yan_Magda_%28The_Returned%29"
     },
     {
@@ -11363,6 +11463,7 @@
           "left"
         ]
       ],
+      "additional_rules": "During setup, shuffle and place the five level 3 treasures that come with Tressa next to her mat facedown to form Tressa's Vault. The top card of Tressa's Vault is always revealed. You may customize this deck with other level 3 treasures from your collection, but it must start with at least five level 3 treasures. At the start of the game, reveal the top two treasures from this deck, and place one into play and the other on the bottom of this deck.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Tressa"
     },
     {
@@ -11399,6 +11500,7 @@
           "up"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Claudia"
     },
     {
@@ -11435,6 +11537,7 @@
           "right"
         ]
       ],
+      "additional_rules": "",
       "page_url": "https://aeonsend.wiki.gg/wiki/Yan_Magda"
     },
     {
@@ -11471,6 +11574,7 @@
           "down"
         ]
       ],
+      "additional_rules": "Lucien's II breach is the Channel breach. When a spell is a cast from an opened Channel breach, the player who cast that spell gains 2 <span class=\"aether\">&AElig;</span>. Lucien's III breach is the Tide breach. When a spell is cast from an opened Tide breach, the player who cast that spell destroys a card in hand or discard pile. Lucien's IV breach is the Flood breach. When a spell is cast from an opened Flood breach, that spell deals 3 additional damage. When a spell is cast from one of Lucien's breaches, after that spell resolves, return that breach to its starting position.",
       "page_url": "https://aeonsend.wiki.gg/wiki/Lucien"
     }
   ],

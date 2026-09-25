@@ -199,8 +199,17 @@ export default function MageSearchScreen() {
                       )}
                       <div 
                         style={{ fontSize: '0.9rem', color: '#ddd', textAlign: 'center' }}
-                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(mage.ability_effect || '') }} 
+                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(mage.ability_effect || '') }}
                       />
+                      {mage.additional_rules && (
+                        <div style={{ marginTop: '0.75rem' }}>
+                          <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.85rem', color: '#bbb', textAlign: 'center' }}><em>Additional Rules:</em></p>
+                          <div
+                            style={{ fontSize: '0.9rem', color: '#ddd', textAlign: 'center' }}
+                            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(mage.additional_rules) }}
+                          />
+                        </div>
+                      )}
                     </div>
 
                     {mage.breaches && mage.breaches.length > 0 && (

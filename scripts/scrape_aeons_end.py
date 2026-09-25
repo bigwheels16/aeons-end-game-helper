@@ -23,7 +23,7 @@ from typing import Dict, List, Any, Optional, Set, Tuple
 
 API_URL = "https://aeonsend.wiki.gg/api.php"
 BASE_PAGE_URL = "https://aeonsend.wiki.gg/wiki/"
-DEFAULT_USER_AGENT = "AeonsEndWikiScraper/1.0 (+https://github.com/bigwheels16/aeons-end-game-helper)"
+DEFAULT_USER_AGENT = "AeonsEndWikiScraper/1.0"
 
 KNOWN_EXPANSIONS = [
     "Aeon's End (Core Box)",
@@ -497,6 +497,26 @@ def parse_mage_breaches(params: Dict[str, str], wikitext: str) -> List[List[str]
     return breaches
 
 
+def parse_mage_additional_rules(params: Dict[str, str], wikitext: str) -> str:
+    """
+    Extracts a mage's additional rules, or "" if the mage has none.
+    Prefers the Mage template's Rules parameter (the mat's Additional Rules), and falls back to
+    the page's ==Rules== (or ==Setup Rules==) section when the template has none.
+    """
+    template_rules = params.get("rules", "").strip()
+    if template_rules:
+        return clean_wikitext(template_rules)
+
+    section_match = re.search(
+        r"^==\s*(?:Setup\s+)?Rules\s*==\s*$(.*?)(?=^==[^=]|\Z)",
+        wikitext,
+        re.IGNORECASE | re.MULTILINE | re.DOTALL,
+    )
+    if section_match:
+        return clean_wikitext(section_match.group(1))
+    return ""
+
+
 def process_mage(title: str, page_data: Dict[str, Any]) -> Optional[Tuple[str, Dict[str, Any]]]:
     """Parses Mage templates."""
     wikitext = page_data["wikitext"]
@@ -547,6 +567,7 @@ def process_mage(title: str, page_data: Dict[str, Any]) -> Optional[Tuple[str, D
         "starting_hand": get_clean(params, "starting hand"),
         "starting_deck": get_clean(params, "starting deck"),
         "breaches": parse_mage_breaches(params, wikitext),
+        "additional_rules": parse_mage_additional_rules(params, wikitext),
         "page_url": make_page_url(title),
     }
     return "mages", item
