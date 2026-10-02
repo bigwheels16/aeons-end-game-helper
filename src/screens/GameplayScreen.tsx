@@ -174,17 +174,52 @@ const CardPile = ({ cards, limit, emptyText, customClass, onCardClick, selectedI
   );
 };
 
-const CurrentTurnDisplay = ({ currentTurn }: { currentTurn: Card | null }) => {
+interface CurrentTurnDisplayProps {
+  currentTurn: Card | null;
+  /** When provided, the card acts as the "draw next turn" control. */
+  onDraw?: () => void;
+  /** Temporarily blocks drawing (e.g. double-tap debounce) while keeping focus on the card. */
+  isDrawDisabled?: boolean;
+  /** True when the draw pile is empty, so drawing starts a new round. */
+  startsNewRound?: boolean;
+}
+
+const CurrentTurnDisplay = ({ currentTurn, onDraw, isDrawDisabled = false, startsNewRound = false }: CurrentTurnDisplayProps) => {
   const showFace = currentTurn ? !!currentTurn.isRevealed : false;
+  const cardLabel = currentTurn ? (showFace ? currentTurn.type : 'Card Back') : 'Round Over';
+  // Inside the button the image is decorative (alt="") because the button's label already names the card.
+  const renderCardImage = (alt: string) => currentTurn ? (
+    <img
+      key={currentTurn.id}
+      src={showFace ? currentTurn.imageFaceUrl : CARD_BACK_URL}
+      alt={alt}
+      className={styles.currentTurnImage}
+      draggable={false}
+    />
+  ) : null;
+
+  if (!onDraw) {
+    return (
+      <div className={styles.currentTurnContainer}>
+        {renderCardImage(cardLabel) ?? <h2>Round Over</h2>}
+      </div>
+    );
+  }
+
+  const actionLabel = startsNewRound ? 'Start new round' : 'Draw next turn card';
+
   return (
     <div className={styles.currentTurnContainer}>
-      {currentTurn ? (
-        <>
-          <img key={currentTurn.id} src={showFace ? currentTurn.imageFaceUrl : CARD_BACK_URL} alt={showFace ? currentTurn.type : 'Card Back'} className={styles.currentTurnImage} />
-        </>
-      ) : (
-        <h2>Round Over</h2>
-      )}
+      <button
+        type="button"
+        className={styles.currentTurnButton}
+        onClick={onDraw}
+        aria-disabled={isDrawDisabled}
+        aria-label={`${cardLabel}. ${actionLabel}`}
+      >
+        {renderCardImage('') ?? <span className={styles.roundOverText}>Round Over</span>}
+      </button>
+      <p className={styles.currentTurnHint}>(tap the card to draw the next one)</p>
     </div>
   );
 };
@@ -467,7 +502,12 @@ const GameplayScreen: React.FC = () => {
           isDragMode={specialMode === 'MOVE'}
         />
         
-        <CurrentTurnDisplay currentTurn={currentTurn} />
+        <CurrentTurnDisplay
+          currentTurn={currentTurn}
+          onDraw={specialMode === 'NONE' ? handleNextTurn : undefined}
+          isDrawDisabled={isNextTurnDisabled}
+          startsNewRound={drawPile.length === 0}
+        />
 
         <CardPile 
           containerId="draw-pile-container"
@@ -498,16 +538,6 @@ const GameplayScreen: React.FC = () => {
           })() : null}
         </DragOverlay>
       </DndContext>
-
-      {specialMode === 'NONE' && (
-        <button
-          onClick={handleNextTurn}
-          className={styles.nextTurnBtn}
-          disabled={isNextTurnDisabled}
-        >
-          {drawPile.length > 0 ? 'NEXT TURN' : 'START NEW ROUND'}
-        </button>
-      )}
 
       <CustomActionsModal 
         isOpen={isCustomActionsOpen} 

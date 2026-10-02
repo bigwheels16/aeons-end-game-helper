@@ -27,3 +27,6 @@ data/scraped/.cache
 
 # Testing
 coverage
+
+# Python
+__pycache__/

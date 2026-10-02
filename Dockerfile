@@ -13,8 +13,9 @@ RUN npm run build
 # Production stage
 FROM nginx:alpine-slim
 
-# Copy nginx config
+# Copy nginx config (snippets live outside conf.d so they are not loaded at http level)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx/security-headers.conf /etc/nginx/snippets/security-headers.conf
 
 # Copy built assets
 COPY --from=builder /app/dist /usr/share/nginx/html
