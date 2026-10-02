@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useGameStore } from '../store';
-import { useToggleSet } from '../hooks/useToggleSet';
 import { getMageById, getNemesisById, getSupplyCardById } from '../utils/cards';
 import CardDisplayItem from '../components/CardDisplayItem';
 import MageDisplayItem from '../components/MageDisplayItem';
@@ -25,16 +24,12 @@ function resolveFavorites<T extends { name: string }>(ids: string[], lookup: (id
  */
 export default function FavoritesScreen() {
   const favorites = useGameStore((state) => state.favorites);
-  const visibleMats = useToggleSet();
-  const visibleStarters = useToggleSet();
-  const visibleNemesisImages = useToggleSet();
-  const visibleCardImages = useToggleSet();
 
   const mages = useMemo(() => resolveFavorites(favorites.mages, getMageById), [favorites.mages]);
   const nemeses = useMemo(() => resolveFavorites(favorites.nemeses, getNemesisById), [favorites.nemeses]);
   const cards = useMemo(() => resolveFavorites(favorites.supply, getSupplyCardById), [favorites.supply]);
 
-  const totalCount = favorites.mages.length + favorites.nemeses.length + favorites.supply.length;
+  const totalCount = mages.length + nemeses.length + cards.length;
   const sectionHeadingStyle = { color: 'white', margin: '0 0 1rem 0' };
 
   return (
@@ -51,51 +46,34 @@ export default function FavoritesScreen() {
           </div>
         ) : (
           <>
-            {favorites.mages.length > 0 && (
+            {mages.length > 0 && (
               <section style={{ marginBottom: '2rem' }}>
                 <h3 style={sectionHeadingStyle}>Mages ({mages.length})</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem' }}>
                   {mages.map(mage => (
-                    <MageDisplayItem
-                      key={mage.id}
-                      mage={mage}
-                      matsVisible={visibleMats.has(mage.id)}
-                      onToggleMats={() => visibleMats.toggle(mage.id)}
-                      isStarterVisible={visibleStarters.has}
-                      onToggleStarter={visibleStarters.toggle}
-                    />
+                    <MageDisplayItem key={mage.id} mage={mage} />
                   ))}
                 </div>
               </section>
             )}
 
-            {favorites.nemeses.length > 0 && (
+            {nemeses.length > 0 && (
               <section style={{ marginBottom: '2rem' }}>
                 <h3 style={sectionHeadingStyle}>Nemeses ({nemeses.length})</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem' }}>
                   {nemeses.map(nemesis => (
-                    <NemesisDisplayItem
-                      key={nemesis.id}
-                      nemesis={nemesis}
-                      imagesVisible={visibleNemesisImages.has(nemesis.id)}
-                      onToggleImages={() => visibleNemesisImages.toggle(nemesis.id)}
-                    />
+                    <NemesisDisplayItem key={nemesis.id} nemesis={nemesis} />
                   ))}
                 </div>
               </section>
             )}
 
-            {favorites.supply.length > 0 && (
+            {cards.length > 0 && (
               <section style={{ marginBottom: '2rem' }}>
                 <h3 style={sectionHeadingStyle}>Supply Cards ({cards.length})</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
                   {cards.map(card => (
-                    <CardDisplayItem
-                      key={card.id}
-                      card={card}
-                      isImageVisible={visibleCardImages.has(card.id)}
-                      onToggleImage={() => visibleCardImages.toggle(card.id)}
-                    />
+                    <CardDisplayItem key={card.id} card={card} />
                   ))}
                 </div>
               </section>

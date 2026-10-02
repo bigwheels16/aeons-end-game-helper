@@ -61,7 +61,7 @@ function App() {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (wakeLock) {
-        wakeLock.release().catch(() => {});
+        wakeLock.release();
       }
     };
   }, []);

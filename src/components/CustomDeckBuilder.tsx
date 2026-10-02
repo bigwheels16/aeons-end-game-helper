@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useGameStore } from '../store';
 import { CardType, CARD_IMAGES } from '../deckEngine';
 
@@ -12,12 +12,7 @@ import { CardType, CARD_IMAGES } from '../deckEngine';
  */
 const CustomDeckBuilder: React.FC = () => {
   const store = useGameStore();
-  const [draftDeck, setDraftDeck] = useState<CardType[]>([]);
-
-  useEffect(() => {
-    // Load existing custom deck on mount
-    setDraftDeck(store.customDeck || []);
-  }, [store.customDeck]);
+  const [draftDeck, setDraftDeck] = useState<CardType[]>(store.customDeck);
 
   const handleAddCard = (type: CardType) => {
     setDraftDeck(prev => [...prev, type]);
@@ -27,11 +22,12 @@ const CustomDeckBuilder: React.FC = () => {
     setDraftDeck(prev => prev.filter((_, i) => i !== indexToRemove));
   };
 
+  const warning = draftDeck.length === 0 ? null
+    : !draftDeck.includes('Nemesis') ? 'Warning: Your deck does not contain any Nemesis cards.'
+    : draftDeck.every(c => c === 'Nemesis') ? 'Warning: Your deck only contains Nemesis cards.'
+    : null;
+
   const handleDone = () => {
-    if (draftDeck.length === 0) {
-      alert('Deck must contain at least one card.');
-      return;
-    }
     store.setCustomDeck(draftDeck);
     store.setPlayerCount('custom');
     window.location.hash = 'turn-order';
@@ -81,15 +77,9 @@ const CustomDeckBuilder: React.FC = () => {
         )}
       </div>
 
-      {draftDeck.length > 0 && !draftDeck.includes('Nemesis') && (
+      {warning && (
         <div style={{ padding: '10px', backgroundColor: 'rgba(255, 152, 0, 0.2)', color: '#ff9800', borderRadius: '8px', marginBottom: '15px', textAlign: 'center', border: '1px solid #ff9800' }}>
-          Warning: Your deck does not contain any Nemesis cards.
-        </div>
-      )}
-      
-      {draftDeck.length > 0 && !draftDeck.some(c => c !== 'Nemesis') && (
-        <div style={{ padding: '10px', backgroundColor: 'rgba(255, 152, 0, 0.2)', color: '#ff9800', borderRadius: '8px', marginBottom: '15px', textAlign: 'center', border: '1px solid #ff9800' }}>
-          Warning: Your deck only contains Nemesis cards.
+          {warning}
         </div>
       )}
 

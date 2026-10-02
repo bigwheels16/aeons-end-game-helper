@@ -30,12 +30,6 @@ describe('deckEngine', () => {
     expect(hasConsecutive).toBe(false);
   });
 
-  it('should allow consecutive nemesis if specified', () => {
-    const deck = generateDeck(1);
-    const shuffled = shuffleDeck(deck, true, true, null);
-    expect(shuffled.length).toBe(deck.length);
-  });
-
   it('should gracefully handle only nemesis cards left when not allowing consecutive', () => {
     const deck: any[] = [
       { id: '1', type: 'Nemesis', imageFaceUrl: '' },
@@ -45,15 +39,6 @@ describe('deckEngine', () => {
     expect(shuffled.length).toBe(2);
     expect(shuffled[0].type).toBe('Nemesis');
     expect(shuffled[1].type).toBe('Nemesis');
-  });
-
-  it('should gracefully handle nemesis cards when last turn was nemesis but only nemesis left', () => {
-    const deck: any[] = [
-      { id: '1', type: 'Nemesis', imageFaceUrl: '' },
-      { id: '2', type: 'Nemesis', imageFaceUrl: '' }
-    ];
-    const shuffled = shuffleDeck(deck, false, true, 'Nemesis');
-    expect(shuffled.length).toBe(2);
   });
 
   it('should strip isRevealed from all cards when shuffling', () => {

@@ -7,9 +7,9 @@ interface CustomActionsModalProps {
   isOpen: boolean;
   onClose: () => void;
   onEnterEditMode: () => void;
-  onEnterRevealMode?: () => void;
-  onOpenGameOptions?: () => void;
-  onOpenHistory?: () => void;
+  onEnterRevealMode: () => void;
+  onOpenGameOptions: () => void;
+  onOpenHistory: () => void;
 }
 
 export const CustomActionsModal: React.FC<CustomActionsModalProps> = ({ isOpen, onClose, onEnterEditMode, onEnterRevealMode, onOpenGameOptions, onOpenHistory }) => {
@@ -35,9 +35,7 @@ export const CustomActionsModal: React.FC<CustomActionsModalProps> = ({ isOpen, 
   };
 
   const handleRevealClick = () => {
-    if (onEnterRevealMode) {
-      onEnterRevealMode();
-    }
+    onEnterRevealMode();
     onClose();
   };
 
@@ -71,10 +69,10 @@ export const CustomActionsModal: React.FC<CustomActionsModalProps> = ({ isOpen, 
       <ModalButton onClick={handleRevealClick} disabled={isRevealDisabled} style={{ width: '100%', marginBottom: '20px' }}>
         Reveal Cards
       </ModalButton>
-      <ModalButton onClick={() => { if (onOpenHistory) onOpenHistory(); onClose(); }} style={{ width: '100%', marginBottom: '20px' }}>
+      <ModalButton onClick={() => { onOpenHistory(); onClose(); }} style={{ width: '100%', marginBottom: '20px' }}>
         Show Turn History
       </ModalButton>
-      <ModalButton onClick={() => { if (onOpenGameOptions) onOpenGameOptions(); onClose(); }} style={{ width: '100%', marginBottom: '20px' }}>
+      <ModalButton onClick={() => { onOpenGameOptions(); onClose(); }} style={{ width: '100%', marginBottom: '20px' }}>
         Update Game Options
       </ModalButton>
       <ModalButton onClick={onClose} style={{ width: '100%' }}>

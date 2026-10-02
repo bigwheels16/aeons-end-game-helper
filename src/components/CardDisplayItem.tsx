@@ -2,14 +2,13 @@ import React, { useState } from 'react';
 import { ScrapedSupplyCard } from '../types/scraped';
 import FavoriteStar from './FavoriteStar';
 import ScrapedHtml from './ScrapedHtml';
+import WikiImage from './WikiImage';
 import WikiLink from './WikiLink';
 
 export interface CardDisplayItemProps {
   card: ScrapedSupplyCard;
   headerExtra?: React.ReactNode;
   containerStyle?: React.CSSProperties;
-  isImageVisible?: boolean;
-  onToggleImage?: () => void;
 }
 
 /**
@@ -20,15 +19,9 @@ export interface CardDisplayItemProps {
 export default function CardDisplayItem({
   card,
   headerExtra,
-  containerStyle,
-  isImageVisible,
-  onToggleImage
+  containerStyle
 }: CardDisplayItemProps) {
-  const [internalShowImage, setInternalShowImage] = useState(false);
-  const showImage = isImageVisible !== undefined ? isImageVisible : internalShowImage;
-  const toggleImage = onToggleImage || (() => setInternalShowImage(prev => !prev));
-
-  const imageUrl = `https://aeonsend.wiki.gg/images/${card.name.replace(/ /g, '_')}.jpg`;
+  const [showImage, setShowImage] = useState(false);
 
   return (
     <div 
@@ -44,7 +37,7 @@ export default function CardDisplayItem({
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
         <h3 style={{ margin: 0 }}>
-          <WikiLink url={card.page_url} fallbackName={card.name} style={{ color: '#4CAF50', textDecoration: 'none' }}>
+          <WikiLink url={card.page_url} style={{ color: '#4CAF50', textDecoration: 'none' }}>
             {card.name}
           </WikiLink>
         </h3>
@@ -63,21 +56,14 @@ export default function CardDisplayItem({
         style={{ fontSize: '0.9rem', color: '#ddd', marginBottom: '0.5rem', textAlign: 'center' }}
       />
       <button 
-        onClick={toggleImage}
+        onClick={() => setShowImage(prev => !prev)}
         style={{ background: 'none', border: 'none', color: '#2196F3', cursor: 'pointer', padding: 0, fontSize: '0.875rem' }}
       >
         {showImage ? 'Hide Image' : 'Show Image'}
       </button>
       {showImage && (
         <div style={{ marginTop: '0.5rem' }}>
-          <a href={imageUrl} target="_blank" rel="noopener noreferrer">
-            <img 
-              src={imageUrl} 
-              alt={card.name}
-              loading="lazy"
-              style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
-            />
-          </a>
+          <WikiImage name={card.name} />
         </div>
       )}
     </div>

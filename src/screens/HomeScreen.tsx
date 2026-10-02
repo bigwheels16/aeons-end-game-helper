@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { MyExpansionsChip, MyExpansionsPicker } from '../components/MyExpansions';
+import React from 'react';
+import { MyExpansionsChip } from '../components/MyExpansions';
 
 interface HomeScreenProps {
   onSelectTool: (tool: string) => void;
@@ -37,9 +37,16 @@ const formatBuildTime = (isoString?: string): string => {
   return `${day}-${month}-${year} ${hours}:${minutes}:${seconds} ${period}${tzSuffix}`;
 };
 
+const TOOLS = [
+  { id: 'turn-order', label: 'Turn Order Helper' },
+  { id: 'randomizer', label: 'Supply Randomizer' },
+  { id: 'card-search', label: 'Supply Card Search' },
+  { id: 'mage-search', label: 'Mage Search' },
+  { id: 'nemesis-search', label: 'Nemesis Search' },
+  { id: 'favorites', label: 'Favorites' },
+] as const;
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectTool }) => {
-  const [pickerOpen, setPickerOpen] = useState(false);
   const buttonStyle: React.CSSProperties = {
     padding: '1.5rem 2rem',
     fontSize: '1.25rem',
@@ -66,45 +73,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectTool }) => {
       }}
     >
       <h1>Aeon's End Tools</h1>
-      <MyExpansionsChip onOpen={() => setPickerOpen(true)} />
-      <MyExpansionsPicker isOpen={pickerOpen} onClose={() => setPickerOpen(false)} />
+      <MyExpansionsChip />
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'stretch' }}>
-        <button
-          onClick={() => onSelectTool('turn-order')}
-          style={buttonStyle}
-        >
-          Turn Order Helper
-        </button>
-        <button
-          onClick={() => onSelectTool('randomizer')}
-          style={buttonStyle}
-        >
-          Supply Randomizer
-        </button>
-        <button
-          onClick={() => onSelectTool('card-search')}
-          style={buttonStyle}
-        >
-          Supply Card Search
-        </button>
-        <button
-          onClick={() => onSelectTool('mage-search')}
-          style={buttonStyle}
-        >
-          Mage Search
-        </button>
-        <button
-          onClick={() => onSelectTool('nemesis-search')}
-          style={buttonStyle}
-        >
-          Nemesis Search
-        </button>
-        <button
-          onClick={() => onSelectTool('favorites')}
-          style={buttonStyle}
-        >
-          Favorites
-        </button>
+        {TOOLS.map(({ id, label }) => (
+          <button key={id} onClick={() => onSelectTool(id)} style={buttonStyle}>
+            {label}
+          </button>
+        ))}
       </div>
 
       <div style={{ marginTop: '3rem', fontSize: '0.9rem', color: '#888' }}>

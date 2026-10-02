@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, within } from '@testing-library/react';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import GameplayScreen from './GameplayScreen';
 import { useGameStore } from '../store';
@@ -89,13 +89,6 @@ describe('GameplayScreen Component', () => {
       vi.useRealTimers();
     });
 
-    it('does not render a separate Next Turn button', () => {
-      render(<GameplayScreen />);
-
-      expect(screen.queryByText('NEXT TURN')).toBeNull();
-      expect(screen.queryByText('START NEW ROUND')).toBeNull();
-    });
-
     it('renders the current card as an accessible native button with the hint below it', () => {
       render(<GameplayScreen />);
 
@@ -149,31 +142,19 @@ describe('GameplayScreen Component', () => {
       expect(useGameStore.getState().roundNumber).toBe(2);
     });
 
-    it('is not tappable and hides the hint in a special mode', () => {
+    it.each([
+      ['Move Cards', 'Move mode'],
+      ['Reveal Cards', 'Reveal mode'],
+    ])('is not tappable and hides the hint after choosing "%s", and restores both after cancelling', (action, modeTitle) => {
       render(<GameplayScreen />);
 
       fireEvent.click(screen.getByText('Special Actions'));
-      fireEvent.click(screen.getByText('Move Cards'));
+      fireEvent.click(screen.getByText(action));
 
-      expect(screen.getByText('Move mode')).toBeDefined();
+      expect(screen.getByText(modeTitle)).toBeDefined();
       expect(screen.queryByRole('button', { name: /Draw next turn card/ })).toBeNull();
       expect(screen.queryByText('(tap the card to draw the next one)')).toBeNull();
       // The current turn card is still shown, just not wrapped in a button
-      const currentImages = screen.getAllByRole('img').filter(img => img.getAttribute('src') === 'url0');
-      expect(currentImages.length).toBeGreaterThan(0);
-      currentImages.forEach(img => expect(img.closest('button')).toBeNull());
-      expect(useGameStore.getState().discardPile).toHaveLength(1);
-    });
-
-    it('is not tappable and hides the hint in Reveal mode, and restores both after cancelling', () => {
-      render(<GameplayScreen />);
-
-      fireEvent.click(screen.getByText('Special Actions'));
-      fireEvent.click(screen.getByText('Reveal Cards'));
-
-      expect(screen.getByText('Reveal mode')).toBeDefined();
-      expect(screen.queryByRole('button', { name: /Draw next turn card/ })).toBeNull();
-      expect(screen.queryByText('(tap the card to draw the next one)')).toBeNull();
       const currentImages = screen.getAllByRole('img').filter(img => img.getAttribute('src') === 'url0');
       expect(currentImages.length).toBeGreaterThan(0);
       currentImages.forEach(img => expect(img.closest('button')).toBeNull());
@@ -183,24 +164,6 @@ describe('GameplayScreen Component', () => {
       expect(screen.getByRole('button', { name: /^Player 3\. Draw next turn card$/ })).toBeDefined();
       expect(screen.getByText('(tap the card to draw the next one)')).toBeDefined();
       expect(useGameStore.getState().discardPile).toHaveLength(1);
-    });
-
-    it('is keyboard-focusable as a native button (Enter/Space activation is native button behaviour)', () => {
-      render(<GameplayScreen />);
-      const cardButton = screen.getByRole('button', { name: /Draw next turn card/ }) as HTMLButtonElement;
-
-      // Not removed from the tab order and not natively disabled (would drop focus during the debounce)
-      expect(cardButton.hasAttribute('tabindex')).toBe(false);
-      expect(cardButton.disabled).toBe(false);
-      cardButton.focus();
-      expect(document.activeElement).toBe(cardButton);
-
-      // A keyboard activation dispatches a click on the native button; it draws a card and keeps focus
-      fireEvent.click(cardButton, { detail: 0 });
-      expect(useGameStore.getState().discardPile).toHaveLength(2);
-      expect(cardButton.getAttribute('aria-disabled')).toBe('true');
-      expect(cardButton.disabled).toBe(false);
-      expect(document.activeElement).toBe(screen.getByRole('button', { name: /Draw next turn card/ }));
     });
 
     it('updates the accessible name to the newly drawn card', () => {
@@ -231,18 +194,51 @@ describe('GameplayScreen Component', () => {
       fireEvent.click(cardButton);
       expect(useGameStore.getState().roundNumber).toBe(4);
     });
+  });
 
-    it('does not start a second new round from a double tap within 1s', () => {
-      useGameStore.setState({ drawPile: [], discardPile: [currentCard], roundNumber: 1 });
-      render(<GameplayScreen />);
-
-      fireEvent.click(screen.getByRole('button', { name: /Start new round/ }));
-      expect(useGameStore.getState().roundNumber).toBe(2);
-      const drawnAfterFirst = useGameStore.getState().discardPile.length;
-
-      fireEvent.click(screen.getByRole('button', { name: /Draw next turn card|Start new round/ }));
-      expect(useGameStore.getState().roundNumber).toBe(2);
-      expect(useGameStore.getState().discardPile).toHaveLength(drawnAfterFirst);
+  it('Update Game Options: Cancel discards the changes; Save applies all four and reveals the draw pile', () => {
+    useGameStore.setState({
+      allowConsecutivePlayer: true,
+      drawPile: [
+        { id: 'p1', type: 'Player 1', imageFaceUrl: 'url1', isRevealed: false },
+        { id: 'n1', type: 'Nemesis', imageFaceUrl: 'url2', isRevealed: false },
+      ],
     });
+    render(<GameplayScreen />);
+    const openOptions = () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Special Actions' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Update Game Options' }));
+      return within(screen.getByRole('heading', { name: 'Update Game Options' }).parentElement!);
+    };
+    const savedOptions = () => {
+      const { playerCount, allowConsecutiveNemesis, allowConsecutivePlayer, visibilityOption } = useGameStore.getState();
+      return { playerCount, allowConsecutiveNemesis, allowConsecutivePlayer, visibilityOption };
+    };
+    const before = savedOptions();
+
+    let dialog = openOptions();
+    fireEvent.click(dialog.getByText('All turns'));
+    fireEvent.click(dialog.getByRole('button', { name: 'Cancel' }));
+    // Reopening starts from the saved options, so saving at once changes nothing
+    dialog = openOptions();
+    fireEvent.click(dialog.getByRole('button', { name: 'Save Options' }));
+    expect(savedOptions()).toEqual(before);
+    expect(screen.getAllByAltText('Card Back')).toHaveLength(2);
+
+    dialog = openOptions();
+    fireEvent.click(dialog.getByText('3'));
+    fireEvent.click(dialog.getByText('Nemesis'));
+    fireEvent.click(dialog.getByText('Same Player'));
+    fireEvent.click(dialog.getByText('All turns'));
+    fireEvent.click(dialog.getByRole('button', { name: 'Save Options' }));
+
+    expect(savedOptions()).toEqual({
+      playerCount: 3,
+      allowConsecutiveNemesis: false,
+      allowConsecutivePlayer: false,
+      visibilityOption: 'all',
+    });
+    expect(screen.queryByAltText('Card Back')).toBeNull();
+    expect(screen.getAllByRole('img').map(img => img.getAttribute('src'))).toEqual(['url1', 'url2']);
   });
 });

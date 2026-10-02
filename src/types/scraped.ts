@@ -9,7 +9,7 @@ export interface ScrapedSupplyCard {
   cost?: string | number;
   effect?: string;
   expansions?: string[];
-  page_url?: string;
+  page_url: string;
 }
 
 export interface ScrapedUniqueStarter {
@@ -20,7 +20,7 @@ export interface ScrapedUniqueStarter {
   effect?: string;
   expansions?: string[];
   mage?: string;
-  page_url?: string;
+  page_url: string;
 }
 
 export interface ScrapedMage {
@@ -39,7 +39,7 @@ export interface ScrapedMage {
   starting_deck?: string;
   breaches?: string[][];
   additional_rules?: string;
-  page_url?: string;
+  page_url: string;
 }
 
 export interface ScrapedNemesis {
@@ -54,7 +54,7 @@ export interface ScrapedNemesis {
   rules?: string;
   setup?: string;
   expansions?: string[];
-  page_url?: string;
+  page_url: string;
 }
 
 export interface ScrapedNemesisCard {
@@ -65,7 +65,7 @@ export interface ScrapedNemesisCard {
   effect?: string;
   nemesis?: string;
   expansions?: string[];
-  page_url?: string;
+  page_url: string;
   life?: string | number;
   power?: string;
 }

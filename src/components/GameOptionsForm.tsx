@@ -1,32 +1,22 @@
 import React from 'react';
-import { VisibilityOption } from '../store';
+import { GameOptionsData } from '../store';
+import { selectableStyle } from './selectableStyle';
 
 export const OptionCard: React.FC<{ title: string; active: boolean; onClick: () => void }> = ({ title, active, onClick }) => (
   <div onClick={onClick} style={{
     flex: 1,
     padding: '15px 10px',
-    border: active ? '2px solid #4CAF50' : '2px solid #555',
-    backgroundColor: active ? 'rgba(76, 175, 80, 0.2)' : '#222',
-    color: active ? '#fff' : '#ccc',
     borderRadius: '8px',
-    cursor: 'pointer',
     textAlign: 'center',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    transition: 'all 0.2s',
-    userSelect: 'none'
+    userSelect: 'none',
+    ...selectableStyle(active, 2)
   }}>
     {title}
   </div>
 );
-
-export interface GameOptionsData {
-  playerCount: number | 'custom';
-  allowConsecutiveNemesis: boolean;
-  allowConsecutivePlayer: boolean;
-  visibilityOption: VisibilityOption;
-}
 
 interface GameOptionsFormProps {
   options: GameOptionsData;

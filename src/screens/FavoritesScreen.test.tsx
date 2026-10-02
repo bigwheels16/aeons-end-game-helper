@@ -16,8 +16,6 @@ vi.mock('../../data/scraped/aeons_end_all.json', () => ({
     ],
     nemeses: [
       { id: 'nemesis:rageborne', name: 'Rageborne', type: 'Nemesis', expansions: ['Base'], health: '70', difficulty: '3' },
-      // Only item in 'Promo', so 'Promo' is a real (known) expansion for the unfiltered-favorites test
-      { id: 'nemesis:prince-of-gluttons', name: 'Prince of Gluttons', type: 'Nemesis', expansions: ['Promo'], health: '60', difficulty: '4' },
     ],
   }
 }));
@@ -73,18 +71,20 @@ describe('Favorites', () => {
     expect(screen.getByText('Favorites (2)')).toBeDefined();
   });
 
-  it('is not filtered by the Expansions setting: favorites from non-owned expansions still render', () => {
-    useGameStore.setState({
-      favorites: { supply: ['supply:spark'], mages: ['mage:adelheim'], nemeses: ['nemesis:rageborne'] },
-      // Owns only an expansion none of the favorites belong to
-      ownedExpansions: ['Promo'],
-    });
-    render(<FavoritesScreen />);
+  it('skips unknown favorite ids and leaves them out of the count', () => {
+    useGameStore.setState({ favorites: { supply: ['supply:spark', 'supply:no-such-card'], mages: ['Brama'], nemeses: [] } });
+    const { unmount } = render(<FavoritesScreen />);
 
-    expect(screen.getByText('Favorites (3)')).toBeDefined();
-    expect(screen.getByText('Adelheim')).toBeDefined();
-    expect(screen.getByText('Rageborne')).toBeDefined();
+    expect(screen.getByText('Favorites (1)')).toBeDefined();
+    expect(screen.getByText('Supply Cards (1)')).toBeDefined();
     expect(screen.getByText('Spark')).toBeDefined();
-    expect(screen.queryByRole('button', { name: /^Expansions:/ })).toBeNull();
+    expect(screen.queryByText('Jade')).toBeNull();
+    expect(screen.queryByRole('heading', { name: /^Mages \(/ })).toBeNull();
+    expect(screen.queryByRole('heading', { name: /^Nemeses \(/ })).toBeNull();
+    unmount();
+
+    useGameStore.setState({ favorites: { supply: ['supply:no-such-card'], mages: ['Brama'], nemeses: ['Rageborne'] } });
+    render(<FavoritesScreen />);
+    expect(screen.getByText('No favorites yet.')).toBeDefined();
   });
 });

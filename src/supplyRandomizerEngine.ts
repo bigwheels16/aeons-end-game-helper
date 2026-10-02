@@ -1,5 +1,8 @@
 import { ScrapedSupplyCard } from './types/scraped';
 import { SlotCriteria } from './store';
+import { toNumber } from './utils/numbers';
+import { shuffleInPlace } from './utils/shuffle';
+import { matchesSearch } from './utils/text';
 
 /**
  * Solves supply card assignments across configured slots using depth-first backtracking
@@ -49,7 +52,7 @@ export function solveSupplyRandomizer(
     let candidates = slotCandidates[currentSlot.id];
 
     // Optional: shuffle candidates to ensure randomization
-    candidates = shuffleArray([...candidates]);
+    candidates = shuffleInPlace([...candidates]);
 
     for (const card of candidates) {
       const uniqueId = card.id;
@@ -81,8 +84,6 @@ export function solveSupplyRandomizer(
   }
 }
 
-import { stripHtml } from './utils/text';
-
 /**
  * Checks whether a supply card satisfies the criteria specified for a slot.
  * Matches against card type, cost range, and name/effect search text.
@@ -92,51 +93,17 @@ import { stripHtml } from './utils/text';
  * @returns True if the card satisfies all slot criteria
  */
 export function isCardMatch(card: ScrapedSupplyCard, slot: SlotCriteria): boolean {
-  if (!card) return false;
-
   // Type filter
-  if (slot.cardTypes !== undefined) {
-    if (!card.type || !slot.cardTypes.includes(card.type as any)) {
-      return false;
-    }
-  } else if (slot.cardType && card.type !== slot.cardType) {
+  if (!card.type || !slot.cardTypes.includes(card.type as any)) {
     return false;
   }
 
   // Cost filter
-  const cardCost = card.cost !== undefined ? Number(card.cost) || 0 : 0;
+  const cardCost = toNumber(card.cost);
   if (cardCost < slot.costRange[0] || cardCost > slot.costRange[1]) {
     return false;
   }
 
   // Search filter
-  if (slot.searchTerm && slot.searchTerm.trim() !== '') {
-    const terms = slot.searchTerm.toLowerCase().split(/\s+/).filter(Boolean);
-    const searchableText = [
-      card.name,
-      card.effect ? stripHtml(card.effect) : ''
-    ].join(' ').toLowerCase();
-
-    if (!terms.every(term => searchableText.includes(term))) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-/**
- * Performs an in-place Fisher-Yates shuffle on an array to randomize candidate selection.
- *
- * @param array Array of items to shuffle
- * @returns Shuffled array
- */
-function shuffleArray<T>(array: T[]): T[] {
-  let currentIndex = array.length, randomIndex;
-  while (currentIndex !== 0) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-  }
-  return array;
+  return matchesSearch(slot.searchTerm, [card.name, card.effect]);
 }

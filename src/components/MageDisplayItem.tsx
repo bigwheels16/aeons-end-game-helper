@@ -1,7 +1,9 @@
-import { ScrapedMage } from '../types/scraped';
+import { useState } from 'react';
+import { ScrapedMage, ScrapedUniqueStarter } from '../types/scraped';
 import { getMageStarters } from '../utils/mages';
 import FavoriteStar from './FavoriteStar';
 import ScrapedHtml from './ScrapedHtml';
+import WikiImage from './WikiImage';
 import WikiLink from './WikiLink';
 
 const BREACH_POSITION_COLORS: Record<string, string> = {
@@ -14,30 +16,54 @@ const BREACH_POSITION_COLORS: Record<string, string> = {
 
 export interface MageDisplayItemProps {
   mage: ScrapedMage;
-  matsVisible: boolean;
-  onToggleMats: () => void;
-  isStarterVisible: (starterName: string) => boolean;
-  onToggleStarter: (starterName: string) => void;
+}
+
+/** One unique starter card: title (wiki link), type, effect, and a collapsible image. */
+function UniqueStarter({ starter }: { starter: ScrapedUniqueStarter }) {
+  const [showImage, setShowImage] = useState(false);
+
+  return (
+    <div style={{ backgroundColor: '#333', padding: '0.75rem', borderRadius: '4px', border: '1px solid #444' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+        <strong style={{ color: '#fff' }}>
+          <WikiLink url={starter.page_url} style={{ color: '#4CAF50', textDecoration: 'none' }}>
+            {starter.name}
+          </WikiLink>
+        </strong>
+        <span style={{ fontSize: '0.8rem', color: '#aaa' }}>{starter.type}</span>
+      </div>
+      <ScrapedHtml
+        html={starter.effect}
+        style={{ fontSize: '0.85rem', color: '#ddd', textAlign: 'center' }}
+      />
+      <button 
+        onClick={() => setShowImage(prev => !prev)}
+        style={{ marginTop: '0.5rem', background: 'none', border: 'none', color: '#2196F3', cursor: 'pointer', padding: 0, fontSize: '0.875rem' }}
+      >
+        {showImage ? 'Hide Image' : 'Show Image'}
+      </button>
+      {showImage && (
+        <div style={{ marginTop: '0.5rem' }}>
+          <WikiImage name={starter.name} />
+        </div>
+      )}
+    </div>
+  );
 }
 
 /**
  * Mage presentation card: title (wiki link), favorite star, special ability and additional rules,
  * complexity, color-coded breach positions, mat images, and unique starter cards.
  */
-export default function MageDisplayItem({
-  mage,
-  matsVisible,
-  onToggleMats,
-  isStarterVisible,
-  onToggleStarter
-}: MageDisplayItemProps) {
+export default function MageDisplayItem({ mage }: MageDisplayItemProps) {
+  const [showMats, setShowMats] = useState(false);
   const starters = getMageStarters(mage);
 
   return (
     <div style={{ backgroundColor: '#222', padding: '0.75rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem', margin: '0 0 0.25rem 0' }}>
         <h2 style={{ margin: 0 }}>
-          <WikiLink url={mage.page_url} fallbackName={mage.name} style={{ color: '#4CAF50', textDecoration: 'none' }}>
+          <WikiLink url={mage.page_url} style={{ color: '#4CAF50', textDecoration: 'none' }}>
             {mage.name}
           </WikiLink>
         </h2>
@@ -85,29 +111,15 @@ export default function MageDisplayItem({
       )}
 
       <button 
-        onClick={() => onToggleMats()}
+        onClick={() => setShowMats(prev => !prev)}
         style={{ marginBottom: '1rem', background: 'none', border: 'none', color: '#2196F3', cursor: 'pointer', padding: 0, fontSize: '0.875rem' }}
       >
-        {matsVisible ? 'Hide Mat Images' : 'Show Mat Images'}
+        {showMats ? 'Hide Mat Images' : 'Show Mat Images'}
       </button>
-      {matsVisible && (
+      {showMats && (
         <div style={{ marginBottom: '1rem', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          <a href={`https://aeonsend.wiki.gg/images/${encodeURIComponent(mage.name.replace(/ /g, '_'))}_Front.jpg`} target="_blank" rel="noopener noreferrer">
-              <img 
-                src={`https://aeonsend.wiki.gg/images/${encodeURIComponent(mage.name.replace(/ /g, '_'))}_Front.jpg`} 
-                alt={`${mage.name} Front`}
-                loading="lazy"
-                style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
-              />
-            </a>
-          <a href={`https://aeonsend.wiki.gg/images/${encodeURIComponent(mage.name.replace(/ /g, '_'))}_Back.jpg`} target="_blank" rel="noopener noreferrer">
-              <img 
-                src={`https://aeonsend.wiki.gg/images/${encodeURIComponent(mage.name.replace(/ /g, '_'))}_Back.jpg`} 
-                alt={`${mage.name} Back`}
-                loading="lazy"
-                style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
-              />
-            </a>
+          <WikiImage name={`${mage.name} Front`} />
+          <WikiImage name={`${mage.name} Back`} />
         </div>
       )}
 
@@ -115,39 +127,8 @@ export default function MageDisplayItem({
         <div>
           <strong style={{ color: '#ccc', display: 'block', marginBottom: '0.5rem' }}>Unique Starters:</strong>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {starters.map((starter, sIdx) => (
-              <div key={sIdx} style={{ backgroundColor: '#333', padding: '0.75rem', borderRadius: '4px', border: '1px solid #444' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                  <strong style={{ color: '#fff' }}>
-                    <WikiLink url={starter.page_url} fallbackName={starter.name} style={{ color: '#4CAF50', textDecoration: 'none' }}>
-                      {starter.name}
-                    </WikiLink>
-                  </strong>
-                  <span style={{ fontSize: '0.8rem', color: '#aaa' }}>{starter.type}</span>
-                </div>
-                <ScrapedHtml
-                  html={starter.effect}
-                  style={{ fontSize: '0.85rem', color: '#ddd', textAlign: 'center' }}
-                />
-                <button 
-                  onClick={() => onToggleStarter(starter.name)}
-                  style={{ marginTop: '0.5rem', background: 'none', border: 'none', color: '#2196F3', cursor: 'pointer', padding: 0, fontSize: '0.875rem' }}
-                >
-                  {isStarterVisible(starter.name) ? 'Hide Image' : 'Show Image'}
-                </button>
-                {isStarterVisible(starter.name) && (
-                  <div style={{ marginTop: '0.5rem' }}>
-                    <a href={`https://aeonsend.wiki.gg/images/${encodeURIComponent(starter.name.replace(/ /g, '_'))}.jpg`} target="_blank" rel="noopener noreferrer">
-                      <img 
-                        src={`https://aeonsend.wiki.gg/images/${encodeURIComponent(starter.name.replace(/ /g, '_'))}.jpg`} 
-                        alt={starter.name}
-                        loading="lazy"
-                        style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
-                      />
-                    </a>
-                  </div>
-                )}
-              </div>
+            {starters.map(starter => (
+              <UniqueStarter key={starter.id} starter={starter} />
             ))}
           </div>
         </div>

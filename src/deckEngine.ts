@@ -5,6 +5,8 @@
  * including validation for preventing consecutive Nemesis turns across rounds.
  */
 
+import { shuffleInPlace } from './utils/shuffle';
+
 /**
  * Valid card types in the Aeon's End turn order deck.
  */
@@ -130,11 +132,7 @@ export function shuffleDeck(
   // allows us to reuse the same logic for all scenarios.
 
   while (!valid && attempts < 100) {
-    // Fisher-Yates shuffle
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
+    shuffleInPlace(shuffled);
 
     valid = true;
     

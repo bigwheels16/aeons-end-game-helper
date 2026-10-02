@@ -3,9 +3,9 @@ import { SlotCriteria } from '../store';
 import { ScrapedSupplyCard } from '../types/scraped';
 import { isCardMatch } from '../supplyRandomizerEngine';
 import CardDisplayItem from './CardDisplayItem';
+import { pillStyle } from './selectableStyle';
 
 interface SupplySlotProps {
-  slotId: string;
   criteria: SlotCriteria;
   availableCards: ScrapedSupplyCard[];
   assignedCard: ScrapedSupplyCard | null;
@@ -13,19 +13,37 @@ interface SupplySlotProps {
   onRemove: (id: string) => void;
   onReroll: (id: string) => void;
   onEditCriteria: (id: string) => void;
-  onShowFullImage?: (card: ScrapedSupplyCard) => void;
 }
 
 interface SlotMenuProps {
   onReroll: () => void;
-  onEditCriteria?: () => void;
+  onEditCriteria: () => void;
   onRemove: () => void;
   hasAssignedCard: boolean;
 }
 
+const menuItemStyle: React.CSSProperties = {
+  padding: '0.6rem 1rem',
+  backgroundColor: 'transparent',
+  color: 'white',
+  border: 'none',
+  textAlign: 'left',
+  cursor: 'pointer',
+  fontSize: '0.875rem',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.5rem',
+};
+
 function SlotMenu({ onReroll, onEditCriteria, onRemove, hasAssignedCard }: SlotMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
+
+  const items: { label: string; onClick: () => void; style?: React.CSSProperties }[] = [
+    { label: 'Randomize', onClick: onReroll },
+    ...(hasAssignedCard ? [{ label: 'Edit Criteria', onClick: onEditCriteria }] : []),
+    { label: 'Remove', onClick: onRemove, style: { color: '#f44336', borderTop: '1px solid #444' } },
+  ];
 
   useEffect(() => {
     if (!isOpen) return;
@@ -75,77 +93,20 @@ function SlotMenu({ onReroll, onEditCriteria, onRemove, hasAssignedCard }: SlotM
             overflow: 'hidden',
           }}
         >
-          <button
-            onClick={() => {
-              setIsOpen(false);
-              onReroll();
-            }}
-            style={{
-              padding: '0.6rem 1rem',
-              backgroundColor: 'transparent',
-              color: 'white',
-              border: 'none',
-              textAlign: 'left',
-              cursor: 'pointer',
-              fontSize: '0.875rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-            }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#3a3a3a')}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
-          >
-            Randomize
-          </button>
-
-          {hasAssignedCard && onEditCriteria && (
+          {items.map(({ label, onClick, style }) => (
             <button
+              key={label}
               onClick={() => {
                 setIsOpen(false);
-                onEditCriteria();
+                onClick();
               }}
-              style={{
-                padding: '0.6rem 1rem',
-                backgroundColor: 'transparent',
-                color: 'white',
-                border: 'none',
-                textAlign: 'left',
-                cursor: 'pointer',
-                fontSize: '0.875rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-              }}
+              style={{ ...menuItemStyle, ...style }}
               onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#3a3a3a')}
               onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
             >
-              Edit Criteria
+              {label}
             </button>
-          )}
-
-          <button
-            onClick={() => {
-              setIsOpen(false);
-              onRemove();
-            }}
-            style={{
-              padding: '0.6rem 1rem',
-              backgroundColor: 'transparent',
-              color: '#f44336',
-              border: 'none',
-              borderTop: '1px solid #444',
-              textAlign: 'left',
-              cursor: 'pointer',
-              fontSize: '0.875rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-            }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#3a3a3a')}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
-          >
-            Remove
-          </button>
+          ))}
         </div>
       )}
     </div>
@@ -158,7 +119,6 @@ function SlotMenu({ onReroll, onEditCriteria, onRemove, hasAssignedCard }: SlotM
  * along with real-time matching card previews and randomized card display with standard CardSearch formatting.
  */
 export default function SupplySlot({
-  slotId,
   criteria,
   availableCards,
   assignedCard,
@@ -171,11 +131,8 @@ export default function SupplySlot({
     return availableCards.filter(card => isCardMatch(card, criteria));
   }, [availableCards, criteria]);
 
-  const currentTypes = useMemo(() => {
-    if (Array.isArray(criteria.cardTypes)) return criteria.cardTypes;
-    if (criteria.cardType) return [criteria.cardType];
-    return ['Gem', 'Relic', 'Spell'] as ('Gem' | 'Relic' | 'Spell')[];
-  }, [criteria.cardTypes, criteria.cardType]);
+  const slotId = criteria.id;
+  const currentTypes = criteria.cardTypes;
 
   const toggleType = (type: 'Gem' | 'Relic' | 'Spell') => {
     const nextTypes = currentTypes.includes(type)
@@ -193,16 +150,6 @@ export default function SupplySlot({
     const val = Number(e.target.value);
     onUpdate(slotId, { costRange: [criteria.costRange[0], Math.max(val, criteria.costRange[0])] });
   };
-
-  const pillStyle = (type: string, activeTypes: string[]) => ({
-    padding: '0.25rem 0.75rem',
-    borderRadius: '4px',
-    border: activeTypes.includes(type) ? '1px solid #4CAF50' : '1px solid #555',
-    backgroundColor: activeTypes.includes(type) ? 'rgba(76, 175, 80, 0.2)' : '#222',
-    color: activeTypes.includes(type) ? '#fff' : '#ccc',
-    cursor: 'pointer',
-    transition: 'all 0.2s'
-  });
 
   const menu = (
     <SlotMenu
@@ -233,7 +180,7 @@ export default function SupplySlot({
         <strong style={{ color: '#ccc', display: 'block', marginBottom: '0.5rem' }}>Card Type:</strong>
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
           {(['Gem', 'Relic', 'Spell'] as const).map(type => (
-            <button key={type} onClick={() => toggleType(type)} style={pillStyle(type, currentTypes)}>
+            <button key={type} onClick={() => toggleType(type)} style={pillStyle(currentTypes.includes(type))}>
               {type}
             </button>
           ))}

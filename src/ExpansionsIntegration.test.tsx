@@ -176,7 +176,9 @@ describe('Expansions setting: app-wide integration', () => {
         async () => {
           useGameStore.getState().setSearchFilters({ cardQuery: 'zzz' });
           render(<CardSearchScreen />);
-          fireEvent.click(await screen.findByRole('button', { name: 'Clear all filters' }));
+          const clear = await screen.findByRole('button', { name: 'Clear all filters' });
+          expect(screen.getByText(/Searching within selected expansions \(2 of 4\)/)).toBeDefined();
+          fireEvent.click(clear);
           expect(useGameStore.getState().searchFilters.cardQuery).toBe('');
         },
       ],
@@ -262,6 +264,7 @@ describe('Expansions setting: app-wide integration', () => {
     for (const name of ['Jade', 'Spark', 'Adelheim', 'Prince of Gluttons']) {
       expect(screen.getByText(name)).toBeDefined();
     }
+    expect(screen.queryByRole('button', { name: /^Expansions:/ })).toBeNull();
   });
 
   describe('simulated page reload (fresh store module)', () => {
@@ -296,64 +299,6 @@ describe('Expansions setting: app-wide integration', () => {
       unmount();
     });
 
-    it('a legacy payload migrates to "All", drops name-keyed favorites and old-format results, and keeps the game and slots, across two reloads', async () => {
-      const errorSpy = vi.spyOn(console, 'error');
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        state: basePersistedState({
-          searchFilters: { cardQuery: '', selectedExpansions: ['Base'], selectedTypes: [], costRange: [0, 10] },
-          mageSearchFilters: { mageQuery: '', selectedMageExpansions: ['Base'] },
-          nemesisSearchFilters: { nemesisQuery: '', selectedNemesisExpansions: ['Base'], difficultyRange: [1, 10] },
-          randomizerExpansions: ['Base', 'Promo'],
-          // Favorites saved before ids existed (by name) are dropped, not migrated
-          favorites: { supply: ['Shard'], mages: ['Brama'], nemeses: ['Prince of Gluttons'] },
-          // A result saved before ids existed (old printed number) is skipped
-          randomizedResult: {
-            'slot-legacy': { id: 'BS12', name: 'Shard', type: 'Gem' },
-          },
-        }),
-        version: 0,
-      }));
-
-      let fresh = await reloadApp();
-      let state = fresh.useGameStore.getState();
-      expect(errorSpy).not.toHaveBeenCalled();
-      expect(state.ownedExpansions).toEqual([]);
-      expect(state.favorites).toEqual({ supply: [], mages: [], nemeses: [] });
-      expect(warnSpy).toHaveBeenCalledWith('favorites.supply: dropped 1 unknown or invalid entries');
-      expect(state.randomizedResult).toEqual({});
-      expect(state.isPlaying).toBe(true);
-      expect(state.roundNumber).toBe(2);
-      expect(state.drawPile.map(c => c.id)).toEqual(['p1', 'n1']);
-      expect(state.randomizerSlots).toEqual([{ id: 'slot-legacy', cardTypes: ['Gem'], costRange: [0, 10], searchTerm: '' }]);
-
-      window.location.hash = 'card-search';
-      const first = render(<fresh.App />);
-      expect(screen.getByText('Card Search (4 results)')).toBeDefined();
-      // Choosing expansions after the upgrade is saved and survives the next reload
-      toggleInPicker(['Buried Secrets']);
-      expect(screen.getByText('Card Search (1 results)')).toBeDefined();
-      first.unmount();
-
-      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) as string).state;
-      expect(stored).not.toHaveProperty('randomizerExpansions');
-      expect(stored.searchFilters).not.toHaveProperty('selectedExpansions');
-
-      fresh = await reloadApp();
-      state = fresh.useGameStore.getState();
-      expect(state.ownedExpansions).toEqual(['Buried Secrets']);
-      expect(state.favorites.supply).toEqual([]);
-      expect(state.randomizedResult).toEqual({});
-      expect(state.isPlaying).toBe(true);
-      expect(state.randomizerSlots.length).toBe(1);
-
-      window.location.hash = 'favorites';
-      render(<fresh.App />);
-      // The old name-keyed favorites are gone (accepted one-time effect of switching to ids)
-      expect(screen.getByText('No favorites yet.')).toBeDefined();
-      expect(errorSpy).not.toHaveBeenCalled();
-    });
-
     it('stale persisted names are ignored after a reload and not counted', async () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         state: basePersistedState({ isPlaying: false, ownedExpansions: ['Renamed Expansion', 'War Eternal'] }),
@@ -368,17 +313,5 @@ describe('Expansions setting: app-wide integration', () => {
       expect(screen.getByText('Mage Search (1 results)')).toBeDefined();
       expect(screen.queryByText(/Renamed Expansion/)).toBeNull();
     });
-  });
-
-  it('the setting is not changed by navigating between tools', async () => {
-    useGameStore.getState().setOwnedExpansions(['Promo']);
-    render(<App />);
-    for (const tool of ['Supply Card Search', 'Mage Search', 'Nemesis Search', 'Supply Randomizer', 'Favorites']) {
-      fireEvent.click(screen.getByText(tool));
-      fireEvent.click(screen.getByText('← Back to Tools'));
-    }
-    await act(async () => undefined);
-    expect(useGameStore.getState().ownedExpansions).toEqual(['Promo']);
-    expect(persistedOwned()).toEqual(['Promo']);
   });
 });

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { ALL_EXPANSIONS, formatOwnedList, getEffectiveOwned, matchesOwned } from './expansions';
+import { ALL_EXPANSIONS, formatOwnedList, getEffectiveOwned, getUniqueExpansions, matchesOwned } from './expansions';
 
 vi.mock('../../data/scraped/aeons_end_all.json', () => ({
   default: {
@@ -23,9 +23,11 @@ describe('ALL_EXPANSIONS', () => {
   it('is the sorted, de-duplicated union across supply, mages and nemeses', () => {
     expect(ALL_EXPANSIONS).toEqual(['Aeon\'s End', 'Base', 'Buried Secrets', 'Promo', 'War Eternal']);
   });
+});
 
-  it('is immutable', () => {
-    expect(Object.isFrozen(ALL_EXPANSIONS)).toBe(true);
+describe('getUniqueExpansions', () => {
+  it('returns sorted unique non-empty expansions', () => {
+    expect(getUniqueExpansions([{ expansions: ['B', 'A'] }, { expansions: ['A', ''] }, {}])).toEqual(['A', 'B']);
   });
 });
 
@@ -44,10 +46,6 @@ describe('getEffectiveOwned', () => {
 
   it('removes duplicates', () => {
     expect(getEffectiveOwned(['Promo', 'Promo', 'Base'])).toEqual(['Base', 'Promo']);
-  });
-
-  it('accepts an explicit list of all expansions', () => {
-    expect(getEffectiveOwned(['b', 'z', 'a'], ['a', 'b', 'c'])).toEqual(['a', 'b']);
   });
 });
 

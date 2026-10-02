@@ -1,59 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Modal, ModalButton } from './Modal';
-import { useGameStore, VisibilityOption } from '../store';
+import { GameOptionsForm } from './GameOptionsForm';
+import { useGameStore, GameOptionsData } from '../store';
 
 interface GameOptionsModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-import { GameOptionsForm } from './GameOptionsForm';
-
 export const GameOptionsModal: React.FC<GameOptionsModalProps> = ({ isOpen, onClose }) => {
-  const store = useGameStore();
-
-  const [localPlayerCount, setLocalPlayerCount] = useState(store.playerCount);
-  const [localAllowNemesis, setLocalAllowNemesis] = useState(store.allowConsecutiveNemesis);
-  const [localAllowPlayer, setLocalAllowPlayer] = useState(store.allowConsecutivePlayer);
-  const [localVisibility, setLocalVisibility] = useState<VisibilityOption>(store.visibilityOption);
-
-  useEffect(() => {
-    if (isOpen) {
-      setLocalPlayerCount(store.playerCount);
-      setLocalAllowNemesis(store.allowConsecutiveNemesis);
-      setLocalAllowPlayer(store.allowConsecutivePlayer);
-      setLocalVisibility(store.visibilityOption);
-    }
-  }, [isOpen, store.playerCount, store.allowConsecutiveNemesis, store.allowConsecutivePlayer, store.visibilityOption]);
-
   if (!isOpen) return null;
+  // Mounting the dialog only while open starts every opening from the saved options.
+  return <GameOptionsDialog onClose={onClose} />;
+};
+
+function GameOptionsDialog({ onClose }: { onClose: () => void }) {
+  const store = useGameStore();
+  const [options, setOptions] = useState<GameOptionsData>({
+    playerCount: store.playerCount,
+    allowConsecutiveNemesis: store.allowConsecutiveNemesis,
+    allowConsecutivePlayer: store.allowConsecutivePlayer,
+    visibilityOption: store.visibilityOption,
+  });
 
   const handleSave = () => {
-    store.setPlayerCount(localPlayerCount);
-    store.setAllowConsecutiveNemesis(localAllowNemesis);
-    store.setAllowConsecutivePlayer(localAllowPlayer);
-    store.setVisibilityOption(localVisibility);
+    store.setGameOptions(options);
     onClose();
   };
 
   return (
-    <Modal isOpen={isOpen} title="Update Game Options">
+    <Modal isOpen title="Update Game Options">
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '20px' }}>
-        
-        <GameOptionsForm 
-          options={{
-            playerCount: localPlayerCount,
-            allowConsecutiveNemesis: localAllowNemesis,
-            allowConsecutivePlayer: localAllowPlayer,
-            visibilityOption: localVisibility,
-          }}
-          onChange={(opts) => {
-            setLocalPlayerCount(opts.playerCount);
-            setLocalAllowNemesis(opts.allowConsecutiveNemesis);
-            setLocalAllowPlayer(opts.allowConsecutivePlayer);
-            setLocalVisibility(opts.visibilityOption);
-          }}
-        />
+        <GameOptionsForm options={options} onChange={setOptions} />
       </div>
 
       <div style={{ display: 'flex', gap: '10px' }}>
@@ -66,4 +44,4 @@ export const GameOptionsModal: React.FC<GameOptionsModalProps> = ({ isOpen, onCl
       </div>
     </Modal>
   );
-};
+}

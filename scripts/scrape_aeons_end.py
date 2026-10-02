@@ -32,7 +32,6 @@ import nh3
 API_URL = "https://aeonsend.wiki.gg/api.php"
 BASE_PAGE_URL = "https://aeonsend.wiki.gg/wiki/"
 DEFAULT_USER_AGENT = "AeonsEndWikiScraper/1.0"
-WIKI_HOSTNAME = "aeonsend.wiki.gg"
 OUTPUT_FILENAME = "aeons_end_all.json"
 
 # Output collection -> id kind prefix. Every record in these collections gets id "<kind>:<slug>".
@@ -43,8 +42,6 @@ ID_KIND_BY_CATEGORY: Dict[str, str] = {
     "nemeses": "nemesis",
     "nemesis_cards": "nemesis-card",
 }
-# Max id length in UTF-16 code units (the unit of JS string.length and the app's zod .max(200)).
-MAX_ID_LENGTH = 200
 # Apostrophe variants removed (not hyphenated) so "Transmuter's Lens" -> "transmuters-lens".
 APOSTROPHES = frozenset("'\u2019\u2018\u02bc`")
 
@@ -252,25 +249,13 @@ def clean_wikitext(text: Optional[str]) -> str:
 
 def make_page_url(title: str) -> str:
     """
-    Returns the canonical, validated HTTPS wiki URL for a given page title.
-    Raises ValueError unless the URL is https on exactly aeonsend.wiki.gg, with no port,
-    credentials, query or fragment, under /wiki/, and with no "." or ".." path segment.
+    Returns the HTTPS wiki URL for a given page title. The constant BASE_PAGE_URL plus the quoted
+    title keeps it on aeonsend.wiki.gg under /wiki/. Raises ValueError on a "." or ".." path segment.
     """
     encoded_title = urllib.parse.quote(title.replace(" ", "_"))
     url = f"{BASE_PAGE_URL}{encoded_title}"
-    parts = urllib.parse.urlsplit(url)
-    if (
-        parts.scheme != "https"
-        or parts.hostname != WIKI_HOSTNAME
-        or parts.port is not None
-        or parts.username is not None
-        or parts.password is not None
-        or parts.query != ""
-        or parts.fragment != ""
-        or not parts.path.startswith("/wiki/")
-        or any(segment in (".", "..") for segment in parts.path.split("/"))
-    ):
-        raise ValueError(f"Page URL not on the allowed wiki origin/path: {ascii(url)}")
+    if any(segment in (".", "..") for segment in encoded_title.split("/")):
+        raise ValueError(f"Page URL has a '.' or '..' path segment: {ascii(url)}")
     return url
 
 
@@ -309,53 +294,20 @@ def slugify(name: str) -> str:
     return slug
 
 
-def utf16_length(text: str) -> int:
-    """Length in UTF-16 code units (matches JS string.length)."""
-    return len(text.encode("utf-16-le")) // 2
-
-
-def check_id_shape(item_id: str) -> None:
-    """
-    Structurally asserts an id is "<known kind>:<slug>" where the slug is runs of word characters
-    joined by single '-', NFC-normalized, and at most MAX_ID_LENGTH UTF-16 units. Raises ValueError.
-    """
-    kind, sep, slug = item_id.partition(":")
-    valid = (
-        sep == ":"
-        and kind in ID_KIND_BY_CATEGORY.values()
-        and slug != ""
-        and all(part != "" and all(_is_word_char(ch) for ch in part) for part in slug.split("-"))
-        and unicodedata.is_normalized("NFC", slug)
-    )
-    if not valid:
-        raise ValueError(f"Malformed id {ascii(item_id)}")
-    if utf16_length(item_id) > MAX_ID_LENGTH:
-        raise ValueError(f"Id longer than {MAX_ID_LENGTH} UTF-16 units: {ascii(item_id)}")
-
-
 def make_item_id(category: str, name: str) -> str:
     """Returns the record id "<kind>:<slug>" for an output collection. Raises ValueError."""
-    kind = ID_KIND_BY_CATEGORY.get(category)
-    if kind is None:
-        raise ValueError(f"No id kind for category {ascii(category)}")
-    item_id = f"{kind}:{slugify(name)}"
-    check_id_shape(item_id)
-    return item_id
+    return f"{ID_KIND_BY_CATEGORY[category]}:{slugify(name)}"
 
 
 def validate_ids(by_category: Dict[str, List[Dict[str, Any]]]) -> None:
     """
-    Checks that every record in every collection has a well-formed id and that ids are globally
-    unique. Raises ValueError listing ALL duplicates (with the names that produced them).
+    Checks that ids are globally unique across all collections.
+    Raises ValueError listing ALL duplicates (with the names that produced them).
     """
     names_by_id: Dict[str, List[str]] = {}
     for category, items in by_category.items():
         for item in items:
-            item_id = item.get("id")
-            if not isinstance(item_id, str):
-                raise ValueError(f"Missing id for {category} record {ascii(item.get('name'))}")
-            check_id_shape(item_id)
-            names_by_id.setdefault(item_id, []).append(f"{category}/{item.get('name')}")
+            names_by_id.setdefault(item["id"], []).append(f"{category}/{item.get('name')}")
 
     duplicates = {i: names for i, names in names_by_id.items() if len(names) > 1}
     if duplicates:
@@ -458,19 +410,13 @@ def load_page_cache(cache_dir: str) -> Dict[str, Dict[str, Any]]:
 
 
 def save_page_file(cache_dir: str, page_data: Dict[str, Any]) -> str:
-    """Atomically and safely saves an individual page into a dedicated JSON file in the cache directory."""
+    """Atomically saves an individual page into a dedicated JSON file in the cache directory."""
     os.makedirs(cache_dir, exist_ok=True)
     raw_page_id = str(page_data.get("pageid", ""))
     if not raw_page_id.isdigit():
         raw_page_id = re.sub(r"[^\w\-]+", "_", str(page_data.get("title", "unknown"))).lower()
 
-    safe_filename = f"page_{os.path.basename(raw_page_id)}.json"
-    cache_root = os.path.realpath(cache_dir)
-    target_path = os.path.realpath(os.path.join(cache_root, safe_filename))
-
-    if not target_path.startswith(cache_root):
-        raise ValueError(f"Path traversal detected in cache filename: {safe_filename}")
-
+    target_path = os.path.join(cache_dir, f"page_{raw_page_id}.json")
     tmp_path = f"{target_path}.tmp"
     with open(tmp_path, "w", encoding="utf-8") as f:
         json.dump(page_data, f, ensure_ascii=False)
@@ -479,11 +425,9 @@ def save_page_file(cache_dir: str, page_data: Dict[str, Any]) -> str:
 
 
 def api_get(params: Dict[str, Any], user_agent: str) -> Dict[str, Any]:
-    """Performs an HTTP GET request to the MediaWiki API with timeout and HTTPS enforcement."""
+    """Performs an HTTP GET request to the MediaWiki API with a timeout."""
     params["format"] = "json"
     url = f"{API_URL}?{urllib.parse.urlencode(params)}"
-    if not url.startswith("https://"):
-        raise ValueError(f"Insecure API endpoint: {url}")
     req = urllib.request.Request(url, headers={"User-Agent": user_agent})
     with urllib.request.urlopen(req, timeout=30) as resp:
         return json.loads(resp.read().decode("utf-8"))
@@ -923,21 +867,9 @@ def save_dataset(by_category: Dict[str, List[Dict[str, Any]]], output_dir: str) 
     os.makedirs(output_dir, exist_ok=True)
     all_path = os.path.join(output_dir, OUTPUT_FILENAME)
     tmp_path = f"{all_path}.tmp"
-    # Atomic write: temp file in the same directory, fsync, then os.replace. A stale temp file from
-    # an earlier crash is removed (unlink never follows a symlink), and mode "x" (O_EXCL) never
-    # follows or reuses an existing path.
-    if os.path.lexists(tmp_path):
-        os.remove(tmp_path)
-    tmp_file = open(tmp_path, "x", encoding="utf-8")
-    try:
-        with tmp_file:
-            json.dump(by_category, tmp_file, indent=2, ensure_ascii=False)
-            tmp_file.flush()
-            os.fsync(tmp_file.fileno())
-        os.replace(tmp_path, all_path)
-    except BaseException:
-        os.remove(tmp_path)
-        raise
+    with open(tmp_path, "w", encoding="utf-8") as f:
+        json.dump(by_category, f, indent=2, ensure_ascii=False)
+    os.replace(tmp_path, all_path)
     print(f"\nSaved master JSON: {all_path}\n")
 
     print("=== Scraping Summary ===")

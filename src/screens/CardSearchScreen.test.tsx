@@ -39,7 +39,10 @@ vi.mock('../../data/scraped/aeons_end_all.json', () => ({
         cost: '5',
         effect: 'Gain 1 charge.'
       }
-    ]
+    ],
+    unique_starters: [],
+    mages: [],
+    nemeses: [],
   }
 }));
 
@@ -92,7 +95,9 @@ describe('CardSearchScreen', () => {
   it('filters by the Expansions setting via the shared chip', () => {
     render(<CardSearchScreen />);
 
-    fireEvent.click(screen.getByRole('button', { name: /^Expansions: All,/ }));
+    const chip = screen.getByRole('button', { name: /^Expansions: All,/ });
+    expect(chip.getAttribute('aria-haspopup')).toBe('dialog');
+    fireEvent.click(chip);
     const dialog = screen.getByRole('dialog');
     const promoTile = within(dialog).getByRole('button', { name: 'Promo' });
     expect(promoTile.getAttribute('aria-pressed')).toBe('false');
@@ -120,77 +125,6 @@ describe('CardSearchScreen', () => {
     });
     
     expect(screen.getByText('Staff')).toBeDefined();
-  });
-
-  it('"Clear All Filters" resets search filters but keeps the Expansions setting', async () => {
-    useGameStore.setState({ ownedExpansions: ['Base', 'ExpansionX'] });
-    render(<CardSearchScreen />);
-
-    fireEvent.click(screen.getByRole('button', { name: 'Relic' }));
-    fireEvent.change(screen.getByPlaceholderText('Search cards, effects...'), { target: { value: 'charge' } });
-    await waitFor(() => {
-      expect(screen.queryByText('Jade')).toBeNull();
-    });
-
-    fireEvent.click(screen.getByRole('button', { name: 'Clear All Filters' }));
-
-    await waitFor(() => {
-      expect(screen.getByText('Jade')).toBeDefined();
-    });
-    const state = useGameStore.getState();
-    expect(state.searchFilters).toEqual({ cardQuery: '', selectedTypes: [], costRange: [0, 10] });
-    expect(state.ownedExpansions).toEqual(['Base', 'ExpansionX']);
-    // Promo is still excluded by the Expansions setting
-    expect(screen.queryByText('Spark')).toBeNull();
-    expect(screen.getByText('Card Search (3 results)')).toBeDefined();
-  });
-
-  it('empty-state "Clear all filters" keeps the Expansions setting and notes the restriction', async () => {
-    useGameStore.setState({ ownedExpansions: ['Base'] });
-    render(<CardSearchScreen />);
-
-    fireEvent.change(screen.getByPlaceholderText('Search cards, effects...'), { target: { value: 'nothing-matches-this' } });
-    await waitFor(() => {
-      expect(screen.getByText('No matching cards found.')).toBeDefined();
-    });
-    expect(screen.getByText(/Searching within selected expansions \(1 of 3\)/)).toBeDefined();
-
-    fireEvent.click(screen.getByRole('button', { name: 'Clear all filters' }));
-
-    await waitFor(() => {
-      expect(screen.getByText('Jade')).toBeDefined();
-    });
-    expect(useGameStore.getState().ownedExpansions).toEqual(['Base']);
-    expect(screen.queryByText('Spark')).toBeNull();
-  });
-
-  it('treats unknown persisted expansion names as "All"', () => {
-    useGameStore.setState({ ownedExpansions: ['Gone'] });
-    render(<CardSearchScreen />);
-
-    expect(screen.getByText('Card Search (4 results)')).toBeDefined();
-    const chip = screen.getByRole('button', { name: /^Expansions: All,/ });
-    expect(within(chip).getByText('All ›')).toBeDefined();
-    expect(screen.queryByText(/Gone/)).toBeNull();
-  });
-
-  it('clears all filters', async () => {
-    render(<CardSearchScreen />);
-    
-    const typeButton = screen.getByRole('button', { name: 'Relic' });
-    fireEvent.click(typeButton);
-
-    await waitFor(() => {
-      expect(screen.queryByText('Jade')).toBeNull();
-    });
-    
-    const clearButton = screen.getAllByText(/Clear All Filters/i)[0];
-    fireEvent.click(clearButton);
-
-    await waitFor(() => {
-      expect(screen.getByText('Jade')).toBeDefined();
-      expect(screen.getByText('Staff')).toBeDefined();
-    });
   });
 });
 

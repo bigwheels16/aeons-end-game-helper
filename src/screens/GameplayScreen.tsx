@@ -31,14 +31,42 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-interface SortableCardProps {
-  id: string;
+interface CardViewProps {
   card: Card;
-  showFace: boolean;
   isSelected?: boolean;
   isDimmed?: boolean;
   interactive?: boolean;
   isTopCard?: boolean;
+  onClick?: () => void;
+}
+
+/** A turn order card in a pile: its face if revealed, otherwise the card back. */
+const CardView = ({ card, isSelected, isDimmed, interactive, isTopCard, onClick }: CardViewProps) => {
+  const showFace = !!card.isRevealed;
+
+  let cardClasses = styles.cardImage;
+  if (interactive) cardClasses += ` ${styles.cardImageInteractive}`;
+  if (isSelected) cardClasses += ` ${styles.cardSelected}`;
+  if (isDimmed) cardClasses += ` ${styles.cardDimmed}`;
+
+  return (
+    <div style={{ position: 'relative', maxHeight: '100%', maxWidth: '100%', aspectRatio: '5 / 7' }}>
+      <img
+        src={showFace ? card.imageFaceUrl : CARD_BACK_URL}
+        alt={showFace ? card.type : 'Card Back'}
+        className={cardClasses}
+        style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+        onClick={onClick}
+        aria-selected={isSelected}
+        draggable={false}
+      />
+      {isTopCard && <div className={styles.topCardBadge}>TOP</div>}
+    </div>
+  );
+};
+
+interface SortableCardProps extends CardViewProps {
+  id: string;
 }
 
 const SortableCard = (props: SortableCardProps) => {
@@ -57,18 +85,10 @@ const SortableCard = (props: SortableCardProps) => {
     opacity: isDragging ? 0.5 : 1,
   };
 
-  let cardClasses = styles.cardImage;
-  if (props.interactive) cardClasses += ` ${styles.cardImageInteractive}`;
-  if (props.isSelected) cardClasses += ` ${styles.cardSelected}`;
-  if (props.isDimmed) cardClasses += ` ${styles.cardDimmed}`;
-  
   return (
-    <div ref={setNodeRef} style={{...style, position: 'relative', height: '100%', flex: '0 0 calc((100% - 25px) / 6)', touchAction: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center'}} {...attributes} {...listeners}>
-        <div style={{ position: 'relative', maxHeight: '100%', maxWidth: '100%', aspectRatio: '5 / 7' }}>
-          <img src={props.showFace ? props.card.imageFaceUrl : CARD_BACK_URL} alt={props.showFace ? props.card.type : 'Card Back'} className={cardClasses} style={{width: '100%', height: '100%', objectFit: 'contain', display: 'block'}} aria-selected={props.isSelected} />
-          {props.isTopCard && <div className={styles.topCardBadge}>TOP</div>}
-        </div>
-      </div>
+    <div ref={setNodeRef} className={`${styles.cardSlot} ${styles.sortableCardWrapper}`} style={style} {...attributes} {...listeners}>
+      <CardView {...props} />
+    </div>
   );
 };
 
@@ -126,46 +146,23 @@ const CardPile = ({ cards, limit, emptyText, customClass, onCardClick, selectedI
           const isSelected = selectedIndices?.has(actualIdx);
           const isDimmed = dimUnselected && !isSelected && showFace;
           const isTopCard = (containerId === 'draw-pile-container' && idx === 0) || (containerId === 'discard-pile-container' && idx === displayCards.length - 1);
-          
+          const cardProps = { card, isSelected, isDimmed, interactive, isTopCard };
+
           if (isDragMode) {
-            return (
-              <SortableCard
-                key={card.id}
-                id={card.id}
-                card={card}
-                showFace={showFace}
-                isSelected={isSelected}
-                isDimmed={isDimmed}
-                interactive={interactive}
-                isTopCard={isTopCard}
-              />
-            );
+            return <SortableCard key={card.id} id={card.id} {...cardProps} />;
           }
 
-          let cardClasses = styles.cardImage;
-          if (interactive) cardClasses += ` ${styles.cardImageInteractive}`;
-          if (isSelected) cardClasses += ` ${styles.cardSelected}`;
-          if (isDimmed) cardClasses += ` ${styles.cardDimmed}`;
-          
           return (
-            <div key={card.id} style={{ position: 'relative', height: '100%', flex: '0 0 calc((100% - 25px) / 6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ position: 'relative', maxHeight: '100%', maxWidth: '100%', aspectRatio: '5 / 7' }}>
-                  <img 
-                    src={showFace ? card.imageFaceUrl : CARD_BACK_URL} 
-                    alt={showFace ? card.type : 'Card Back'} 
-                    className={cardClasses}
-                    style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-                    onClick={() => {
-                      if (onCardClick && (!isDimmed || (dimUnselected && !showFace))) {
-                        onCardClick(actualIdx);
-                      }
-                    }}
-                    aria-selected={isSelected}
-                    draggable={false}
-                  />
-                  {isTopCard && <div className={styles.topCardBadge}>TOP</div>}
-                </div>
-              </div>
+            <div key={card.id} className={styles.cardSlot}>
+              <CardView
+                {...cardProps}
+                onClick={() => {
+                  if (onCardClick && (!isDimmed || (dimUnselected && !showFace))) {
+                    onCardClick(actualIdx);
+                  }
+                }}
+              />
+            </div>
           );
         })}
       </SortableContext>
@@ -286,12 +283,8 @@ const GameplayScreen: React.FC = () => {
 
   const handleConfirm = () => {
     if (specialMode === 'MOVE') {
-      const success = setPiles(localDrawPile, localDiscardPile);
-      if (success) {
-        toast.success('Cards have been moved!');
-      } else {
-        toast.error('Failed to move cards. Invalid operation.');
-      }
+      setPiles(localDrawPile, localDiscardPile);
+      toast.success('Cards have been moved!');
     } else if (specialMode === 'REVEAL') {
       revealCards(Array.from(revealSelection));
       toast.success('Cards have been revealed!');
@@ -353,6 +346,13 @@ const GameplayScreen: React.FC = () => {
     setActiveId(event.active.id as string);
   };
 
+  /** The pile a card id or pile container id belongs to. */
+  const findContainer = (id: string) => {
+    if (id === 'draw-pile-container' || localDrawPile.some(c => c.id === id)) return 'draw';
+    if (id === 'discard-pile-container' || localDiscardPile.some(c => c.id === id)) return 'discard';
+    return null;
+  };
+
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
     if (!over) return;
@@ -361,15 +361,6 @@ const GameplayScreen: React.FC = () => {
     const overId = over.id as string;
 
     if (activeId === overId) return;
-
-    const drawPileIds = localDrawPile.map(c => c.id);
-    const discardPileIds = localDiscardPile.map(c => c.id);
-
-    const findContainer = (id: string) => {
-      if (drawPileIds.includes(id) || id === 'draw-pile-container') return 'draw';
-      if (discardPileIds.includes(id) || id === 'discard-pile-container') return 'discard';
-      return null;
-    };
 
     const activeContainer = findContainer(activeId);
     const overContainer = findContainer(overId);
@@ -389,9 +380,8 @@ const GameplayScreen: React.FC = () => {
     if (overId === `${overContainer}-pile-container`) {
       overIndex = overPile.length;
     } else if (overIndex >= 0) {
-      const isBelowOverItem = over && active.rect.current.translated && active.rect.current.translated.top > over.rect.top + over.rect.height;
-      const modifier = isBelowOverItem ? 1 : 0;
-      overIndex = overIndex >= 0 ? overIndex + modifier : overPile.length;
+      const translated = active.rect.current.translated;
+      if (translated && translated.top > over.rect.top + over.rect.height) overIndex += 1;
     }
 
     const newActivePile = [...activePile];
@@ -417,15 +407,6 @@ const GameplayScreen: React.FC = () => {
 
     const activeId = active.id as string;
     const overId = over.id as string;
-
-    const drawPileIds = localDrawPile.map(c => c.id);
-    const discardPileIds = localDiscardPile.map(c => c.id);
-
-    const findContainer = (id: string) => {
-      if (drawPileIds.includes(id) || id === 'draw-pile-container') return 'draw';
-      if (discardPileIds.includes(id) || id === 'discard-pile-container') return 'discard';
-      return null;
-    };
 
     const activeContainer = findContainer(activeId);
     const overContainer = findContainer(overId);
@@ -525,15 +506,10 @@ const GameplayScreen: React.FC = () => {
           {activeId ? (() => {
             const card = [...localDrawPile, ...localDiscardPile].find(c => c.id === activeId);
             if (!card) return null;
-            const showFace = !!card.isRevealed;
             return (
-              <img 
-                src={showFace ? card.imageFaceUrl : CARD_BACK_URL} 
-                alt={showFace ? card.type : 'Card Back'} 
-                className={`${styles.cardImage} ${styles.cardImageInteractive}`}
-                style={{ opacity: 0.8 }}
-                draggable={false}
-              />
+              <div className={styles.cardSlot} style={{ opacity: 0.8 }}>
+                <CardView card={card} interactive />
+              </div>
             );
           })() : null}
         </DragOverlay>

@@ -1,7 +1,7 @@
 import scrapedData from '../../data/scraped/aeons_end_all.json';
 import { ScrapedMage, ScrapedUniqueStarter } from '../types/scraped';
 
-const allUniqueStarters: ScrapedUniqueStarter[] = scrapedData.unique_starters || [];
+const allUniqueStarters: ScrapedUniqueStarter[] = scrapedData.unique_starters;
 
 const startersByName = new Map<string, ScrapedUniqueStarter>();
 const startersByMage = new Map<string, ScrapedUniqueStarter[]>();

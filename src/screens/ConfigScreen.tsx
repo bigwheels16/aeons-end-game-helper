@@ -1,6 +1,6 @@
 import React from 'react';
 import { useGameStore } from '../store';
-import { GameOptionsForm, GameOptionsData } from '../components/GameOptionsForm';
+import { GameOptionsForm } from '../components/GameOptionsForm';
 
 /**
  * Configuration Screen Component.
@@ -11,13 +11,6 @@ const ConfigScreen: React.FC = () => {
   const handleStart = () => {
     store.startGame();
     store.nextTurn();
-  };
-
-  const handleOptionsChange = (options: GameOptionsData) => {
-    store.setPlayerCount(options.playerCount);
-    store.setAllowConsecutiveNemesis(options.allowConsecutiveNemesis);
-    store.setAllowConsecutivePlayer(options.allowConsecutivePlayer);
-    store.setVisibilityOption(options.visibilityOption);
   };
 
   return (
@@ -32,7 +25,7 @@ const ConfigScreen: React.FC = () => {
             allowConsecutivePlayer: store.allowConsecutivePlayer,
             visibilityOption: store.visibilityOption,
           }}
-          onChange={handleOptionsChange}
+          onChange={store.setGameOptions}
         />
       </div>
 

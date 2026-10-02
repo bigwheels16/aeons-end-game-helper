@@ -55,7 +55,7 @@ The **Supply Randomizer** tool automates creating randomized, balanced market se
   - *Search Text Filters:* Instant keyword filtering against card names and rules/effect text.
   - *Live Match Previews:* Real-time matching card counter and horizontally scrollable preview chips that immediately indicate whether constraints can be satisfied.
 - **Intelligent Backtracking Randomization:** Employs a depth-first constraint satisfaction solver using the Most Constrained Variable (MRV) heuristic. It guarantees 100% unique card selection across all slots with zero duplicate cards, fast execution, loop/timeout protection, and graceful error messaging if constraints cannot be met.
-- **Visual Card Preview & Full-Size Modal Viewer:** Upon randomization, each slot reveals the assigned card name, type, cost, and effect text. Players can click "View Image" on any assigned slot to inspect the official high-resolution card artwork in a modal overlay.
+- **Visual Card Preview & Inline Image:** Upon randomization, each slot reveals the assigned card name, type, cost, and effect text. Players can click "Show Image" on any assigned slot to expand the official card artwork, and click the image to open it full size in a new tab.
 
 ---
 

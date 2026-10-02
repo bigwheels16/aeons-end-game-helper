@@ -56,7 +56,6 @@ describe('App Integration', () => {
       fireEvent.click(screen.getByText('2'));
       fireEvent.click(screen.getByText('START GAME'));
 
-      expect(screen.queryByText('NEXT TURN')).toBeNull();
       expect(useGameStore.getState().roundNumber).toBe(1);
       const roundSize = useGameStore.getState().drawPile.length + useGameStore.getState().discardPile.length;
 

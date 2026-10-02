@@ -3,8 +3,7 @@ import { create, StateCreator } from 'zustand';
 import { createJSONStorage, persist, StateStorage } from 'zustand/middleware';
 import { z } from 'zod';
 import { CARD_TYPES, Card, CardType, generateDeck, shuffleDeck } from './deckEngine';
-import { ALL_EXPANSIONS } from './utils/expansions';
-import { getSupplyCardById, isKnownFavoriteId } from './utils/cards';
+import { getSupplyCardById } from './utils/cards';
 import { ScrapedSupplyCard } from './types/scraped';
 
 export type VisibilityOption = 'current' | 'next' | 'all';
@@ -20,65 +19,10 @@ const CardSchema = z.object({
 
 const VisibilityOptionSchema = z.enum(['current', 'next', 'all']);
 
-/**
- * Persisted favorites of one category: a list of record ids. Every element that is not a known id
- * of this category (old name-keyed favorites, other kinds, unknown ids, non-strings) and every
- * duplicate is dropped, never migrated. A non-array resets only this category to []. Warnings
- * carry counts and field names only, never stored values.
- */
-const favoriteIdList = (category: FavoriteCategory) =>
-  z.array(z.unknown())
-    .transform((raw) => {
-      const out: string[] = [];
-      const seen = new Set<string>();
-      let dropped = 0;
-      for (const v of raw) {
-        if (typeof v === 'string' && isKnownFavoriteId(category, v) && !seen.has(v)) {
-          seen.add(v);
-          out.push(v);
-        } else {
-          dropped++;
-        }
-      }
-      if (dropped > 0) console.warn(`favorites.${category}: dropped ${dropped} unknown or invalid entries`);
-      return out;
-    })
-    .optional()
-    .default([])
-    .catch(() => {
-      console.warn(`favorites.${category}: invalid persisted value, reset to empty`);
-      return [];
-    });
+/** Persisted record ids of one favorites category; an invalid value resets the category to []. */
+const FavoriteIdsSchema = z.array(z.string()).catch([]);
 
 const emptyFavorites = (): Favorites => ({ supply: [], mages: [], nemeses: [] });
-
-/** Only the stored card id is read; the card itself comes from the current card list. */
-const PersistedResultEntrySchema = z.object({ id: z.string() });
-
-/**
- * Resolves persisted randomizer results by card id, so saved slots show current card data.
- * Entries without a known id are skipped; a non-object resets the field to {}. Never throws.
- * Warnings carry counts only.
- */
-function resolvePersistedRandomizedResult(raw: unknown): Record<string, ScrapedSupplyCard> {
-  if (raw === undefined) return {};
-  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
-    console.warn('randomizedResult: invalid persisted value, reset to empty');
-    return {};
-  }
-  const entries = Object.entries(raw);
-  const resolved: [string, ScrapedSupplyCard][] = [];
-  for (const [slotId, entry] of entries) {
-    const parsed = PersistedResultEntrySchema.safeParse(entry);
-    const card = parsed.success ? getSupplyCardById(parsed.data.id) : undefined;
-    if (card) resolved.push([slotId, card]);
-  }
-  const dropped = entries.length - resolved.length;
-  if (dropped > 0) {
-    console.warn(`randomizedResult: dropped ${dropped} persisted results that were invalid or stale`);
-  }
-  return Object.fromEntries(resolved);
-}
 
 const GameStateSchema = z.object({
   playerCount: z.union([z.number().min(1).max(4), z.literal('custom')]),
@@ -94,75 +38,43 @@ const GameStateSchema = z.object({
     roundNumber: z.number(),
     card: CardSchema,
   })).optional().default([]),
-  // Plain z.object() (default strip of unknown keys): the LEGACY selectedExpansions key is silently dropped.
   searchFilters: z.object({
     cardQuery: z.string().optional().default(''),
     selectedTypes: z.array(z.string()),
     costRange: z.tuple([z.number(), z.number()]),
   }).optional(),
-  // Plain z.object() (default strip of unknown keys): the LEGACY selectedMageExpansions key is silently dropped.
   mageSearchFilters: z.object({
     mageQuery: z.string(),
   }).optional(),
-  // Plain z.object() (default strip of unknown keys): the LEGACY selectedNemesisExpansions key is silently dropped.
   nemesisSearchFilters: z.object({
     nemesisQuery: z.string(),
     difficultyRange: z.tuple([z.number(), z.number()]).optional().default([1, 10]),
   }).optional(),
-  /**
-   * Favorites by record id. Old name-keyed favorites are dropped (not migrated). Any
-   * invalid value resets only the affected category, or only `favorites`, never the whole store.
-   */
+  /** Favorites by record id. Ids that are not in the dataset are kept but never shown. */
   favorites: z.object({
-    supply: favoriteIdList('supply'),
-    mages: favoriteIdList('mages'),
-    nemeses: favoriteIdList('nemeses'),
-  })
-    .optional()
-    .default(emptyFavorites)
-    .catch(() => {
-      console.warn('favorites: invalid persisted value, reset to empty');
-      return emptyFavorites();
-    }),
-  // LEGACY randomizerExpansions is no longer declared, so the top-level (strip) object drops it.
-  /**
-   * App-wide "Expansions". Non-string entries are skipped; a non-array resets only this field
-   * to [] (= All) instead of failing the whole parse.
-   */
-  ownedExpansions: z.array(z.unknown())
-    .transform((names) => names.filter((name): name is string => typeof name === 'string'))
-    .optional()
-    .default([])
-    .catch([]),
+    supply: FavoriteIdsSchema,
+    mages: FavoriteIdsSchema,
+    nemeses: FavoriteIdsSchema,
+  }).catch(emptyFavorites),
+  /** App-wide "Expansions". An invalid value resets it to [] (= All). */
+  ownedExpansions: z.array(z.string()).catch([]),
   randomizerSlots: z.array(z.object({
     id: z.string(),
-    cardTypes: z.array(z.enum(['Gem', 'Relic', 'Spell'])).optional(),
-    cardType: z.any().optional(),
+    cardTypes: z.array(z.enum(['Gem', 'Relic', 'Spell'])).default(['Gem', 'Relic', 'Spell']),
     costRange: z.tuple([z.number(), z.number()]),
     searchTerm: z.string(),
-  }).transform((slot) => {
-    let types: ('Gem' | 'Relic' | 'Spell')[] = ['Gem', 'Relic', 'Spell'];
-    if (Array.isArray(slot.cardTypes)) {
-      types = slot.cardTypes;
-    } else if (typeof slot.cardType === 'string') {
-      if (['Gem', 'Relic', 'Spell'].includes(slot.cardType)) {
-        types = [slot.cardType as 'Gem' | 'Relic' | 'Spell'];
-      }
-    }
-    return {
-      id: slot.id,
-      cardTypes: types,
-      costRange: slot.costRange,
-      searchTerm: slot.searchTerm,
-    };
   })).optional(),
-  /** Only each entry's `id` is read, and the entry is replaced by that card. Never fails the whole parse. */
-  randomizedResult: z.unknown()
-    .transform(resolvePersistedRandomizedResult)
-    .catch(() => {
-      console.warn('randomizedResult: invalid persisted value, reset to empty');
-      return {};
-    }),
+  /** Saved results are looked up by card id, so they show current card data. Unknown ids are skipped. */
+  randomizedResult: z.record(z.object({ id: z.string() }))
+    .transform((saved) => {
+      const resolved: Record<string, ScrapedSupplyCard> = {};
+      for (const [slotId, { id }] of Object.entries(saved)) {
+        const card = getSupplyCardById(id);
+        if (card) resolved[slotId] = card;
+      }
+      return resolved;
+    })
+    .catch({}),
 });
 
 /**
@@ -183,13 +95,12 @@ export interface ConfigSlice {
   setPlayerCount: (count: number | 'custom') => void;
   /** Updates custom turn order deck card pool */
   setCustomDeck: (deck: CardType[]) => void;
-  /** Toggles consecutive Nemesis rule */
-  setAllowConsecutiveNemesis: (allow: boolean) => void;
-  /** Toggles consecutive player rule */
-  setAllowConsecutivePlayer: (allow: boolean) => void;
-  /** Sets draw pile visibility option */
-  setVisibilityOption: (opt: VisibilityOption) => void;
+  /** Sets all game options at once */
+  setGameOptions: (options: GameOptionsData) => void;
 }
+
+/** The game options edited by GameOptionsForm. */
+export type GameOptionsData = Pick<ConfigSlice, 'playerCount' | 'allowConsecutiveNemesis' | 'allowConsecutivePlayer' | 'visibilityOption'>;
 
 export interface TurnHistoryEntry {
   roundNumber: number;
@@ -207,13 +118,7 @@ export interface PlaySlice {
   endGame: () => void;
   revealCards: (indices: number[]) => void;
   shuffleDrawPile: () => void;
-  moveCard: (
-    source: 'draw' | 'discard',
-    cardId: string,
-    destination: 'draw' | 'discard',
-    position: 'top' | 'bottom' | 'shuffled'
-  ) => void;
-  setPiles: (newDrawPile: Card[], newDiscardPile: Card[]) => boolean;
+  setPiles: (newDrawPile: Card[], newDiscardPile: Card[]) => void;
 }
 
 /**
@@ -271,9 +176,7 @@ export interface SlotCriteria {
   /** Unique identifier for the slot */
   id: string;
   /** Filter by card types (multi-select: Gem, Relic, Spell) */
-  cardTypes?: ('Gem' | 'Relic' | 'Spell')[];
-  /** Legacy single card type filter for backwards compatibility */
-  cardType?: 'Gem' | 'Relic' | 'Spell';
+  cardTypes: ('Gem' | 'Relic' | 'Spell')[];
   /** Range filter for card cost: [minCost, maxCost] */
   costRange: [number, number];
   /** Search string filter evaluated against card name and rules text */
@@ -315,9 +218,9 @@ export interface ExpansionsSlice {
    * getEffectiveOwned()/useOwnedExpansions(), never read this raw for filtering or display.
    */
   ownedExpansions: string[];
-  /** Adds or removes one expansion. Names not in ALL_EXPANSIONS are ignored. */
+  /** Adds or removes one expansion. */
   toggleOwnedExpansion: (name: string) => void;
-  /** Replaces the selection (Select All / Clear Selection). Unknown names are dropped. */
+  /** Replaces the selection (Select All / Clear Selection). */
   setOwnedExpansions: (names: readonly string[]) => void;
 }
 
@@ -350,13 +253,7 @@ const createConfigSlice: StateCreator<GameState, [], [], ConfigSlice> = (set, ge
   visibilityOption: 'current',
   setPlayerCount: (count) => set({ playerCount: count }),
   setCustomDeck: (deck) => set({ customDeck: deck }),
-  setAllowConsecutiveNemesis: (allow) => set({ allowConsecutiveNemesis: allow }),
-  setAllowConsecutivePlayer: (allow) => set({ allowConsecutivePlayer: allow }),
-  setVisibilityOption: (opt) => {
-    const currentDrawPile = get().drawPile || [];
-    const newDrawPile = currentDrawPile.length > 0 ? applyVisibility(currentDrawPile, opt) : [];
-    set({ visibilityOption: opt, drawPile: newDrawPile });
-  },
+  setGameOptions: (options) => set({ ...options, drawPile: applyVisibility(get().drawPile, options.visibilityOption) }),
 });
 
 const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) => ({
@@ -384,33 +281,21 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
 
   nextTurn: () => {
     const state = get();
-    let newDiscard = [...state.discardPile];
 
-    let newDrawPile = [...state.drawPile];
-    let nextCard = null;
-
-    if (newDrawPile.length > 0) {
-      nextCard = newDrawPile.shift() || null;
-      if (nextCard) {
-        nextCard = { ...nextCard, isRevealed: true };
-        newDiscard.push(nextCard);
-      }
-      
-      newDrawPile = applyVisibility(newDrawPile, state.visibilityOption);
-
-      const turnHistory = nextCard ? [...state.turnHistory, { roundNumber: state.roundNumber, card: nextCard }] : state.turnHistory;
-
+    if (state.drawPile.length > 0) {
+      const [drawn, ...rest] = state.drawPile;
+      const revealed = { ...drawn, isRevealed: true };
       set({
-        discardPile: newDiscard,
-        drawPile: newDrawPile,
-        turnHistory,
+        discardPile: [...state.discardPile, revealed],
+        drawPile: applyVisibility(rest, state.visibilityOption),
+        turnHistory: [...state.turnHistory, { roundNumber: state.roundNumber, card: revealed }],
       });
     } else {
       const initialDeck = generateDeck(state.playerCount, state.customDeck);
       const lastTurnType = state.discardPile.length > 0 ? state.discardPile[state.discardPile.length - 1].type : null;
       let shuffled = shuffleDeck(initialDeck, state.allowConsecutiveNemesis, state.allowConsecutivePlayer, lastTurnType);
       
-      nextCard = shuffled.shift() || null;
+      let nextCard = shuffled.shift() || null;
       if (nextCard) {
         nextCard = { ...nextCard, isRevealed: true };
       }
@@ -463,65 +348,14 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
     set({ drawPile: newDrawPile });
   },
 
-  moveCard: (source, cardId, destination, position) => {
-    const state = get();
-    let drawPile = [...state.drawPile];
-    let discardPile = [...state.discardPile];
-
-    let cardToMove: Card | undefined;
-    if (source === 'draw') {
-      const index = drawPile.findIndex(c => c.id === cardId);
-      if (index !== -1) {
-        cardToMove = drawPile[index];
-        drawPile.splice(index, 1);
-      }
-    } else if (source === 'discard') {
-      const index = discardPile.findIndex(c => c.id === cardId);
-      if (index !== -1) {
-        cardToMove = discardPile[index];
-        discardPile.splice(index, 1);
-      }
-    }
-
-    if (!cardToMove) return;
-
-    if (destination === 'draw') {
-      if (position === 'top') {
-        drawPile.unshift(cardToMove);
-      } else if (position === 'bottom') {
-        drawPile.push(cardToMove);
-      } else if (position === 'shuffled') {
-        drawPile.push(cardToMove);
-        const lastTurnType = discardPile.length > 0 ? discardPile[discardPile.length - 1].type : null;
-        drawPile = shuffleDeck(drawPile, state.allowConsecutiveNemesis, state.allowConsecutivePlayer, lastTurnType);
-      }
-      drawPile = applyVisibility(drawPile, state.visibilityOption);
-    } else if (destination === 'discard') {
-      cardToMove = { ...cardToMove, isRevealed: true };
-      discardPile.push(cardToMove);
-    }
-
-    const turnHistory = updateRoundHistory(state.turnHistory, state.roundNumber, discardPile);
-
-    set({ drawPile, discardPile, turnHistory });
-  },
-
   setPiles: (newDrawPile, newDiscardPile) => {
     const state = get();
-    const currentTotal = state.drawPile.length + state.discardPile.length;
-    const newTotal = newDrawPile.length + newDiscardPile.length;
-    if (currentTotal !== newTotal) {
-      console.warn(`Card move rejected: card count changed from ${currentTotal} to ${newTotal}`);
-      return false;
-    }
-    
     newDiscardPile = newDiscardPile.map(c => ({ ...c, isRevealed: true }));
     newDrawPile = applyVisibility(newDrawPile, state.visibilityOption);
 
     const turnHistory = updateRoundHistory(state.turnHistory, state.roundNumber, newDiscardPile);
 
     set({ drawPile: newDrawPile, discardPile: newDiscardPile, turnHistory });
-    return true;
   },
 });
 
@@ -591,7 +425,6 @@ const createRandomizerSlice: StateCreator<GameState, [], [], SupplyRandomizerSli
 const createExpansionsSlice: StateCreator<GameState, [], [], ExpansionsSlice> = (set) => ({
   ownedExpansions: [],
   toggleOwnedExpansion: (name) => set((state) => {
-    if (!ALL_EXPANSIONS.includes(name)) return {};
     const current = state.ownedExpansions;
     return {
       ownedExpansions: current.includes(name)
@@ -599,27 +432,16 @@ const createExpansionsSlice: StateCreator<GameState, [], [], ExpansionsSlice> = 
         : [...current, name],
     };
   }),
-  setOwnedExpansions: (names) => set({
-    ownedExpansions: ALL_EXPANSIONS.filter((name) => names.includes(name)),
-  }),
+  setOwnedExpansions: (names) => set({ ownedExpansions: [...names] }),
 });
 
 /**
- * localStorage adapter that keeps the app usable when storage is blocked or full
- * (private mode, quota exceeded): each storage call is individually guarded and the
- * failure is logged with console.error. Payload contents are never logged.
- * window.localStorage is resolved lazily inside the guard because the getter itself
- * can throw when storage access is denied.
+ * localStorage whose writes are guarded, so a full or blocked storage (quota exceeded, private mode)
+ * logs the error and the session continues in memory. Read errors are reported by zustand through
+ * onRehydrateStorage.
  */
-const loggingLocalStorage: StateStorage = {
-  getItem: (name) => {
-    try {
-      return window.localStorage.getItem(name);
-    } catch (e) {
-      console.error('Failed to read persisted state', e);
-      return null;
-    }
-  },
+const guardedLocalStorage: StateStorage = {
+  getItem: (name) => window.localStorage.getItem(name),
   setItem: (name, value) => {
     try {
       window.localStorage.setItem(name, value);
@@ -627,13 +449,7 @@ const loggingLocalStorage: StateStorage = {
       console.error('Failed to persist state (session continues in memory)', e);
     }
   },
-  removeItem: (name) => {
-    try {
-      window.localStorage.removeItem(name);
-    } catch (e) {
-      console.error('Failed to remove persisted state', e);
-    }
-  },
+  removeItem: (name) => window.localStorage.removeItem(name),
 };
 
 export const useGameStore = create<GameState>()(
@@ -647,19 +463,18 @@ export const useGameStore = create<GameState>()(
     }),
     {
       name: 'aeons-end-game-storage',
-      storage: createJSONStorage(() => loggingLocalStorage),
+      storage: createJSONStorage(() => guardedLocalStorage),
       onRehydrateStorage: () => (_state, error) => {
         if (error) console.error('Failed to rehydrate persisted state', error);
       },
-      merge: (persistedState: any, currentState) => {
-        try {
-          if (!persistedState) return currentState;
-          const validated = GameStateSchema.parse(persistedState);
-          return { ...currentState, ...validated };
-        } catch (e) {
-          console.error('Failed to parse persisted state', e);
+      merge: (persistedState, currentState) => {
+        if (!persistedState) return currentState;
+        const parsed = GameStateSchema.safeParse(persistedState);
+        if (!parsed.success) {
+          console.error('Failed to parse persisted state', parsed.error);
           return currentState;
         }
+        return { ...currentState, ...parsed.data };
       },
     }
   )

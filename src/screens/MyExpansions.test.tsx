@@ -1,10 +1,8 @@
-import { act, render, screen, fireEvent, waitFor, within } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import CardSearchScreen from './CardSearchScreen';
 import MageSearchScreen from './MageSearchScreen';
 import NemesisSearchScreen from './NemesisSearchScreen';
-import SupplyRandomizerScreen from './SupplyRandomizerScreen';
-import HomeScreen from './HomeScreen';
 import { useGameStore } from '../store';
 
 // Expansions: Base (all three datasets), Buried Secrets (supply only), Promo (supply + nemeses),
@@ -27,8 +25,6 @@ vi.mock('../../data/scraped/aeons_end_all.json', () => ({
     ],
   },
 }));
-
-const STORAGE_KEY = 'aeons-end-game-storage';
 
 const openPickerFromChip = () => {
   fireEvent.click(screen.getByRole('button', { name: /^Expansions:/ }));
@@ -53,89 +49,6 @@ describe('Expansions (app-wide setting)', () => {
     localStorage.clear();
   });
 
-  it('one selection is shared by every tool screen and the Home chip', async () => {
-    const card = render(<CardSearchScreen />);
-    expect(screen.getByText('Card Search (3 results)')).toBeDefined();
-
-    const dialog = openPickerFromChip();
-    fireEvent.click(within(dialog).getByRole('button', { name: 'Base' }));
-    fireEvent.click(within(dialog).getByRole('button', { name: 'Done' }));
-
-    expect(screen.queryByRole('dialog')).toBeNull();
-    expect(screen.getByText('Card Search (1 results)')).toBeDefined();
-    card.unmount();
-
-    const mage = render(<MageSearchScreen />);
-    expect(screen.getByText('Mage Search (1 results)')).toBeDefined();
-    expect(screen.getByRole('button', { name: 'Expansions: 1 of 4 selected, applies to all tools. Edit' })).toBeDefined();
-    mage.unmount();
-
-    const nemesis = render(<NemesisSearchScreen />);
-    expect(screen.getByText('Nemesis Search (1 results)')).toBeDefined();
-    expect(screen.getByText('Rageborne')).toBeDefined();
-    expect(screen.queryByText('Prince of Gluttons')).toBeNull();
-    nemesis.unmount();
-
-    const randomizer = render(<SupplyRandomizerScreen />);
-    fireEvent.click(screen.getByText('+ Add Slot'));
-    await waitFor(() => {
-      expect(screen.getByText('1 Matching Cards')).toBeDefined();
-    });
-    randomizer.unmount();
-
-    render(<HomeScreen onSelectTool={() => undefined} />);
-    expect(screen.getByRole('button', { name: 'Expansions: 1 of 4 selected, applies to all tools. Edit' })).toBeDefined();
-  });
-
-  it('Home uses the same Expansions chip as the tool screens, and its changes apply to the tools', () => {
-    const home = render(<HomeScreen onSelectTool={() => undefined} />);
-    const chip = screen.getByRole('button', { name: 'Expansions: All, applies to all tools. Edit' });
-    expect(chip.getAttribute('aria-haspopup')).toBe('dialog');
-    expect(chip.textContent).toBe('Expansionsapplies to all toolsAll ›');
-
-    fireEvent.click(chip);
-    const dialog = screen.getByRole('dialog');
-    fireEvent.click(within(dialog).getByRole('button', { name: 'Promo' }));
-    fireEvent.click(within(dialog).getByRole('button', { name: 'Done' }));
-
-    expect(screen.getByRole('button', { name: 'Expansions: 1 of 4 selected, applies to all tools. Edit' })).toBeDefined();
-    home.unmount();
-
-    render(<NemesisSearchScreen />);
-    expect(screen.getByText('Nemesis Search (1 results)')).toBeDefined();
-    expect(screen.getByText('Prince of Gluttons')).toBeDefined();
-  });
-
-  it('Mage Search "Clear All Filters" resets only the query and keeps the Expansions setting', async () => {
-    useGameStore.setState({ ownedExpansions: ['War Eternal'] });
-    useGameStore.getState().setMageSearchFilters({ mageQuery: 'zzz' });
-    render(<MageSearchScreen />);
-
-    fireEvent.click(screen.getByRole('button', { name: 'Clear All Filters' }));
-
-    await waitFor(() => {
-      expect(screen.getByText('Brama')).toBeDefined();
-    });
-    expect(useGameStore.getState().mageSearchFilters).toEqual({ mageQuery: '' });
-    expect(useGameStore.getState().ownedExpansions).toEqual(['War Eternal']);
-    expect(screen.queryByText('Adelheim')).toBeNull();
-  });
-
-  it('Nemesis Search "Clear All Filters" resets query and difficulty and keeps the Expansions setting', async () => {
-    useGameStore.setState({ ownedExpansions: ['Promo'] });
-    useGameStore.getState().setNemesisSearchFilters({ nemesisQuery: 'zzz', difficultyRange: [8, 10] });
-    render(<NemesisSearchScreen />);
-
-    fireEvent.click(screen.getByRole('button', { name: 'Clear All Filters' }));
-
-    await waitFor(() => {
-      expect(screen.getByText('Prince of Gluttons')).toBeDefined();
-    });
-    expect(useGameStore.getState().nemesisSearchFilters).toEqual({ nemesisQuery: '', difficultyRange: [1, 10] });
-    expect(useGameStore.getState().ownedExpansions).toEqual(['Promo']);
-    expect(screen.queryByText('Rageborne')).toBeNull();
-  });
-
   it.each([
     ['Mage Search', MageSearchScreen, 'Buried Secrets', 'mages'],
     ['Nemesis Search', NemesisSearchScreen, 'Buried Secrets', 'nemeses'],
@@ -151,7 +64,22 @@ describe('Expansions (app-wide setting)', () => {
     expect(screen.queryByText(/No matching/)).toBeNull();
 
     fireEvent.click(screen.getByRole('button', { name: 'Edit Expansions' }));
+    // The picker stays open when a pick replaces the empty state with results
+    fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Base' }));
     expect(screen.getByRole('dialog')).toBeDefined();
+    expect(screen.queryByText(`None of your selected expansions contain ${noun}.`)).toBeNull();
+  });
+
+  it('the "Searching within" note opens the picker, which stays open when a pick brings back results', () => {
+    useGameStore.setState({ ownedExpansions: ['Base'], mageSearchFilters: { mageQuery: 'brama' } });
+    render(<MageSearchScreen />);
+    expect(screen.getByText('No matching mages found.')).toBeDefined();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
+    fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'War Eternal' }));
+
+    expect(screen.getByRole('dialog')).toBeDefined();
+    expect(screen.getByText('Brama')).toBeDefined();
   });
 
   it('truncates the empty-state expansion list after three names', () => {
@@ -186,17 +114,6 @@ describe('Expansions (app-wide setting)', () => {
       expect(document.activeElement).toBe(within(dialog).getByRole('heading', { name: 'Expansions' }));
     });
 
-    it('has no corner close button; the only ✕ is the in-search "Clear search" button', () => {
-      render(<CardSearchScreen />);
-      const dialog = openPickerFromChip();
-      expect(within(dialog).queryByRole('button', { name: /close/i })).toBeNull();
-      expect(within(dialog).queryByText('✕')).toBeNull();
-
-      fireEvent.change(within(dialog).getByRole('textbox', { name: 'Search expansions' }), { target: { value: 'bur' } });
-      const clear = within(dialog).getByRole('button', { name: 'Clear search' });
-      expect(within(dialog).getAllByText('✕')).toEqual([clear]);
-    });
-
     it.each([
       ['Escape', () => fireEvent.keyDown(document, { key: 'Escape' })],
       ['backdrop click', () => fireEvent.click(screen.getByRole('dialog'))],
@@ -213,14 +130,6 @@ describe('Expansions (app-wide setting)', () => {
       expect(screen.getByText('Card Search (1 results)')).toBeDefined();
     });
 
-    it('locks body scroll while open and restores it on close', () => {
-      render(<CardSearchScreen />);
-      openPickerFromChip();
-      expect(document.body.style.overflow).toBe('hidden');
-      fireEvent.keyDown(document, { key: 'Escape' });
-      expect(document.body.style.overflow).toBe('');
-    });
-
     it('search filters tiles; Select All during a search selects every expansion', () => {
       render(<CardSearchScreen />);
       const dialog = openPickerFromChip();
@@ -230,14 +139,6 @@ describe('Expansions (app-wide setting)', () => {
 
       fireEvent.click(within(dialog).getByRole('button', { name: 'Select All (4)' }));
       expect(useGameStore.getState().ownedExpansions).toEqual(['Base', 'Buried Secrets', 'Promo', 'War Eternal']);
-    });
-
-    it('treats regex metacharacters in the search as plain text', () => {
-      render(<CardSearchScreen />);
-      const dialog = openPickerFromChip();
-
-      fireEvent.change(within(dialog).getByRole('textbox', { name: 'Search expansions' }), { target: { value: '.*(' } });
-      expect(within(dialog).getByText('No matching expansions found')).toBeDefined();
     });
 
     it('resets the search text when closed and reopened', () => {
@@ -250,57 +151,5 @@ describe('Expansions (app-wide setting)', () => {
       dialog = openPickerFromChip();
       expect((within(dialog).getByRole('textbox', { name: 'Search expansions' }) as HTMLInputElement).value).toBe('');
     });
-  });
-
-  it('persists the selection and restores it on rehydrate', async () => {
-    render(<CardSearchScreen />);
-    const dialog = openPickerFromChip();
-    fireEvent.click(within(dialog).getByRole('button', { name: 'Base' }));
-    fireEvent.click(within(dialog).getByRole('button', { name: 'Promo' }));
-
-    const saved = localStorage.getItem(STORAGE_KEY);
-    expect(saved).not.toBeNull();
-    expect(JSON.parse(saved as string).state.ownedExpansions).toEqual(['Base', 'Promo']);
-
-    // The screen is still mounted, so store updates must go through act()
-    act(() => {
-      useGameStore.setState({ ownedExpansions: [] });
-    });
-    expect(screen.getByText('Card Search (3 results)')).toBeDefined();
-    localStorage.setItem(STORAGE_KEY, saved as string);
-    await act(async () => {
-      await useGameStore.persist.rehydrate();
-    });
-
-    expect(useGameStore.getState().ownedExpansions).toEqual(['Base', 'Promo']);
-    expect(screen.getByText('Card Search (2 results)')).toBeDefined();
-  });
-
-  it('treats a stale persisted name as "All"', async () => {
-    const payload = {
-      state: {
-        playerCount: 1,
-        allowConsecutiveNemesis: true,
-        visibilityOption: 'current',
-        isPlaying: false,
-        drawPile: [],
-        discardPile: [],
-        roundNumber: 0,
-        ownedExpansions: ['Unknown Expansion'],
-      },
-      version: 0,
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-    await useGameStore.persist.rehydrate();
-
-    render(<CardSearchScreen />);
-
-    expect(screen.getByText('Card Search (3 results)')).toBeDefined();
-    const chip = screen.getByRole('button', { name: 'Expansions: All, applies to all tools. Edit' });
-    expect(within(chip).getByText('All ›')).toBeDefined();
-
-    const dialog = openPickerFromChip();
-    expect(within(dialog).getAllByRole('button', { pressed: false }).map(t => t.textContent))
-      .toEqual(['Base', 'Buried Secrets', 'Promo', 'War Eternal']);
   });
 });

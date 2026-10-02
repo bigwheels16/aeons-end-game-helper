@@ -4,13 +4,13 @@ import { useGameStore } from '../store';
 import scrapedData from '../../data/scraped/aeons_end_all.json';
 import { matchesOwned } from '../utils/expansions';
 import { useOwnedExpansions } from '../hooks/useOwnedExpansions';
-import { MyExpansionsChip, MyExpansionsPicker } from '../components/MyExpansions';
+import { MyExpansionsChip } from '../components/MyExpansions';
 import SupplySlot from '../components/SupplySlot';
 import { solveSupplyRandomizer, isCardMatch } from '../supplyRandomizerEngine';
 import { ScrapedSupplyCard } from '../types/scraped';
 import styles from './SupplyRandomizerScreen.module.css';
 
-const allCards: ScrapedSupplyCard[] = scrapedData.supply || [];
+const allCards: ScrapedSupplyCard[] = scrapedData.supply;
 
 /**
  * Supply Randomizer screen component.
@@ -30,7 +30,6 @@ export default function SupplyRandomizerScreen() {
   const clearRandomizer = useGameStore((state) => state.clearRandomizer);
 
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [pickerOpen, setPickerOpen] = useState(false);
   const { ownedSet, isAll, label: ownedLabel } = useOwnedExpansions();
 
   // Single card pool used by randomize, single-slot re-roll, live previews and zero-match checks
@@ -56,11 +55,6 @@ export default function SupplyRandomizerScreen() {
 
   const handleRandomize = () => {
     setErrorMsg(null);
-    if (randomizerSlots.length === 0) {
-      setErrorMsg("Add at least one slot before randomizing.");
-      return;
-    }
-
     const result = solveSupplyRandomizer(randomizerSlots, availableCardsPool);
     if (result) {
       setRandomizedResult(result);
@@ -79,14 +73,11 @@ export default function SupplyRandomizerScreen() {
     // Identify cards assigned to OTHER slots to guarantee uniqueness across supply
     const otherAssignedIds = new Set(
       Object.entries(randomizedResult)
-        .filter(([id, card]) => id !== slotId && card)
+        .filter(([id]) => id !== slotId)
         .map(([_, card]) => card.id)
     );
 
-    const candidates = availableCardsPool.filter(card => {
-      if (!card || otherAssignedIds.has(card.id)) return false;
-      return isCardMatch(card, slot);
-    });
+    const candidates = availableCardsPool.filter(card => !otherAssignedIds.has(card.id) && isCardMatch(card, slot));
 
     if (candidates.length === 0) {
       toast.error("No other matching cards available without duplicate.");
@@ -121,8 +112,7 @@ export default function SupplyRandomizerScreen() {
       <div style={{ padding: '1rem', borderBottom: '1px solid #555' }}>
         <h2 style={{ marginTop: 0, color: 'white' }}>Supply Randomizer</h2>
         
-        <MyExpansionsChip onOpen={() => setPickerOpen(true)} />
-        <MyExpansionsPicker isOpen={pickerOpen} onClose={() => setPickerOpen(false)} />
+        <MyExpansionsChip />
         
         <div className={styles.actionsContainer}>
           <div className={styles.managementButtons}>
@@ -165,7 +155,6 @@ export default function SupplyRandomizerScreen() {
         {randomizerSlots.map(slot => (
           <SupplySlot 
             key={slot.id}
-            slotId={slot.id}
             criteria={slot}
             availableCards={availableCardsPool}
             assignedCard={randomizedResult[slot.id] || null}

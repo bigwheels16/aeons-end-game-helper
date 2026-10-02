@@ -4,13 +4,7 @@ import { useOwnedExpansions } from '../hooks/useOwnedExpansions';
 import { ALL_EXPANSIONS, formatOwnedList } from '../utils/expansions';
 import styles from './MyExpansions.module.css';
 
-/*
- * UI for the app-wide "Expansions" setting.
- *
- * Security note: every expansion name rendered here comes from ALL_EXPANSIONS (bundled data)
- * or from useOwnedExpansions().owned (an intersection with ALL_EXPANSIONS). The raw persisted
- * array is never rendered. Names are only ever React text children / attribute strings.
- */
+/* UI for the app-wide "Expansions" setting. */
 
 const cx = (...classes: (string | false | undefined)[]): string => classes.filter(Boolean).join(' ');
 
@@ -64,7 +58,6 @@ function MyExpansionsDialog({ onClose }: { onClose: () => void }) {
     headingRef.current?.focus();
   }, []);
 
-  // Plain case-insensitive substring match; never builds a RegExp from user input.
   const visibleExpansions = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
     if (!query) return ALL_EXPANSIONS;
@@ -171,36 +164,43 @@ function MyExpansionsDialog({ onClose }: { onClose: () => void }) {
   );
 }
 
-interface OpenPickerProps {
-  /** Opens the Expansions picker */
-  onOpen: () => void;
-}
-
 /**
  * Compact, always-visible indicator of the app-wide setting, shown on the Home screen and on
- * each filtered tool screen.
+ * each filtered tool screen. Opens its own picker.
  */
-export function MyExpansionsChip({ onOpen }: OpenPickerProps) {
+export function MyExpansionsChip() {
   const { isAll, label } = useOwnedExpansions();
+  const [pickerOpen, setPickerOpen] = useState(false);
   const ariaLabel = isAll
     ? 'Expansions: All, applies to all tools. Edit'
     : `Expansions: ${label} selected, applies to all tools. Edit`;
 
   return (
-    <button
-      type="button"
-      onClick={onOpen}
-      aria-haspopup="dialog"
-      aria-label={ariaLabel}
-      className={cx(styles.chip, styles.focusable)}
-    >
-      <span className={styles.chipText}>
-        <span className={styles.chipTitle}>Expansions</span>
-        <span className={styles.chipSubtitle}>applies to all tools</span>
-      </span>
-      <span className={styles.chipPill}>{label} ›</span>
-    </button>
+    <>
+      <button
+        type="button"
+        onClick={() => setPickerOpen(true)}
+        aria-haspopup="dialog"
+        aria-label={ariaLabel}
+        className={cx(styles.chip, styles.focusable)}
+      >
+        <span className={styles.chipText}>
+          <span className={styles.chipTitle}>Expansions</span>
+          <span className={styles.chipSubtitle}>applies to all tools</span>
+        </span>
+        <span className={styles.chipPill}>{label} ›</span>
+      </button>
+      <MyExpansionsPicker isOpen={pickerOpen} onClose={() => setPickerOpen(false)} />
+    </>
   );
+}
+
+interface OpenPickerProps {
+  /**
+   * Opens the Expansions picker. The caller owns the picker because this component unmounts as
+   * soon as a picked expansion changes the results, which would close a picker it owned.
+   */
+  onOpen: () => void;
 }
 
 interface OwnedEmptyStateProps extends OpenPickerProps {

@@ -1,28 +1,34 @@
+import { useState } from 'react';
 import { ScrapedNemesis } from '../types/scraped';
 import FavoriteStar from './FavoriteStar';
 import ScrapedHtml from './ScrapedHtml';
+import WikiImage from './WikiImage';
 import WikiLink from './WikiLink';
+
+/** Rules text sections, in display order. */
+const TEXT_SECTIONS: { label: string; color: string; field: 'unleash' | 'increased_difficulty' | 'rules' | 'setup' }[] = [
+  { label: 'Unleash', color: '#ff7043', field: 'unleash' },
+  { label: 'Increased Difficulty', color: '#ef5350', field: 'increased_difficulty' },
+  { label: 'Rules', color: '#42a5f5', field: 'rules' },
+  { label: 'Setup', color: '#ffa726', field: 'setup' },
+];
 
 export interface NemesisDisplayItemProps {
   nemesis: ScrapedNemesis;
-  imagesVisible: boolean;
-  onToggleImages: () => void;
 }
 
 /**
  * Nemesis presentation card: title (wiki link), favorite star, health and difficulty,
  * unleash, increased difficulty, rules, setup, and mat images.
  */
-export default function NemesisDisplayItem({
-  nemesis,
-  imagesVisible,
-  onToggleImages
-}: NemesisDisplayItemProps) {
+export default function NemesisDisplayItem({ nemesis }: NemesisDisplayItemProps) {
+  const [showMats, setShowMats] = useState(false);
+
   return (
     <div style={{ backgroundColor: '#222', padding: '0.75rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem', margin: '0 0 0.25rem 0' }}>
         <h2 style={{ margin: 0 }}>
-          <WikiLink url={nemesis.page_url} fallbackName={nemesis.name} style={{ color: '#4CAF50', textDecoration: 'none' }}>
+          <WikiLink url={nemesis.page_url} style={{ color: '#4CAF50', textDecoration: 'none' }}>
             {nemesis.name}
           </WikiLink>
         </h2>
@@ -42,70 +48,26 @@ export default function NemesisDisplayItem({
         </div>
       </div>
 
-      {nemesis.unleash && (
-        <div style={{ marginBottom: '0.75rem' }}>
-          <strong style={{ color: '#ff7043', display: 'block', marginBottom: '0.25rem' }}>Unleash:</strong>
+      {TEXT_SECTIONS.map(({ label, color, field }) => nemesis[field] && (
+        <div key={field} style={{ marginBottom: '0.75rem' }}>
+          <strong style={{ color, display: 'block', marginBottom: '0.25rem' }}>{label}:</strong>
           <ScrapedHtml
-            html={nemesis.unleash}
+            html={nemesis[field]}
             style={{ fontSize: '0.9rem', color: '#ddd' }}
           />
         </div>
-      )}
-
-      {nemesis.increased_difficulty && (
-        <div style={{ marginBottom: '0.75rem' }}>
-          <strong style={{ color: '#ef5350', display: 'block', marginBottom: '0.25rem' }}>Increased Difficulty:</strong>
-          <ScrapedHtml
-            html={nemesis.increased_difficulty}
-            style={{ fontSize: '0.9rem', color: '#ddd' }}
-          />
-        </div>
-      )}
-
-      {nemesis.rules && (
-        <div style={{ marginBottom: '0.75rem' }}>
-          <strong style={{ color: '#42a5f5', display: 'block', marginBottom: '0.25rem' }}>Rules:</strong>
-          <ScrapedHtml
-            html={nemesis.rules}
-            style={{ fontSize: '0.9rem', color: '#ddd' }}
-          />
-        </div>
-      )}
-
-      {nemesis.setup && (
-        <div style={{ marginBottom: '0.75rem' }}>
-          <strong style={{ color: '#ffa726', display: 'block', marginBottom: '0.25rem' }}>Setup:</strong>
-          <ScrapedHtml
-            html={nemesis.setup}
-            style={{ fontSize: '0.9rem', color: '#ddd' }}
-          />
-        </div>
-      )}
+      ))}
 
       <button 
-        onClick={() => onToggleImages()}
+        onClick={() => setShowMats(prev => !prev)}
         style={{ marginTop: '1rem', background: 'none', border: 'none', color: '#2196F3', cursor: 'pointer', padding: 0, fontSize: '0.875rem' }}
       >
-        {imagesVisible ? 'Hide Mat Images' : 'Show Mat Images'}
+        {showMats ? 'Hide Mat Images' : 'Show Mat Images'}
       </button>
-      {imagesVisible && (
+      {showMats && (
         <div style={{ marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          <a href={`https://aeonsend.wiki.gg/images/${encodeURIComponent(nemesis.name.replace(/ /g, '_'))}_Front.jpg`} target="_blank" rel="noopener noreferrer">
-            <img 
-              src={`https://aeonsend.wiki.gg/images/${encodeURIComponent(nemesis.name.replace(/ /g, '_'))}_Front.jpg`} 
-              alt={`${nemesis.name} Front`}
-              loading="lazy"
-              style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
-            />
-          </a>
-          <a href={`https://aeonsend.wiki.gg/images/${encodeURIComponent(nemesis.name.replace(/ /g, '_'))}_Back.jpg`} target="_blank" rel="noopener noreferrer">
-            <img 
-              src={`https://aeonsend.wiki.gg/images/${encodeURIComponent(nemesis.name.replace(/ /g, '_'))}_Back.jpg`} 
-              alt={`${nemesis.name} Back`}
-              loading="lazy"
-              style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} 
-            />
-          </a>
+          <WikiImage name={`${nemesis.name} Front`} />
+          <WikiImage name={`${nemesis.name} Back`} />
         </div>
       )}
     </div>

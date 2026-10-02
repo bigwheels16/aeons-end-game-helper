@@ -9,7 +9,7 @@ interface HistoryModalProps {
 }
 
 export const HistoryModal: React.FC<HistoryModalProps> = ({ isOpen, onClose }) => {
-  const turnHistory = useGameStore(state => state.turnHistory || []);
+  const turnHistory = useGameStore(state => state.turnHistory);
   
   if (!isOpen) return null;
 

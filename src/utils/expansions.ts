@@ -1,5 +1,23 @@
 import scrapedData from '../../data/scraped/aeons_end_all.json';
-import { getUniqueExpansions, ItemWithExpansions } from './cards';
+
+export interface ItemWithExpansions {
+  expansions?: string[];
+}
+
+/**
+ * Extracts a sorted, unique list of expansions from an array of items.
+ */
+export function getUniqueExpansions(items: ItemWithExpansions[]): string[] {
+  const exps = new Set<string>();
+  for (const item of items) {
+    if (item.expansions) {
+      for (const exp of item.expansions) {
+        if (exp) exps.add(exp);
+      }
+    }
+  }
+  return Array.from(exps).sort();
+}
 
 /**
  * Union of every expansion name found across supply cards, mages and nemeses,
@@ -8,25 +26,20 @@ import { getUniqueExpansions, ItemWithExpansions } from './cards';
  * Scope: global, in-memory, never persisted. This is the only list of expansion
  * names the UI ever renders; persisted names are intersected with it first.
  */
-export const ALL_EXPANSIONS: readonly string[] = Object.freeze(
-  getUniqueExpansions([
-    ...(scrapedData.supply || []),
-    ...(scrapedData.mages || []),
-    ...(scrapedData.nemeses || []),
-  ])
-);
+export const ALL_EXPANSIONS: readonly string[] = getUniqueExpansions([
+  ...scrapedData.supply,
+  ...scrapedData.mages,
+  ...scrapedData.nemeses,
+]);
 
 /**
- * Returns the owned expansion names that exist in `all`, in `all` order, without
- * duplicates. Stale or unknown persisted names are dropped. An empty result means
+ * Returns the owned expansion names that exist in ALL_EXPANSIONS, in ALL_EXPANSIONS order,
+ * without duplicates. Stale or unknown persisted names are dropped. An empty result means
  * "All Expansions" (no filtering).
  */
-export function getEffectiveOwned(
-  owned: readonly string[],
-  all: readonly string[] = ALL_EXPANSIONS
-): string[] {
+export function getEffectiveOwned(owned: readonly string[]): string[] {
   const ownedSet = new Set(owned);
-  return all.filter((name) => ownedSet.has(name));
+  return ALL_EXPANSIONS.filter((name) => ownedSet.has(name));
 }
 
 /**

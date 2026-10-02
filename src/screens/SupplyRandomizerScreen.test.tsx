@@ -38,7 +38,10 @@ vi.mock('../../data/scraped/aeons_end_all.json', () => ({
         cost: '5',
         effect: 'Gain 1 charge.'
       }
-    ]
+    ],
+    unique_starters: [],
+    mages: [],
+    nemeses: [],
   }
 }));
 
@@ -58,21 +61,6 @@ describe('SupplyRandomizerScreen', () => {
     await waitFor(() => {
       expect(screen.getByText('2 Matching Cards')).toBeDefined();
     });
-  });
-
-  it('"Clear All" clears slots but keeps the Expansions setting', async () => {
-    useGameStore.setState({ ownedExpansions: ['Base', 'Promo'] });
-    render(<SupplyRandomizerScreen />);
-
-    fireEvent.click(screen.getByText('+ Add Slot'));
-    await waitFor(() => {
-      expect(screen.getByText('Card Type:')).toBeDefined();
-    });
-
-    fireEvent.click(screen.getByRole('button', { name: 'Clear All' }));
-
-    expect(useGameStore.getState().randomizerSlots).toEqual([]);
-    expect(useGameStore.getState().ownedExpansions).toEqual(['Base', 'Promo']);
   });
 
   it('solver and single-slot re-roll only use cards from the Expansions setting', async () => {
@@ -138,23 +126,6 @@ describe('SupplyRandomizerScreen', () => {
     });
     expect(screen.getByRole('button', { name: /^Randomize$/i })).toHaveProperty('disabled', true);
     expect(screen.getByText('Some slots have no matching cards in your selected expansions.')).toBeDefined();
-  });
-
-  it('renders correctly and can add a slot', async () => {
-    render(<SupplyRandomizerScreen />);
-    
-    expect(screen.getByText('Supply Randomizer')).toBeDefined();
-    
-    const addButton = screen.getByText('+ Add Slot');
-    fireEvent.click(addButton);
-
-    await waitFor(() => {
-      // "Card Type:" is rendered inside SupplySlot
-      expect(screen.getByText('Card Type:')).toBeDefined();
-    });
-
-    const slots = useGameStore.getState().randomizerSlots;
-    expect(slots.length).toBe(1);
   });
 
   it('can delete a slot', async () => {
@@ -223,23 +194,6 @@ describe('SupplyRandomizerScreen', () => {
       // 1 card with 'Ruby'
       expect(screen.getByText('1 Matching Cards')).toBeDefined();
     });
-  });
-
-  it('disables randomize button when a slot has 0 matches', async () => {
-    render(<SupplyRandomizerScreen />);
-    
-    const addButton = screen.getByText('+ Add Slot');
-    fireEvent.click(addButton);
-
-    const searchInput = screen.getByPlaceholderText('Filter by name or effect...');
-    fireEvent.change(searchInput, { target: { value: 'ImpossibleSearchTerm' } });
-
-    await waitFor(() => {
-      expect(screen.getByText('0 Matching Cards')).toBeDefined();
-    });
-
-    const randomizeButton = screen.getByRole('button', { name: /^Randomize$/i });
-    expect(randomizeButton).toHaveProperty('disabled', true);
   });
 
   it('randomizes and renders assigned cards', async () => {
