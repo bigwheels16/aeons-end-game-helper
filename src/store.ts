@@ -1,8 +1,9 @@
 
 import { create, StateCreator } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist, StateStorage } from 'zustand/middleware';
 import { z } from 'zod';
 import { CARD_TYPES, Card, CardType, generateDeck, shuffleDeck } from './deckEngine';
+import { ALL_EXPANSIONS } from './utils/expansions';
 
 export type VisibilityOption = 'current' | 'next' | 'all';
 
@@ -16,6 +17,10 @@ const CardSchema = z.object({
 });
 
 const VisibilityOptionSchema = z.enum(['current', 'next', 'all']);
+
+/** Upper bounds for the persisted ownedExpansions array (untrusted localStorage input). */
+const MAX_EXPANSION_NAME_LENGTH = 200;
+const MAX_OWNED_EXPANSIONS = 500;
 
 const GameStateSchema = z.object({
   playerCount: z.union([z.number().min(1).max(4), z.literal('custom')]),
@@ -31,19 +36,19 @@ const GameStateSchema = z.object({
     roundNumber: z.number(),
     card: CardSchema,
   })).optional().default([]),
+  // Plain z.object() (default strip of unknown keys): the LEGACY selectedExpansions key is silently dropped.
   searchFilters: z.object({
     cardQuery: z.string().optional().default(''),
-    selectedExpansions: z.array(z.string()),
     selectedTypes: z.array(z.string()),
     costRange: z.tuple([z.number(), z.number()]),
-  }).passthrough().optional(),
+  }).optional(),
+  // Plain z.object() (default strip of unknown keys): the LEGACY selectedMageExpansions key is silently dropped.
   mageSearchFilters: z.object({
     mageQuery: z.string(),
-    selectedMageExpansions: z.array(z.string()),
   }).optional(),
+  // Plain z.object() (default strip of unknown keys): the LEGACY selectedNemesisExpansions key is silently dropped.
   nemesisSearchFilters: z.object({
     nemesisQuery: z.string(),
-    selectedNemesisExpansions: z.array(z.string()),
     difficultyRange: z.tuple([z.number(), z.number()]).optional().default([1, 10]),
   }).optional(),
   favorites: z.object({
@@ -51,7 +56,16 @@ const GameStateSchema = z.object({
     mages: z.array(z.string()).default([]),
     nemeses: z.array(z.string()).default([]),
   }).optional(),
-  randomizerExpansions: z.array(z.string()).optional(),
+  // LEGACY randomizerExpansions is no longer declared, so the top-level (strip) object drops it.
+  /**
+   * App-wide "Expansions". Untrusted input from localStorage: bounded, and any invalid
+   * value resets only this field to [] (= All) instead of failing the whole parse.
+   */
+  ownedExpansions: z.array(z.string().max(MAX_EXPANSION_NAME_LENGTH))
+    .max(MAX_OWNED_EXPANSIONS)
+    .optional()
+    .default([])
+    .catch([]),
   randomizerSlots: z.array(z.object({
     id: z.string(),
     cardTypes: z.array(z.enum(['Gem', 'Relic', 'Spell'])).optional(),
@@ -134,8 +148,6 @@ export interface PlaySlice {
 export interface SearchFilters {
   /** Text query matched against card name and rules/effect text */
   cardQuery: string;
-  /** List of selected expansion acronyms/identifiers to include in results */
-  selectedExpansions: string[];
   /** List of selected card types ('Gem', 'Relic', 'Spell') to include in results */
   selectedTypes: string[];
   /** [minCost, maxCost] Aether cost bounds */
@@ -144,12 +156,10 @@ export interface SearchFilters {
 
 export interface MageSearchFilters {
   mageQuery: string;
-  selectedMageExpansions: string[];
 }
 
 export interface NemesisSearchFilters {
   nemesisQuery: string;
-  selectedNemesisExpansions: string[];
   difficultyRange: [number, number];
 }
 
@@ -200,14 +210,10 @@ export interface SlotCriteria {
  * Zustand slice managing supply randomizer setup, slot criteria, and randomized results.
  */
 export interface SupplyRandomizerSlice {
-  /** Active expansion filters for the supply randomizer pool */
-  randomizerExpansions: string[];
   /** Configured criteria for each supply slot */
   randomizerSlots: SlotCriteria[];
   /** Map of slot IDs to assigned supply cards */
   randomizedResult: Record<string, any | null>;
-  /** Updates the active expansion filter selection */
-  setRandomizerExpansions: (expansions: string[]) => void;
   /** Adds a new slot with specified criteria */
   addSlot: (slot: SlotCriteria) => void;
   /** Removes a slot and its assigned card by ID */
@@ -220,7 +226,28 @@ export interface SupplyRandomizerSlice {
   clearRandomizer: () => void;
 }
 
-type GameState = ConfigSlice & PlaySlice & SearchSlice & SupplyRandomizerSlice;
+/**
+ * Zustand slice holding the app-wide "Expansions" setting.
+ *
+ * Scope: global (one per browser profile + origin), persisted in
+ * localStorage['aeons-end-game-storage'].state.ownedExpansions. Not synced across tabs
+ * (last tab to write wins). Applies to Card Search, Mage Search, Nemesis Search and the
+ * Supply Randomizer card pool; Favorites is intentionally unfiltered.
+ */
+export interface ExpansionsSlice {
+  /**
+   * App-wide "Expansions". Empty array = All Expansions (no filtering).
+   * May contain stale names no longer in the data; consumers must go through
+   * getEffectiveOwned()/useOwnedExpansions(), never read this raw for filtering or display.
+   */
+  ownedExpansions: string[];
+  /** Adds or removes one expansion. Names not in ALL_EXPANSIONS are ignored. */
+  toggleOwnedExpansion: (name: string) => void;
+  /** Replaces the selection (Select All / Clear Selection). Unknown names are dropped. */
+  setOwnedExpansions: (names: readonly string[]) => void;
+}
+
+type GameState = ConfigSlice & PlaySlice & SearchSlice & SupplyRandomizerSlice & ExpansionsSlice;
 
 const applyVisibility = (drawPile: Card[], visibilityOption: VisibilityOption): Card[] => {
   let newPile = drawPile.map(c => ({ ...c, isRevealed: !!c.isRevealed }));
@@ -430,7 +457,6 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
 const createSearchSlice: StateCreator<GameState, [], [], SearchSlice> = (set) => ({
   searchFilters: {
     cardQuery: '',
-    selectedExpansions: [],
     selectedTypes: [],
     costRange: [0, 10],
   },
@@ -439,14 +465,12 @@ const createSearchSlice: StateCreator<GameState, [], [], SearchSlice> = (set) =>
   })),
   mageSearchFilters: {
     mageQuery: '',
-    selectedMageExpansions: [],
   },
   setMageSearchFilters: (filters) => set((state) => ({
     mageSearchFilters: { ...state.mageSearchFilters, ...filters }
   })),
   nemesisSearchFilters: {
     nemesisQuery: '',
-    selectedNemesisExpansions: [],
     difficultyRange: [1, 10],
   },
   setNemesisSearchFilters: (filters) => set((state) => ({
@@ -470,10 +494,8 @@ const createSearchSlice: StateCreator<GameState, [], [], SearchSlice> = (set) =>
  * Creates the supply randomizer state slice with default empty slots and filters.
  */
 const createRandomizerSlice: StateCreator<GameState, [], [], SupplyRandomizerSlice> = (set) => ({
-  randomizerExpansions: [],
   randomizerSlots: [],
   randomizedResult: {},
-  setRandomizerExpansions: (expansions) => set({ randomizerExpansions: expansions }),
   addSlot: (slot) => set((state) => ({ randomizerSlots: [...state.randomizerSlots, slot] })),
   removeSlot: (id) => set((state) => {
     const newSlots = state.randomizerSlots.filter(s => s.id !== id);
@@ -488,6 +510,58 @@ const createRandomizerSlice: StateCreator<GameState, [], [], SupplyRandomizerSli
   clearRandomizer: () => set({ randomizerSlots: [], randomizedResult: {} })
 });
 
+/**
+ * Creates the app-wide "Expansions" slice. These two actions are the only writers
+ * of ownedExpansions; no "Clear Filters" action may touch it.
+ */
+const createExpansionsSlice: StateCreator<GameState, [], [], ExpansionsSlice> = (set) => ({
+  ownedExpansions: [],
+  toggleOwnedExpansion: (name) => set((state) => {
+    if (!ALL_EXPANSIONS.includes(name)) return {};
+    const current = state.ownedExpansions;
+    return {
+      ownedExpansions: current.includes(name)
+        ? current.filter((n) => n !== name)
+        : [...current, name],
+    };
+  }),
+  setOwnedExpansions: (names) => set({
+    ownedExpansions: ALL_EXPANSIONS.filter((name) => names.includes(name)),
+  }),
+});
+
+/**
+ * localStorage adapter that keeps the app usable when storage is blocked or full
+ * (private mode, quota exceeded): each storage call is individually guarded and the
+ * failure is logged with console.error. Payload contents are never logged.
+ * window.localStorage is resolved lazily inside the guard because the getter itself
+ * can throw when storage access is denied.
+ */
+const loggingLocalStorage: StateStorage = {
+  getItem: (name) => {
+    try {
+      return window.localStorage.getItem(name);
+    } catch (e) {
+      console.error('Failed to read persisted state', e);
+      return null;
+    }
+  },
+  setItem: (name, value) => {
+    try {
+      window.localStorage.setItem(name, value);
+    } catch (e) {
+      console.error('Failed to persist state (session continues in memory)', e);
+    }
+  },
+  removeItem: (name) => {
+    try {
+      window.localStorage.removeItem(name);
+    } catch (e) {
+      console.error('Failed to remove persisted state', e);
+    }
+  },
+};
+
 export const useGameStore = create<GameState>()(
   persist(
     (...a) => ({
@@ -495,9 +569,14 @@ export const useGameStore = create<GameState>()(
       ...createPlaySlice(...a),
       ...createSearchSlice(...a),
       ...createRandomizerSlice(...a),
+      ...createExpansionsSlice(...a),
     }),
     {
       name: 'aeons-end-game-storage',
+      storage: createJSONStorage(() => loggingLocalStorage),
+      onRehydrateStorage: () => (_state, error) => {
+        if (error) console.error('Failed to rehydrate persisted state', error);
+      },
       merge: (persistedState: any, currentState) => {
         try {
           if (!persistedState) return currentState;

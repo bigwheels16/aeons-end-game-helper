@@ -2,14 +2,25 @@
 
 A mobile-optimized, client-side web application suite designed for the cooperative deck-building board game **Aeon's End**. The suite provides several core tools:
 1. **Turn Order Helper:** Randomizes, tracks, and manipulates turn order decks with official rules, visibility settings, drag-and-drop mid-round edits, and wake lock support.
-2. **Supply Randomizer:** Generates tailored, balanced market setups with custom slot constraints, global expansion filters, and guaranteed unique card selection via constraint backtracking.
+2. **Supply Randomizer:** Generates tailored, balanced market setups with custom slot constraints, a card pool limited to your selected **Expansions**, and guaranteed unique card selection via constraint backtracking.
 3. **Card Search:** A fast, multi-expansion card browser and lookup tool covering Gems, Relics, and Spells.
 4. **Mage Search:** A dedicated database for browsing all playable Mages, their starting abilities, unique starters, and official player mats.
 5. **Nemesis Search:** A quick reference for discovering and reviewing Nemeses and their mats across all expansions.
 
+All of the search tools and the Supply Randomizer share one app-wide **Expansions** setting, so you only pick the expansions you own once.
+
 ---
 
 ## Features
+
+### Expansions (app-wide setting)
+Tell the app which expansions you own **once**; every tool that has an expansion concept uses it.
+- **Where:** The *Expansions — applies to all tools* chip on the Home screen and at the top of Card Search, Mage Search, Nemesis Search and the Supply Randomizer. Every chip opens the same picker.
+- **Picker:** Tap expansion tiles to toggle them (a check mark shows the selected ones). Includes a name search plus quick **Select All** and **Clear Selection** actions. Changes apply instantly; there is no save step.
+- **Empty selection = All Expansions:** With nothing selected, nothing is filtered. Expansions added to the data later are *not* automatically added to an explicit selection.
+- **Never cleared by "Clear Filters":** Each tool's *Clear All Filters* / *Clear All* button only resets that tool's own search filters or slots.
+- **Persistent:** Saved in the browser's `localStorage` and restored on every visit. If storage is unavailable (e.g. private browsing), the setting still works for the current session. With several tabs open, the last tab to save wins.
+- **Not applied to Favorites:** The Favorites screen always shows everything you starred.
 
 ### 1. Turn Order Helper
 
@@ -37,7 +48,7 @@ Supports card abilities, player relics/spells, and Nemesis effects that manipula
 
 ### 2. Supply Randomizer
 The **Supply Randomizer** tool automates creating randomized, balanced market setups (Gems, Relics, and Spells) tailored to custom game requirements.
-- **Global Expansion Filtering:** Constrain the eligible card pool to only chosen expansions with quick "Select All" and "Clear All" toggles.
+- **Expansions Card Pool:** The eligible card pool (full randomization, single-slot re-rolls and live match previews) is limited to the app-wide **Expansions** setting. "Clear All" resets slots and results but never your expansions, and the error message points to the Expansions setting when the owned pool is too small.
 - **Configurable Card Slots:** Add or remove market slots dynamically to configure standard 9-card setups or custom supply structures.
   - *Card Type Selectors:* Visual toggle pills to constrain slots to `Gem`, `Relic`, `Spell`, or `Any`.
   - *Cost Range Sliders:* Dual min and max cost sliders (0–10) to enforce specific card cost thresholds.
@@ -50,7 +61,7 @@ The **Supply Randomizer** tool automates creating randomized, balanced market se
 
 ### 3. Card Search Tool
 The integrated **Card Search** tool allows quick browsing, searching, and filtering of player market cards (Gems, Relics, Spells).
-- **Advanced Filters:** Filter by card name, effect text, cost ranges, specific card types, and desired expansions.
+- **Advanced Filters:** Filter by card name, effect text, cost ranges, and specific card types. Results only include cards from your app-wide **Expansions** setting, which "Clear All Filters" leaves unchanged.
 - **Inline Images:** Expand any card to see its full-resolution artwork, and click any expanded image to open it in a new tab for native zooming.
 
 ---
@@ -59,12 +70,13 @@ The integrated **Card Search** tool allows quick browsing, searching, and filter
 The integrated **Mage Search** tool allows quick browsing of playable Mages.
 - **Ability Search:** Look up Mages by name or specific ability keywords.
 - **Mage Mats:** Expand to view a Mage's official Front/Back mats and their unique starter cards.
+- **Expansions:** Results only include Mages from your app-wide **Expansions** setting.
 
 ---
 
 ### 5. Nemesis Search Tool
 The integrated **Nemesis Search** tool allows filtering of Nemeses.
-- **Expansion Filtering:** Easily find Nemeses by the box or expansion they came in.
+- **Expansions:** Results only include Nemeses from your app-wide **Expansions** setting; the search text and difficulty range are this screen's own filters.
 - **Nemesis Mats:** Instantly expand and view the official Front and Back mats for any Nemesis to review setup or unleash conditions.
 
 ---

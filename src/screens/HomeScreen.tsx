@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { MyExpansionsChip, MyExpansionsPicker } from '../components/MyExpansions';
 
 interface HomeScreenProps {
   onSelectTool: (tool: string) => void;
@@ -7,8 +8,8 @@ interface HomeScreenProps {
 /**
  * Home Screen Component.
  *
- * Serves as the central navigation hub for selecting available Aeon's End tools
- * (Turn Order Helper and Card Search).
+ * Serves as the central navigation hub for selecting available Aeon's End tools,
+ * and hosts the entry point to the app-wide "Expansions" setting.
  */
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as const;
 
@@ -38,6 +39,7 @@ const formatBuildTime = (isoString?: string): string => {
 
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectTool }) => {
+  const [pickerOpen, setPickerOpen] = useState(false);
   const buttonStyle: React.CSSProperties = {
     padding: '1.5rem 2rem',
     fontSize: '1.25rem',
@@ -64,6 +66,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectTool }) => {
       }}
     >
       <h1>Aeon's End Tools</h1>
+      <MyExpansionsChip onOpen={() => setPickerOpen(true)} />
+      <MyExpansionsPicker isOpen={pickerOpen} onClose={() => setPickerOpen(false)} />
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'stretch' }}>
         <button
           onClick={() => onSelectTool('turn-order')}

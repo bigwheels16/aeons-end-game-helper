@@ -1,11 +1,17 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import scrapedData from '../../data/scraped/aeons_end_all.json';
 import { useGameStore } from '../store';
-import ExpansionFilter from '../components/ExpansionFilter';
+import {
+  MyExpansionsChip,
+  MyExpansionsEmptyState,
+  MyExpansionsPicker,
+  MyExpansionsSearchingNote,
+} from '../components/MyExpansions';
 import { useDebounce } from '../hooks/useDebounce';
+import { useOwnedExpansions } from '../hooks/useOwnedExpansions';
 import { useToggleSet } from '../hooks/useToggleSet';
 import { stripHtml } from '../utils/text';
-import { getUniqueExpansions } from '../utils/cards';
+import { matchesOwned } from '../utils/expansions';
 import { ScrapedSupplyCard } from '../types/scraped';
 import CardDisplayItem from '../components/CardDisplayItem';
 
@@ -15,8 +21,9 @@ const allCards: ScrapedSupplyCard[] = scrapedData.supply || [];
  * Card Search Screen Component.
  *
  * Provides a responsive multi-filter card lookup tool for Aeon's End supply cards (Gems, Relics, Spells).
- * Supports debounced name and effect text queries, expansion toggle filtering, card type filtering,
- * cost range slider filtering, and sanitized HTML effect rendering with DOMPurify.
+ * Supports debounced name and effect text queries, card type filtering, cost range slider
+ * filtering, and sanitized HTML effect rendering with DOMPurify. Results are restricted to the
+ * app-wide "Expansions" setting, which this screen's "Clear All Filters" never changes.
  *
  * Filter criteria are synchronized with and persisted in the global Zustand store (`localStorage`),
  * allowing search parameters to persist across tool navigation and page reloads.
@@ -25,20 +32,12 @@ export default function CardSearchScreen() {
   const searchFilters = useGameStore((state) => state.searchFilters);
   const setSearchFilters = useGameStore((state) => state.setSearchFilters);
 
-  const { cardQuery, selectedExpansions, selectedTypes, costRange } = searchFilters;
+  const { cardQuery, selectedTypes, costRange } = searchFilters;
   const visibleImages = useToggleSet();
   const debouncedQuery = useDebounce(cardQuery);
-
-  // Extract all available expansions
-  const allExpansions = useMemo(() => getUniqueExpansions(allCards), []);
-
-  const toggleExpansion = (exp: string) => {
-    setSearchFilters({
-      selectedExpansions: selectedExpansions.includes(exp)
-        ? selectedExpansions.filter(e => e !== exp)
-        : [...selectedExpansions, exp]
-    });
-  };
+  const { ownedSet } = useOwnedExpansions();
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const openPicker = () => setPickerOpen(true);
 
   const toggleType = (type: string) => {
     setSearchFilters({
@@ -48,17 +47,24 @@ export default function CardSearchScreen() {
     });
   };
 
+  // Resets only this screen's filters; the Expansions setting is app-wide and is never cleared here.
   const clearFilters = () => {
     setSearchFilters({
       cardQuery: '',
-      selectedExpansions: [],
       selectedTypes: [],
       costRange: [0, 10]
     });
   };
 
+  // Step 1: restrict to the Expansions setting (not debounced, so changes apply instantly)
+  const ownedPool = useMemo(
+    () => allCards.filter(card => card && matchesOwned(card, ownedSet)),
+    [ownedSet]
+  );
+
+  // Step 2: this screen's own search filters
   const filteredCards = useMemo(() => {
-    return allCards.filter(card => {
+    return ownedPool.filter(card => {
       // Missing data fallback
       if (!card) return false;
 
@@ -73,11 +79,6 @@ export default function CardSearchScreen() {
         if (!terms.every(term => searchableText.includes(term))) {
           return false;
         }
-      }
-
-      // Expansion filter
-      if (selectedExpansions.length > 0 && (!card.expansions || !card.expansions.some(e => selectedExpansions.includes(e)))) {
-        return false;
       }
 
       // Type filter
@@ -97,13 +98,16 @@ export default function CardSearchScreen() {
       const costB = b.cost !== undefined ? Number(b.cost) || 0 : 0;
       return costA - costB;
     });
-  }, [debouncedQuery, selectedExpansions, selectedTypes, costRange]);
+  }, [ownedPool, debouncedQuery, selectedTypes, costRange]);
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto', backgroundColor: '#1a1a1a' }}>
       <div style={{ padding: '1rem', borderBottom: '1px solid #555' }}>
         <h2 style={{ marginTop: 0, color: 'white' }}>Card Search ({filteredCards.length} results)</h2>
-        
+
+        <MyExpansionsChip onOpen={openPicker} />
+        <MyExpansionsPicker isOpen={pickerOpen} onClose={() => setPickerOpen(false)} />
+
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
           <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: '200px' }}>
             <label style={{ color: '#ccc', marginBottom: '4px' }}>Search (Name, Effect)</label>
@@ -116,14 +120,6 @@ export default function CardSearchScreen() {
             />
           </div>
         </div>
-
-        <ExpansionFilter
-          allExpansions={allExpansions}
-          selectedExpansions={selectedExpansions}
-          onToggleExpansion={toggleExpansion}
-          onSelectAll={() => setSearchFilters({ selectedExpansions: allExpansions })}
-          onClearAll={() => setSearchFilters({ selectedExpansions: [] })}
-        />
 
         <div style={{ marginBottom: '1rem' }}>
           <strong style={{ color: '#ccc' }}>Card Type:</strong>
@@ -168,7 +164,7 @@ export default function CardSearchScreen() {
           </div>
         </div>
         
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
           <button 
             onClick={clearFilters} 
             style={{ 
@@ -183,13 +179,19 @@ export default function CardSearchScreen() {
           >
             Clear All Filters
           </button>
+          <span style={{ color: '#999', fontSize: '0.85rem' }}>
+            Resets search, type &amp; cost. Expansions are kept.
+          </span>
         </div>
       </div>
 
       <div style={{ padding: '1rem', backgroundColor: '#1a1a1a' }}>
-        {filteredCards.length === 0 ? (
+        {ownedPool.length === 0 ? (
+          <MyExpansionsEmptyState itemLabel="cards" onOpen={openPicker} />
+        ) : filteredCards.length === 0 ? (
           <div style={{ textAlign: 'center', marginTop: '2rem' }}>
             <p style={{ fontSize: '1.25rem', color: '#ccc' }}>No matching cards found.</p>
+            <MyExpansionsSearchingNote onOpen={openPicker} />
             <button 
               onClick={clearFilters} 
               style={{ 
@@ -222,9 +224,3 @@ export default function CardSearchScreen() {
     </div>
   );
 }
-
-
-
-
-
-

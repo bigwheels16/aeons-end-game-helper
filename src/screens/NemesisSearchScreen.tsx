@@ -1,44 +1,56 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import scrapedData from '../../data/scraped/aeons_end_all.json';
 import { useGameStore } from '../store';
-import ExpansionFilter from '../components/ExpansionFilter';
+import {
+  MyExpansionsChip,
+  MyExpansionsEmptyState,
+  MyExpansionsPicker,
+  MyExpansionsSearchingNote,
+} from '../components/MyExpansions';
 import { useDebounce } from '../hooks/useDebounce';
+import { useOwnedExpansions } from '../hooks/useOwnedExpansions';
 import { useToggleSet } from '../hooks/useToggleSet';
 import { stripHtml } from '../utils/text';
-import { getUniqueExpansions } from '../utils/cards';
+import { matchesOwned } from '../utils/expansions';
 import { ScrapedNemesis } from '../types/scraped';
 import NemesisDisplayItem from '../components/NemesisDisplayItem';
 
 const allNemeses: ScrapedNemesis[] = scrapedData.nemeses || [];
 
+/**
+ * Nemesis Search Screen Component.
+ *
+ * Debounced search over nemesis text plus a difficulty range. Results are restricted to the
+ * app-wide "Expansions" setting, which this screen's "Clear All Filters" never changes.
+ */
 export default function NemesisSearchScreen() {
   const nemesisSearchFilters = useGameStore((state) => state.nemesisSearchFilters);
   const setNemesisSearchFilters = useGameStore((state) => state.setNemesisSearchFilters);
 
-  const { nemesisQuery, selectedNemesisExpansions, difficultyRange } = nemesisSearchFilters;
+  const { nemesisQuery, difficultyRange } = nemesisSearchFilters;
   const visibleImages = useToggleSet();
   const debouncedQuery = useDebounce(nemesisQuery);
+  const { ownedSet } = useOwnedExpansions();
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const openPicker = () => setPickerOpen(true);
 
-  const allExpansions = useMemo(() => getUniqueExpansions(allNemeses), []);
-
-  const toggleExpansion = (exp: string) => {
-    setNemesisSearchFilters({
-      selectedNemesisExpansions: selectedNemesisExpansions.includes(exp)
-        ? selectedNemesisExpansions.filter(e => e !== exp)
-        : [...selectedNemesisExpansions, exp]
-    });
-  };
-
+  // Resets only this screen's filters; the Expansions setting is app-wide and is never cleared here.
   const clearFilters = () => {
     setNemesisSearchFilters({
       nemesisQuery: '',
-      selectedNemesisExpansions: [],
       difficultyRange: [1, 10],
     });
   };
 
+  // Step 1: restrict to the Expansions setting (not debounced, so changes apply instantly)
+  const ownedPool = useMemo(
+    () => allNemeses.filter(nemesis => nemesis && matchesOwned(nemesis, ownedSet)),
+    [ownedSet]
+  );
+
+  // Step 2: this screen's own search filters
   const filteredNemeses = useMemo(() => {
-    return allNemeses.filter(nemesis => {
+    return ownedPool.filter(nemesis => {
       if (!nemesis) return false;
 
       if (debouncedQuery) {
@@ -56,10 +68,6 @@ export default function NemesisSearchScreen() {
         }
       }
 
-      if (selectedNemesisExpansions.length > 0 && (!nemesis.expansions || !nemesis.expansions.some(e => selectedNemesisExpansions.includes(e)))) {
-        return false;
-      }
-
       const difficulty = Number(nemesis.difficulty);
       if (nemesis.difficulty !== undefined && !Number.isNaN(difficulty) && (difficulty < difficultyRange[0] || difficulty > difficultyRange[1])) {
         return false;
@@ -71,13 +79,16 @@ export default function NemesisSearchScreen() {
       const diffB = b.difficulty !== undefined ? Number(b.difficulty) || 0 : 0;
       return diffA - diffB;
     });
-  }, [debouncedQuery, selectedNemesisExpansions, difficultyRange]);
+  }, [ownedPool, debouncedQuery, difficultyRange]);
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto', backgroundColor: '#1a1a1a' }}>
       <div style={{ padding: '1rem', borderBottom: '1px solid #555' }}>
         <h2 style={{ marginTop: 0, color: 'white' }}>Nemesis Search ({filteredNemeses.length} results)</h2>
-        
+
+        <MyExpansionsChip onOpen={openPicker} />
+        <MyExpansionsPicker isOpen={pickerOpen} onClose={() => setPickerOpen(false)} />
+
         <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '1rem' }}>
           <label style={{ color: '#ccc', marginBottom: '4px' }}>Search (Name, Info)</label>
           <input 
@@ -88,14 +99,6 @@ export default function NemesisSearchScreen() {
             style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white' }}
           />
         </div>
-
-        <ExpansionFilter
-          allExpansions={allExpansions}
-          selectedExpansions={selectedNemesisExpansions}
-          onToggleExpansion={toggleExpansion}
-          onSelectAll={() => setNemesisSearchFilters({ selectedNemesisExpansions: allExpansions })}
-          onClearAll={() => setNemesisSearchFilters({ selectedNemesisExpansions: [] })}
-        />
 
         <div style={{ marginBottom: '1rem' }}>
           <strong style={{ color: '#ccc' }}>Difficulty Range ({difficultyRange[0]} - {difficultyRange[1]})</strong>
@@ -138,9 +141,12 @@ export default function NemesisSearchScreen() {
       </div>
 
       <div style={{ padding: '1rem', backgroundColor: '#1a1a1a' }}>
-        {filteredNemeses.length === 0 ? (
+        {ownedPool.length === 0 ? (
+          <MyExpansionsEmptyState itemLabel="nemeses" onOpen={openPicker} />
+        ) : filteredNemeses.length === 0 ? (
           <div style={{ textAlign: 'center', marginTop: '2rem' }}>
             <p style={{ fontSize: '1.25rem', color: '#ccc' }}>No matching nemeses found.</p>
+            <MyExpansionsSearchingNote onOpen={openPicker} />
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem' }}>

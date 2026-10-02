@@ -16,16 +16,17 @@ vi.mock('../../data/scraped/aeons_end_all.json', () => ({
     ],
     nemeses: [
       { name: 'Rageborne', type: 'Nemesis', expansions: ['Base'], health: '70', difficulty: '3' },
+      // Only item in 'Promo', so 'Promo' is a real (known) expansion for the unfiltered-favorites test
+      { name: 'Prince of Gluttons', type: 'Nemesis', expansions: ['Promo'], health: '60', difficulty: '4' },
     ],
   }
 }));
 
 describe('Favorites', () => {
   beforeEach(() => {
-    useGameStore.setState({ favorites: { supply: [], mages: [], nemeses: [] } });
+    useGameStore.setState({ favorites: { supply: [], mages: [], nemeses: [] }, ownedExpansions: [] });
     useGameStore.getState().setSearchFilters({
       cardQuery: '',
-      selectedExpansions: [],
       selectedTypes: [],
       costRange: [0, 10],
     });
@@ -70,6 +71,21 @@ describe('Favorites', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Remove Spark from favorites' }));
     expect(screen.queryByText('Spark')).toBeNull();
     expect(screen.getByText('Favorites (2)')).toBeDefined();
+  });
+
+  it('is not filtered by the Expansions setting: favorites from non-owned expansions still render', () => {
+    useGameStore.setState({
+      favorites: { supply: ['Spark'], mages: ['Adelheim'], nemeses: ['Rageborne'] },
+      // Owns only an expansion none of the favorites belong to
+      ownedExpansions: ['Promo'],
+    });
+    render(<FavoritesScreen />);
+
+    expect(screen.getByText('Favorites (3)')).toBeDefined();
+    expect(screen.getByText('Adelheim')).toBeDefined();
+    expect(screen.getByText('Rageborne')).toBeDefined();
+    expect(screen.getByText('Spark')).toBeDefined();
+    expect(screen.queryByRole('button', { name: /^Expansions:/ })).toBeNull();
   });
 
   it('reports favorited names that are missing from the data', () => {

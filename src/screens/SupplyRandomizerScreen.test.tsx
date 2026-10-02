@@ -45,7 +45,99 @@ vi.mock('../../data/scraped/aeons_end_all.json', () => ({
 describe('SupplyRandomizerScreen', () => {
   beforeEach(() => {
     useGameStore.getState().clearRandomizer();
-    useGameStore.getState().setRandomizerExpansions([]);
+    useGameStore.setState({ ownedExpansions: [] });
+  });
+
+  it('restricts the live match count to the Expansions setting', async () => {
+    useGameStore.setState({ ownedExpansions: ['Base'] });
+    render(<SupplyRandomizerScreen />);
+
+    expect(screen.getByRole('button', { name: /^Expansions: 1 of 3 selected/ })).toBeDefined();
+    fireEvent.click(screen.getByText('+ Add Slot'));
+
+    await waitFor(() => {
+      expect(screen.getByText('2 Matching Cards')).toBeDefined();
+    });
+  });
+
+  it('"Clear All" clears slots but keeps the Expansions setting', async () => {
+    useGameStore.setState({ ownedExpansions: ['Base', 'Promo'] });
+    render(<SupplyRandomizerScreen />);
+
+    fireEvent.click(screen.getByText('+ Add Slot'));
+    await waitFor(() => {
+      expect(screen.getByText('Card Type:')).toBeDefined();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Clear All' }));
+
+    expect(useGameStore.getState().randomizerSlots).toEqual([]);
+    expect(useGameStore.getState().ownedExpansions).toEqual(['Base', 'Promo']);
+  });
+
+  it('solver and single-slot re-roll only use cards from the Expansions setting', async () => {
+    useGameStore.setState({ ownedExpansions: ['Base'] });
+    render(<SupplyRandomizerScreen />);
+
+    fireEvent.click(screen.getByText('+ Add Slot'));
+    fireEvent.click(screen.getByRole('button', { name: /^Randomize$/i }));
+
+    const slotId = useGameStore.getState().randomizerSlots[0].id;
+    await waitFor(() => {
+      expect(useGameStore.getState().randomizedResult[slotId]).toBeDefined();
+    });
+    expect(['Jade', 'Ruby']).toContain(useGameStore.getState().randomizedResult[slotId].name);
+
+    for (let i = 0; i < 10; i++) {
+      fireEvent.click(screen.getByTitle('Slot Menu'));
+      fireEvent.click(screen.getAllByRole('button', { name: 'Randomize' })[1]);
+      expect(['Jade', 'Ruby']).toContain(useGameStore.getState().randomizedResult[slotId].name);
+    }
+  });
+
+  it('mentions the Expansions setting when the owned pool cannot satisfy the slots', async () => {
+    useGameStore.setState({ ownedExpansions: ['Base'] });
+    render(<SupplyRandomizerScreen />);
+
+    // Three "any" slots but only two owned cards (Jade, Ruby)
+    fireEvent.click(screen.getByText('+ Add Slot'));
+    fireEvent.click(screen.getByText('+ Add Slot'));
+    fireEvent.click(screen.getByText('+ Add Slot'));
+
+    const randomizeButton = screen.getByRole('button', { name: /^Randomize$/i });
+    expect(randomizeButton).toHaveProperty('disabled', false);
+    fireEvent.click(randomizeButton);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Your Expansions setting \(1 of 3\) limits the card pool/)).toBeDefined();
+    });
+  });
+
+  it('keeps the original error text when the Expansions setting is "All"', async () => {
+    render(<SupplyRandomizerScreen />);
+
+    for (let i = 0; i < 5; i++) fireEvent.click(screen.getByText('+ Add Slot'));
+    fireEvent.click(screen.getByRole('button', { name: /^Randomize$/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Not enough unique cards to satisfy all slot criteria.')).toBeDefined();
+    });
+  });
+
+  it('shows an Expansions hint when a slot has zero matches in the owned pool', async () => {
+    useGameStore.setState({ ownedExpansions: ['Promo'] });
+    render(<SupplyRandomizerScreen />);
+
+    fireEvent.click(screen.getByText('+ Add Slot'));
+    // Only Spark (Spell) is owned; restrict the slot to Gems
+    fireEvent.click(screen.getByRole('button', { name: 'Relic' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Spell' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('0 Matching Cards')).toBeDefined();
+    });
+    expect(screen.getByRole('button', { name: /^Randomize$/i })).toHaveProperty('disabled', true);
+    expect(screen.getByText('Some slots have no matching cards in your selected expansions.')).toBeDefined();
   });
 
   it('renders correctly and can add a slot', async () => {
