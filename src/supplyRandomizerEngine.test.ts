@@ -67,4 +67,43 @@ describe('Supply Randomizer Engine', () => {
     const result = solveSupplyRandomizer(impossibleSlots, manyCards);
     expect(result).toBeNull(); // Should fail gracefully
   });
+
+  it('uses the card id as the no-repeat key: distinct ids with distinct names can both be assigned', () => {
+    const cards: ScrapedSupplyCard[] = [
+      { id: 'supply:jade', name: 'Jade', type: 'Gem', cost: 2 },
+      { id: 'supply:ruby', name: 'Ruby', type: 'Gem', cost: 4 },
+    ];
+    const slots: SlotCriteria[] = [
+      { id: 's1', cardType: 'Gem', costRange: [0, 10], searchTerm: '' },
+      { id: 's2', cardType: 'Gem', costRange: [0, 10], searchTerm: '' },
+    ];
+    const result = solveSupplyRandomizer(slots, cards);
+    expect(result).not.toBeNull();
+    expect(new Set(Object.values(result!).map(c => c.id))).toEqual(new Set(['supply:jade', 'supply:ruby']));
+  });
+
+  it('treats two cards that share a name but have different ids as distinct', () => {
+    const cards: ScrapedSupplyCard[] = [
+      { id: 'supply:smite-spell', name: 'Smite', type: 'Spell', cost: 3 },
+      { id: 'supply:smite-relic', name: 'Smite', type: 'Spell', cost: 3 },
+    ];
+    const slots: SlotCriteria[] = [
+      { id: 's1', cardType: 'Spell', costRange: [0, 10], searchTerm: '' },
+      { id: 's2', cardType: 'Spell', costRange: [0, 10], searchTerm: '' },
+    ];
+    const result = solveSupplyRandomizer(slots, cards);
+    expect(result).not.toBeNull();
+    expect(result!['s1'].id).not.toBe(result!['s2'].id);
+  });
+
+  it('never assigns the same id twice', () => {
+    const cards: ScrapedSupplyCard[] = [
+      { id: 'supply:jade', name: 'Jade', type: 'Gem', cost: 2 },
+    ];
+    const slots: SlotCriteria[] = [
+      { id: 's1', cardType: 'Gem', costRange: [0, 10], searchTerm: '' },
+      { id: 's2', cardType: 'Gem', costRange: [0, 10], searchTerm: '' },
+    ];
+    expect(solveSupplyRandomizer(slots, cards)).toBeNull();
+  });
 });

@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { useGameStore } from './store';
 import { generateDeck } from './deckEngine';
 import { ALL_EXPANSIONS } from './utils/expansions';
+import { getSupplyCardById } from './utils/cards';
 
 const STORAGE_KEY = 'aeons-end-game-storage';
 
@@ -195,12 +196,14 @@ const makeLegacyState = () => {
     searchFilters: { cardQuery: 'gem', selectedExpansions: ['Legacy'], selectedTypes: ['Gem'], costRange: [1, 6] },
     mageSearchFilters: { mageQuery: 'brama', selectedMageExpansions: ['War Eternal'] },
     nemesisSearchFilters: { nemesisQuery: '', selectedNemesisExpansions: ['The Void'], difficultyRange: [2, 8] },
-    favorites: { supply: ['Jade'], mages: ['Brama'], nemeses: ['Rageborne'] },
+    favorites: { supply: ['supply:jade'], mages: ['mage:brama'], nemeses: ['nemesis:rageborne'] },
     randomizerExpansions: ['Aeon\'s End', 'The Depths'],
     randomizerSlots: [{ id: 'slot-1', cardTypes: ['Gem'], costRange: [0, 10], searchTerm: '' }],
     randomizedResult: {},
   };
 };
+
+const LEGACY_FAVORITES = { supply: ['supply:jade'], mages: ['mage:brama'], nemeses: ['nemesis:rageborne'] };
 
 const writePersisted = (state: unknown) => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify({ state, version: 0 }));
@@ -305,7 +308,7 @@ describe('Expansions setting (ownedExpansions)', () => {
     // Human Decision 1: existing users start at "All"
     expect(state.ownedExpansions).toEqual([]);
     // Everything else survives
-    expect(state.favorites).toEqual({ supply: ['Jade'], mages: ['Brama'], nemeses: ['Rageborne'] });
+    expect(state.favorites).toEqual(LEGACY_FAVORITES);
     expect(state.isPlaying).toBe(true);
     expect(state.roundNumber).toBe(3);
     expect(state.drawPile.length).toBe(4);
@@ -348,7 +351,7 @@ describe('Expansions setting (ownedExpansions)', () => {
     expect(state.ownedExpansions).toEqual([]);
     // The rest of the store was not wiped
     expect(errorSpy).not.toHaveBeenCalled();
-    expect(state.favorites).toEqual({ supply: ['Jade'], mages: ['Brama'], nemeses: ['Rageborne'] });
+    expect(state.favorites).toEqual(LEGACY_FAVORITES);
     expect(state.isPlaying).toBe(true);
     expect(state.randomizerSlots.length).toBe(1);
   });
@@ -389,13 +392,332 @@ describe('Expansions setting (ownedExpansions)', () => {
 
   it('logs (and does not throw) when the persisted JSON is corrupt', async () => {
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
-    useGameStore.setState({ ownedExpansions: [expA], favorites: { supply: ['Jade'], mages: [], nemeses: [] } });
+    useGameStore.setState({ ownedExpansions: [expA], favorites: { supply: ['supply:jade'], mages: [], nemeses: [] } });
     localStorage.setItem(STORAGE_KEY, '{not valid json');
 
     await expect(useGameStore.persist.rehydrate()).resolves.toBeUndefined();
 
     expect(errorSpy).toHaveBeenCalledWith('Failed to rehydrate persisted state', expect.any(SyntaxError));
     expect(useGameStore.getState().ownedExpansions).toEqual([expA]);
-    expect(useGameStore.getState().favorites.supply).toEqual(['Jade']);
+    expect(useGameStore.getState().favorites.supply).toEqual(['supply:jade']);
+  });
+});
+
+describe('persisted state validation (randomizedResult and favorites)', () => {
+  const [expA] = ALL_EXPANSIONS;
+  const lens = getSupplyCardById('supply:transmuters-lens')!;
+  const barrage = getSupplyCardById('supply:all-out-barrage')!;
+  const jade = getSupplyCardById('supply:jade')!;
+
+  /** Persisted payload whose other fields differ from the in-memory reset state. */
+  const payloadWith = (overrides: Record<string, unknown>) => ({
+    ...makeLegacyState(),
+    ownedExpansions: [expA],
+    ...overrides,
+  });
+
+  /** Every other persisted field survived (no whole-store reset). */
+  const expectOtherStateRestored = (except: 'favorites' | 'randomizedResult') => {
+    const state = useGameStore.getState();
+    expect(state.ownedExpansions).toEqual([expA]);
+    expect(state.isPlaying).toBe(true);
+    expect(state.roundNumber).toBe(3);
+    expect(state.randomizerSlots).toEqual([{ id: 'slot-1', cardTypes: ['Gem'], costRange: [0, 10], searchTerm: '' }]);
+    if (except !== 'favorites') expect(state.favorites).toEqual(LEGACY_FAVORITES);
+  };
+
+  beforeEach(() => {
+    useGameStore.setState({
+      ownedExpansions: [],
+      isPlaying: false,
+      roundNumber: 0,
+      favorites: { supply: [], mages: [], nemeses: [] },
+      randomizerSlots: [],
+      randomizedResult: {},
+    });
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    localStorage.clear();
+  });
+
+  describe('randomizedResult', () => {
+    const hydrate = async (randomizedResult: unknown) => {
+      writePersisted(payloadWith({ randomizedResult }));
+      await useGameStore.persist.rehydrate();
+      expectOtherStateRestored('randomizedResult');
+      return useGameStore.getState().randomizedResult;
+    };
+
+    it('resolves a new-format entry by id and ignores tampered stored fields', async () => {
+      const result = await hydrate({
+        'slot-1': { ...lens, page_url: 'javascript:alert(1)', effect: '<img src=x onerror=alert(1)>', type: 'Evil' },
+      });
+      expect(result['slot-1']).toBe(lens);
+      expect(result['slot-1'].page_url).toBe('https://aeonsend.wiki.gg/wiki/Transmuter%27s_Lens');
+    });
+
+    it('trusts the id over a mismatched stored name', async () => {
+      const result = await hydrate({ 'slot-1': { id: 'supply:transmuters-lens', name: 'Jade' } });
+      expect(result['slot-1']).toBe(lens);
+    });
+
+    it('drops an unknown supply: id even when its name is valid (no name fallback)', async () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      const result = await hydrate({
+        'slot-1': { id: 'supply:renamed-card', name: 'Jade' },
+        'slot-2': { id: 'supply:jade', name: 'Jade' },
+      });
+      expect(result).toEqual({ 'slot-2': jade });
+      expect(warnSpy).toHaveBeenCalledWith('randomizedResult: dropped 1 persisted results that were invalid or stale');
+    });
+
+    it('resolves legacy entries (old printed number, empty or missing id) by name once', async () => {
+      const result = await hydrate({
+        'slot-1': { id: 'AB33 – AB37', name: 'All-out Barrage', type: 'Spell', page_url: 'javascript:alert(1)' },
+        'slot-2': { id: '', name: 'Jade' },
+        'slot-3': { name: "Transmuter's Lens" },
+      });
+      expect(result['slot-1']).toBe(barrage);
+      expect(result['slot-1'].id).toBe('supply:all-out-barrage');
+      expect(result['slot-2']).toBe(jade);
+      expect(result['slot-3']).toBe(lens);
+    });
+
+    it('does not resolve a non-supply id or a prototype-member name', async () => {
+      vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      const result = await hydrate({
+        a: { id: 'mage:taqren-outcasts' },
+        b: { name: 'constructor' },
+        c: { id: 'constructor' },
+        d: { name: '__proto__' },
+      });
+      expect(result).toEqual({});
+    });
+
+    it('drops only malformed entries: null, a number, or neither id nor name', async () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      const result = await hydrate({
+        bad1: null,
+        bad2: 7,
+        bad3: { type: 'Gem' },
+        bad4: { id: 42, name: 'Jade' },
+        good: { id: 'supply:jade' },
+      });
+      expect(result).toEqual({ good: jade });
+      expect(warnSpy).toHaveBeenCalledWith('randomizedResult: dropped 4 persisted results that were invalid or stale');
+    });
+
+    it.each([
+      ['a number', 42],
+      ['a string', 'supply:jade'],
+      ['an array', [{ id: 'supply:jade' }]],
+      ['null', null],
+      ['more than 500 entries', Object.fromEntries(Array.from({ length: 501 }, (_, i) => [`s${i}`, { id: 'supply:jade' }]))],
+      ['an over-long slot id', { ['x'.repeat(201)]: { id: 'supply:jade' } }],
+    ])('resets only randomizedResult to {} when it is %s', async (_label, bad) => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      const errorSpy = vi.spyOn(console, 'error');
+      const result = await hydrate(bad);
+      expect(result).toEqual({});
+      expect(errorSpy).not.toHaveBeenCalled();
+      expect(warnSpy).toHaveBeenCalled();
+    });
+
+    it('ignores a __proto__ key without polluting the result', async () => {
+      vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      writePersisted(payloadWith({ randomizedResult: {} }));
+      // JSON text so "__proto__" is an own key, as it would be in tampered storage.
+      const raw = localStorage.getItem(STORAGE_KEY)!.replace(
+        '"randomizedResult":{}',
+        '"randomizedResult":{"__proto__":{"id":"supply:jade","polluted":true},"slot-1":{"id":"supply:jade"}}'
+      );
+      localStorage.setItem(STORAGE_KEY, raw);
+      await useGameStore.persist.rehydrate();
+      const result = useGameStore.getState().randomizedResult;
+      expect(Object.keys(result)).toEqual(['slot-1']);
+      expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
+      expect((result as Record<string, unknown>).polluted).toBeUndefined();
+      expect(({} as Record<string, unknown>).polluted).toBeUndefined();
+    });
+
+    it('resolves a legacy entry by name, then by id once a store write has saved the new format', async () => {
+      vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      const first = await hydrate({ 'slot-1': { id: 'AB33 – AB37', name: 'All-out Barrage', page_url: 'javascript:alert(1)' } });
+      expect(first['slot-1']).toBe(barrage);
+
+      // Before any write the legacy entry is still in storage and is simply re-resolved by name.
+      expect((readPersistedState().randomizedResult as Record<string, { id: string }>)['slot-1'].id).toBe('AB33 – AB37');
+
+      // Any store write persists the whole state, now holding the bundled card with its new id.
+      useGameStore.getState().toggleOwnedExpansion(expA);
+      const stored = readPersistedState().randomizedResult as Record<string, Record<string, unknown>>;
+      expect(stored['slot-1'].id).toBe('supply:all-out-barrage');
+      expect(stored['slot-1'].page_url).toBe(barrage.page_url);
+
+      // Prove the second load goes through the id: tamper the stored name, and the id still wins.
+      const state = readPersistedState();
+      (state.randomizedResult as Record<string, Record<string, unknown>>)['slot-1'].name = 'Jade';
+      // setState persists too, so reset memory first and write the tampered payload afterwards.
+      useGameStore.setState({ randomizedResult: {} });
+      writePersisted(state);
+      await useGameStore.persist.rehydrate();
+      expect(useGameStore.getState().randomizedResult['slot-1']).toBe(barrage);
+    });
+
+    it('accepts constructor/toString as slot ids without touching the prototype', async () => {
+      const result = await hydrate({ constructor: { id: 'supply:jade' }, toString: { id: 'supply:all-out-barrage' } });
+      expect(Object.prototype.hasOwnProperty.call(result, 'constructor')).toBe(true);
+      expect(result.constructor as unknown).toBe(jade);
+      expect((result as Record<string, unknown>).toString).toBe(barrage);
+      expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
+      expect(typeof ({} as Record<string, unknown>).toString).toBe('function');
+    });
+
+    it('drops prototype-member and transformed ids (exact lookup, no normalization)', async () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      const result = await hydrate({
+        a: { id: '__proto__' },
+        b: { id: 'supply:constructor' },
+        c: { id: 'supply:proto' },
+        d: { id: 'SUPPLY:JADE' },
+        e: { id: 'supply:ja\u200bde' },
+        f: { id: 'supply:jade\n' },
+        g: { id: 'supply:' + 'a'.repeat(194) },
+        h: { id: 'supply:' + 'a'.repeat(200) },
+        ok: { id: 'supply:jade' },
+      });
+      expect(result).toEqual({ ok: jade });
+      expect(warnSpy).toHaveBeenCalledWith('randomizedResult: dropped 8 persisted results that were invalid or stale');
+    });
+
+    it('treats a missing randomizedResult as empty', async () => {
+      const payload = payloadWith({});
+      delete (payload as Record<string, unknown>).randomizedResult;
+      writePersisted(payload);
+      await useGameStore.persist.rehydrate();
+      expect(useGameStore.getState().randomizedResult).toEqual({});
+      expectOtherStateRestored('randomizedResult');
+    });
+  });
+
+  describe('favorites', () => {
+    const hydrate = async (favorites: unknown) => {
+      writePersisted(payloadWith({ favorites, randomizedResult: { 'slot-1': { id: 'supply:jade' } } }));
+      await useGameStore.persist.rehydrate();
+      expectOtherStateRestored('favorites');
+      expect(useGameStore.getState().randomizedResult).toEqual({ 'slot-1': jade });
+      return useGameStore.getState().favorites;
+    };
+
+    it('drops legacy name-keyed favorites (no migration) and warns with counts only', async () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      const favorites = await hydrate({ supply: ['Jade'], mages: ['Brama'], nemeses: ['Rageborne'] });
+      expect(favorites).toEqual({ supply: [], mages: [], nemeses: [] });
+      expect(warnSpy).toHaveBeenCalledWith('favorites.supply: dropped 1 unknown or invalid entries');
+      for (const call of warnSpy.mock.calls) {
+        expect(String(call[0])).not.toMatch(/Jade|Brama|Rageborne/);
+      }
+    });
+
+    it('keeps valid ids and drops old names, wrong-kind ids, unknown ids, prototype names and duplicates', async () => {
+      vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      const favorites = await hydrate({
+        supply: ['supply:jade', 'Spark', 'mage:brama', 'supply:no-such-card', 'constructor', '__proto__', 'supply:jade'],
+        mages: ['mage:brama', 'supply:jade'],
+        nemeses: ['nemesis:rageborne', 'toString'],
+      });
+      expect(favorites).toEqual({ supply: ['supply:jade'], mages: ['mage:brama'], nemeses: ['nemesis:rageborne'] });
+    });
+
+    it('drops only non-string elements', async () => {
+      vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      const favorites = await hydrate({ supply: [null, 1, {}, 'supply:jade', 'x'.repeat(201)], mages: [], nemeses: [] });
+      expect(favorites.supply).toEqual(['supply:jade']);
+    });
+
+    it.each([
+      ['a non-array category', { supply: 'supply:jade', mages: ['mage:brama'], nemeses: ['nemesis:rageborne'] }],
+      ['an over-long category', { supply: Array.from({ length: 1001 }, () => 'supply:jade'), mages: ['mage:brama'], nemeses: ['nemesis:rageborne'] }],
+    ])('resets only the affected category for %s', async (_label, bad) => {
+      vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      const favorites = await hydrate(bad);
+      expect(favorites).toEqual({ supply: [], mages: ['mage:brama'], nemeses: ['nemesis:rageborne'] });
+    });
+
+    it.each([
+      ['a number', 42],
+      ['null', null],
+      ['an array', ['supply:jade']],
+    ])('resets only favorites when it is %s', async (_label, bad) => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      const errorSpy = vi.spyOn(console, 'error');
+      const favorites = await hydrate(bad);
+      expect(favorites).toEqual({ supply: [], mages: [], nemeses: [] });
+      expect(errorSpy).not.toHaveBeenCalled();
+      expect(warnSpy).toHaveBeenCalled();
+    });
+
+    it('drops old name entries on reload while other state survives, and the next write removes them from storage', async () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      const errorSpy = vi.spyOn(console, 'error');
+      const favorites = await hydrate({ supply: ['Jade', 'supply:jade'], mages: ['Brama'], nemeses: ['nemesis:rageborne', 'Rageborne'] });
+      expect(favorites).toEqual({ supply: ['supply:jade'], mages: [], nemeses: ['nemesis:rageborne'] });
+      expect(errorSpy).not.toHaveBeenCalled();
+      for (const call of warnSpy.mock.calls) expect(String(call[0])).not.toMatch(/Jade|Brama|Rageborne/);
+      const state = useGameStore.getState();
+      expect(state.searchFilters).toEqual({ cardQuery: 'gem', selectedTypes: ['Gem'], costRange: [1, 6] });
+      expect(state.mageSearchFilters).toEqual({ mageQuery: 'brama' });
+
+      // Until a write, storage still holds the old names (re-dropped on each load, idempotent).
+      expect((readPersistedState().favorites as Record<string, string[]>).mages).toEqual(['Brama']);
+      useGameStore.getState().toggleFavorite('mages', 'mage:brama');
+      expect(readPersistedState().favorites).toEqual({ supply: ['supply:jade'], mages: ['mage:brama'], nemeses: ['nemesis:rageborne'] });
+
+      // A second reload keeps the ids and everything else, with nothing left to drop.
+      warnSpy.mockClear();
+      const saved = localStorage.getItem(STORAGE_KEY)!;
+      useGameStore.setState({ favorites: { supply: [], mages: [], nemeses: [] }, isPlaying: false, ownedExpansions: [] });
+      localStorage.setItem(STORAGE_KEY, saved);
+      await useGameStore.persist.rehydrate();
+      expect(useGameStore.getState().favorites).toEqual({ supply: ['supply:jade'], mages: ['mage:brama'], nemeses: ['nemesis:rageborne'] });
+      expectOtherStateRestored('favorites');
+      expect(warnSpy.mock.calls.filter((c) => String(c[0]).startsWith('favorites'))).toEqual([]);
+    });
+
+    it('drops prototype-member, kind-prefixed prototype and transformed ids in every category', async () => {
+      vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      const favorites = await hydrate({
+        supply: ['__proto__', 'supply:constructor', 'SUPPLY:JADE', 'supply:jade\n', ' supply:jade', 'supply:jade'],
+        mages: ['constructor', 'mage:__proto__', 'mage:brama'],
+        nemeses: ['hasOwnProperty', 'valueOf', 'nemesis:rageborne'],
+      });
+      expect(favorites).toEqual({ supply: ['supply:jade'], mages: ['mage:brama'], nemeses: ['nemesis:rageborne'] });
+    });
+
+    it('resets only favorites for a __proto__-keyed favorites object from raw JSON', async () => {
+      vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      writePersisted(payloadWith({ favorites: {} , randomizedResult: { 'slot-1': { id: 'supply:jade' } } }));
+      const raw = localStorage.getItem(STORAGE_KEY)!.replace(
+        '"favorites":{}',
+        '"favorites":{"__proto__":{"supply":["supply:jade"]},"mages":["mage:brama"]}'
+      );
+      localStorage.setItem(STORAGE_KEY, raw);
+      await useGameStore.persist.rehydrate();
+      expect(useGameStore.getState().favorites).toEqual({ supply: [], mages: ['mage:brama'], nemeses: [] });
+      expect(({} as Record<string, unknown>).supply).toBeUndefined();
+      expectOtherStateRestored('favorites');
+    });
+
+    it('round-trips a toggled id through storage', async () => {
+      useGameStore.getState().toggleFavorite('mages', 'mage:taqren-outcasts');
+      const saved = localStorage.getItem(STORAGE_KEY)!;
+      useGameStore.setState({ favorites: { supply: [], mages: [], nemeses: [] } });
+      localStorage.setItem(STORAGE_KEY, saved);
+      await useGameStore.persist.rehydrate();
+      expect(useGameStore.getState().favorites.mages).toEqual(['mage:taqren-outcasts']);
+    });
   });
 });

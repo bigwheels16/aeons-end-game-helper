@@ -2,6 +2,9 @@ import { useGameStore, FavoriteCategory } from '../store';
 
 export interface FavoriteStarProps {
   category: FavoriteCategory;
+  /** Bundled record id: the favorites key. */
+  id: string;
+  /** Display name: used only for the aria-label. */
   name: string;
 }
 
@@ -9,14 +12,14 @@ export interface FavoriteStarProps {
  * Yellow star toggle that adds or removes an item from the persisted favorites list.
  * Shows an outline when not favorited and a filled star when favorited.
  */
-export default function FavoriteStar({ category, name }: FavoriteStarProps) {
-  const isFavorite = useGameStore((state) => state.favorites[category].includes(name));
+export default function FavoriteStar({ category, id, name }: FavoriteStarProps) {
+  const isFavorite = useGameStore((state) => state.favorites[category].includes(id));
   const toggleFavorite = useGameStore((state) => state.toggleFavorite);
 
   return (
     <button
       type="button"
-      onClick={() => toggleFavorite(category, name)}
+      onClick={() => toggleFavorite(category, id)}
       aria-pressed={isFavorite}
       aria-label={isFavorite ? `Remove ${name} from favorites` : `Add ${name} to favorites`}
       title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}

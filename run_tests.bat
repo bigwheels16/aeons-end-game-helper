@@ -1,4 +1,12 @@
 @echo off
+echo Running Python tests...
+docker run --rm -e PYTHONDONTWRITEBYTECODE=1 -v "%CD%:/app" -w /app python:3.12-slim python -m unittest discover -s scripts -p "test_*.py"
+IF %ERRORLEVEL% NEQ 0 (
+    echo Python tests failed. Aborting build.
+    pause
+    exit /b %ERRORLEVEL%
+)
+
 echo Running tests...
 docker run --rm -v "%CD%:/app" -w /app node:22-slim sh -c "npm ci && npm run test"
 IF %ERRORLEVEL% NEQ 0 (

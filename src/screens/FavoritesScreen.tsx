@@ -1,43 +1,23 @@
 import { useMemo } from 'react';
-import scrapedData from '../../data/scraped/aeons_end_all.json';
 import { useGameStore } from '../store';
 import { useToggleSet } from '../hooks/useToggleSet';
-import { ScrapedMage, ScrapedNemesis, ScrapedSupplyCard } from '../types/scraped';
+import { getMageById, getNemesisById, getSupplyCardById } from '../utils/cards';
 import CardDisplayItem from '../components/CardDisplayItem';
 import MageDisplayItem from '../components/MageDisplayItem';
 import NemesisDisplayItem from '../components/NemesisDisplayItem';
 
-const allCards: ScrapedSupplyCard[] = scrapedData.supply || [];
-const allMages: ScrapedMage[] = scrapedData.mages || [];
-const allNemeses: ScrapedNemesis[] = scrapedData.nemeses || [];
-
 /**
- * Looks up favorited names in a dataset, returning the matching items sorted by name
- * and any favorited names that no longer exist in the dataset.
+ * Resolves favorited record ids to bundled items, sorted by name. Unknown ids are skipped; the
+ * store's load-time filter already drops them, so in practice every id resolves.
  */
-function resolveFavorites<T extends { name: string }>(names: string[], items: T[]): { found: T[]; missing: string[] } {
-  const byName = new Map(items.map(item => [item.name, item]));
+function resolveFavorites<T extends { name: string }>(ids: string[], lookup: (id: string) => T | undefined): T[] {
   const found: T[] = [];
-  const missing: string[] = [];
-  names.forEach(name => {
-    const item = byName.get(name);
-    if (item) {
-      found.push(item);
-    } else {
-      missing.push(name);
-    }
+  ids.forEach(id => {
+    const item = lookup(id);
+    if (item) found.push(item);
   });
   found.sort((a, b) => a.name.localeCompare(b.name));
-  return { found, missing };
-}
-
-function MissingFavorites({ names }: { names: string[] }) {
-  if (names.length === 0) return null;
-  return (
-    <p style={{ color: '#ffa726', fontSize: '0.85rem', margin: '0 0 1rem 0' }}>
-      Not found in the current card data: {names.join(', ')}
-    </p>
-  );
+  return found;
 }
 
 /**
@@ -53,9 +33,9 @@ export default function FavoritesScreen() {
   const visibleNemesisImages = useToggleSet();
   const visibleCardImages = useToggleSet();
 
-  const mages = useMemo(() => resolveFavorites(favorites.mages, allMages), [favorites.mages]);
-  const nemeses = useMemo(() => resolveFavorites(favorites.nemeses, allNemeses), [favorites.nemeses]);
-  const cards = useMemo(() => resolveFavorites(favorites.supply, allCards), [favorites.supply]);
+  const mages = useMemo(() => resolveFavorites(favorites.mages, getMageById), [favorites.mages]);
+  const nemeses = useMemo(() => resolveFavorites(favorites.nemeses, getNemesisById), [favorites.nemeses]);
+  const cards = useMemo(() => resolveFavorites(favorites.supply, getSupplyCardById), [favorites.supply]);
 
   const totalCount = favorites.mages.length + favorites.nemeses.length + favorites.supply.length;
   const sectionHeadingStyle = { color: 'white', margin: '0 0 1rem 0' };
@@ -76,15 +56,14 @@ export default function FavoritesScreen() {
           <>
             {favorites.mages.length > 0 && (
               <section style={{ marginBottom: '2rem' }}>
-                <h3 style={sectionHeadingStyle}>Mages ({mages.found.length})</h3>
-                <MissingFavorites names={mages.missing} />
+                <h3 style={sectionHeadingStyle}>Mages ({mages.length})</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem' }}>
-                  {mages.found.map(mage => (
+                  {mages.map(mage => (
                     <MageDisplayItem
-                      key={mage.name}
+                      key={mage.id}
                       mage={mage}
-                      matsVisible={visibleMats.has(mage.name)}
-                      onToggleMats={() => visibleMats.toggle(mage.name)}
+                      matsVisible={visibleMats.has(mage.id)}
+                      onToggleMats={() => visibleMats.toggle(mage.id)}
                       isStarterVisible={visibleStarters.has}
                       onToggleStarter={visibleStarters.toggle}
                     />
@@ -95,15 +74,14 @@ export default function FavoritesScreen() {
 
             {favorites.nemeses.length > 0 && (
               <section style={{ marginBottom: '2rem' }}>
-                <h3 style={sectionHeadingStyle}>Nemeses ({nemeses.found.length})</h3>
-                <MissingFavorites names={nemeses.missing} />
+                <h3 style={sectionHeadingStyle}>Nemeses ({nemeses.length})</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem' }}>
-                  {nemeses.found.map(nemesis => (
+                  {nemeses.map(nemesis => (
                     <NemesisDisplayItem
-                      key={nemesis.name}
+                      key={nemesis.id}
                       nemesis={nemesis}
-                      imagesVisible={visibleNemesisImages.has(nemesis.name)}
-                      onToggleImages={() => visibleNemesisImages.toggle(nemesis.name)}
+                      imagesVisible={visibleNemesisImages.has(nemesis.id)}
+                      onToggleImages={() => visibleNemesisImages.toggle(nemesis.id)}
                     />
                   ))}
                 </div>
@@ -112,15 +90,14 @@ export default function FavoritesScreen() {
 
             {favorites.supply.length > 0 && (
               <section style={{ marginBottom: '2rem' }}>
-                <h3 style={sectionHeadingStyle}>Supply Cards ({cards.found.length})</h3>
-                <MissingFavorites names={cards.missing} />
+                <h3 style={sectionHeadingStyle}>Supply Cards ({cards.length})</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
-                  {cards.found.map(card => (
+                  {cards.map(card => (
                     <CardDisplayItem
-                      key={card.name}
+                      key={card.id}
                       card={card}
-                      isImageVisible={visibleCardImages.has(card.name)}
-                      onToggleImage={() => visibleCardImages.toggle(card.name)}
+                      isImageVisible={visibleCardImages.has(card.id)}
+                      onToggleImage={() => visibleCardImages.toggle(card.id)}
                     />
                   ))}
                 </div>

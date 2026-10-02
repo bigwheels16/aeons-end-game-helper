@@ -12,18 +12,18 @@ import { useGameStore } from '../store';
 vi.mock('../../data/scraped/aeons_end_all.json', () => ({
   default: {
     supply: [
-      { id: 'Jade', name: 'Jade', type: 'Gem', expansions: ['Base'], cost: '2', effect: 'Gain 2 aether.' },
-      { id: 'Shard', name: 'Shard', type: 'Gem', expansions: ['Buried Secrets'], cost: '3', effect: 'Gain 1 aether.' },
-      { id: 'Spark', name: 'Spark', type: 'Spell', expansions: ['Promo'], cost: '1', effect: 'Deal 1 damage.' },
+      { id: 'supply:jade', name: 'Jade', type: 'Gem', expansions: ['Base'], cost: '2', effect: 'Gain 2 aether.' },
+      { id: 'supply:shard', name: 'Shard', type: 'Gem', expansions: ['Buried Secrets'], cost: '3', effect: 'Gain 1 aether.' },
+      { id: 'supply:spark', name: 'Spark', type: 'Spell', expansions: ['Promo'], cost: '1', effect: 'Deal 1 damage.' },
     ],
     unique_starters: [],
     mages: [
-      { name: 'Adelheim', type: 'Mage', expansions: ['Base'], charges: '5', ability_name: 'Aethereal Ward', breaches: [] },
-      { name: 'Brama', type: 'Mage', expansions: ['War Eternal'], charges: '4', ability_name: 'Brink Siphon', breaches: [] },
+      { id: 'mage:adelheim', name: 'Adelheim', type: 'Mage', expansions: ['Base'], charges: '5', ability_name: 'Aethereal Ward', breaches: [] },
+      { id: 'mage:brama', name: 'Brama', type: 'Mage', expansions: ['War Eternal'], charges: '4', ability_name: 'Brink Siphon', breaches: [] },
     ],
     nemeses: [
-      { name: 'Rageborne', type: 'Nemesis', expansions: ['Base'], health: '70', difficulty: '3' },
-      { name: 'Prince of Gluttons', type: 'Nemesis', expansions: ['Promo'], health: '60', difficulty: '4' },
+      { id: 'nemesis:rageborne', name: 'Rageborne', type: 'Nemesis', expansions: ['Base'], health: '70', difficulty: '3' },
+      { id: 'nemesis:prince-of-gluttons', name: 'Prince of Gluttons', type: 'Nemesis', expansions: ['Promo'], health: '60', difficulty: '4' },
     ],
   },
 }));

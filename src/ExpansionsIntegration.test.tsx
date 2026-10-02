@@ -15,19 +15,19 @@ import { useGameStore } from './store';
 vi.mock('../data/scraped/aeons_end_all.json', () => ({
   default: {
     supply: [
-      { id: 'Jade', name: 'Jade', type: 'Gem', expansions: ['Base'], cost: '2', effect: 'Gain 2 aether.' },
-      { id: 'Ruby', name: 'Ruby', type: 'Gem', expansions: ['Base'], cost: '4', effect: 'Gain 3 aether.' },
-      { id: 'Shard', name: 'Shard', type: 'Gem', expansions: ['Buried Secrets'], cost: '3', effect: 'Gain 1 aether.' },
-      { id: 'Spark', name: 'Spark', type: 'Spell', expansions: ['Promo'], cost: '1', effect: 'Deal 1 damage.' },
+      { id: 'supply:jade', name: 'Jade', type: 'Gem', expansions: ['Base'], cost: '2', effect: 'Gain 2 aether.' },
+      { id: 'supply:ruby', name: 'Ruby', type: 'Gem', expansions: ['Base'], cost: '4', effect: 'Gain 3 aether.' },
+      { id: 'supply:shard', name: 'Shard', type: 'Gem', expansions: ['Buried Secrets'], cost: '3', effect: 'Gain 1 aether.' },
+      { id: 'supply:spark', name: 'Spark', type: 'Spell', expansions: ['Promo'], cost: '1', effect: 'Deal 1 damage.' },
     ],
     unique_starters: [],
     mages: [
-      { name: 'Adelheim', type: 'Mage', expansions: ['Base'], charges: '5', ability_name: 'Aethereal Ward', breaches: [] },
-      { name: 'Brama', type: 'Mage', expansions: ['War Eternal'], charges: '4', ability_name: 'Brink Siphon', breaches: [] },
+      { id: 'mage:adelheim', name: 'Adelheim', type: 'Mage', expansions: ['Base'], charges: '5', ability_name: 'Aethereal Ward', breaches: [] },
+      { id: 'mage:brama', name: 'Brama', type: 'Mage', expansions: ['War Eternal'], charges: '4', ability_name: 'Brink Siphon', breaches: [] },
     ],
     nemeses: [
-      { name: 'Rageborne', type: 'Nemesis', expansions: ['Base'], health: '70', difficulty: '3' },
-      { name: 'Prince of Gluttons', type: 'Nemesis', expansions: ['Promo'], health: '60', difficulty: '4' },
+      { id: 'nemesis:rageborne', name: 'Rageborne', type: 'Nemesis', expansions: ['Base'], health: '70', difficulty: '3' },
+      { id: 'nemesis:prince-of-gluttons', name: 'Prince of Gluttons', type: 'Nemesis', expansions: ['Promo'], health: '60', difficulty: '4' },
     ],
   },
 }));
@@ -62,7 +62,7 @@ const basePersistedState = (overrides: Record<string, unknown> = {}) => ({
   discardPile: [{ id: 'p2', type: 'Player 2', imageFaceUrl: 'p2.png', isRevealed: true }],
   roundNumber: 2,
   turnHistory: [],
-  favorites: { supply: ['Shard'], mages: ['Brama'], nemeses: ['Prince of Gluttons'] },
+  favorites: { supply: ['supply:shard'], mages: ['mage:brama'], nemeses: ['nemesis:prince-of-gluttons'] },
   randomizerSlots: [{ id: 'slot-legacy', cardTypes: ['Gem'], costRange: [0, 10], searchTerm: '' }],
   randomizedResult: {},
   ...overrides,
@@ -253,7 +253,7 @@ describe('Expansions setting: app-wide integration', () => {
   it('Favorites in the App is not filtered by the setting', () => {
     useGameStore.setState({
       ownedExpansions: ['War Eternal'],
-      favorites: { supply: ['Jade', 'Spark'], mages: ['Adelheim'], nemeses: ['Prince of Gluttons'] },
+      favorites: { supply: ['supply:jade', 'supply:spark'], mages: ['mage:adelheim'], nemeses: ['nemesis:prince-of-gluttons'] },
     });
     render(<App />);
     fireEvent.click(screen.getByText('Favorites'));
@@ -296,14 +296,21 @@ describe('Expansions setting: app-wide integration', () => {
       unmount();
     });
 
-    it('a legacy payload migrates to "All" and keeps favorites, the game and slots, across two reloads', async () => {
+    it('a legacy payload migrates to "All", drops name-keyed favorites and keeps the game, slots and results, across two reloads', async () => {
       const errorSpy = vi.spyOn(console, 'error');
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         state: basePersistedState({
           searchFilters: { cardQuery: '', selectedExpansions: ['Base'], selectedTypes: [], costRange: [0, 10] },
           mageSearchFilters: { mageQuery: '', selectedMageExpansions: ['Base'] },
           nemesisSearchFilters: { nemesisQuery: '', selectedNemesisExpansions: ['Base'], difficultyRange: [1, 10] },
           randomizerExpansions: ['Base', 'Promo'],
+          // Favorites saved before ids existed (by name) are dropped, not migrated
+          favorites: { supply: ['Shard'], mages: ['Brama'], nemeses: ['Prince of Gluttons'] },
+          // A result saved before ids existed resolves by name to the bundled card, never trusting stored fields
+          randomizedResult: {
+            'slot-legacy': { id: 'BS12', name: 'Shard', type: 'Gem', effect: 'Tampered', page_url: 'javascript:alert(1)' },
+          },
         }),
         version: 0,
       }));
@@ -312,7 +319,10 @@ describe('Expansions setting: app-wide integration', () => {
       let state = fresh.useGameStore.getState();
       expect(errorSpy).not.toHaveBeenCalled();
       expect(state.ownedExpansions).toEqual([]);
-      expect(state.favorites).toEqual({ supply: ['Shard'], mages: ['Brama'], nemeses: ['Prince of Gluttons'] });
+      expect(state.favorites).toEqual({ supply: [], mages: [], nemeses: [] });
+      expect(warnSpy).toHaveBeenCalledWith('favorites.supply: dropped 1 unknown or invalid entries');
+      expect(state.randomizedResult['slot-legacy']).toMatchObject({ id: 'supply:shard', name: 'Shard', effect: 'Gain 1 aether.' });
+      expect(state.randomizedResult['slot-legacy'].page_url).toBeUndefined();
       expect(state.isPlaying).toBe(true);
       expect(state.roundNumber).toBe(2);
       expect(state.drawPile.map(c => c.id)).toEqual(['p1', 'n1']);
@@ -333,16 +343,15 @@ describe('Expansions setting: app-wide integration', () => {
       fresh = await reloadApp();
       state = fresh.useGameStore.getState();
       expect(state.ownedExpansions).toEqual(['Buried Secrets']);
-      expect(state.favorites.supply).toEqual(['Shard']);
+      expect(state.favorites.supply).toEqual([]);
+      expect(state.randomizedResult['slot-legacy'].id).toBe('supply:shard');
       expect(state.isPlaying).toBe(true);
       expect(state.randomizerSlots.length).toBe(1);
 
       window.location.hash = 'favorites';
       render(<fresh.App />);
-      // Favorites stays unfiltered after the reload
-      expect(screen.getByText('Favorites (3)')).toBeDefined();
-      expect(screen.getByText('Brama')).toBeDefined();
-      expect(screen.getByText('Prince of Gluttons')).toBeDefined();
+      // The old name-keyed favorites are gone (accepted one-time effect of switching to ids)
+      expect(screen.getByText('No favorites yet.')).toBeDefined();
       expect(errorSpy).not.toHaveBeenCalled();
     });
 

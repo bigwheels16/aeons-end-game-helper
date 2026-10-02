@@ -30,7 +30,7 @@ export function solveSupplyRandomizer(
   });
 
   const assignment: Record<string, ScrapedSupplyCard> = {};
-  const usedCards = new Set<string>(); // Use name as unique identifier since id might be missing or name is unique
+  const usedCards = new Set<string>(); // Card ids
 
   let stepCount = 0;
   const MAX_STEPS = 1000;
@@ -52,7 +52,7 @@ export function solveSupplyRandomizer(
     candidates = shuffleArray([...candidates]);
 
     for (const card of candidates) {
-      const uniqueId = card.id || card.name;
+      const uniqueId = card.id;
       if (!usedCards.has(uniqueId)) {
         assignment[currentSlot.id] = card;
         usedCards.add(uniqueId);

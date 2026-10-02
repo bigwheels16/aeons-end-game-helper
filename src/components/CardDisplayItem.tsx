@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import DOMPurify from 'dompurify';
 import { ScrapedSupplyCard } from '../types/scraped';
 import FavoriteStar from './FavoriteStar';
+import WikiLink from './WikiLink';
 
 export interface CardDisplayItemProps {
   card: ScrapedSupplyCard;
@@ -27,7 +28,6 @@ export default function CardDisplayItem({
   const showImage = isImageVisible !== undefined ? isImageVisible : internalShowImage;
   const toggleImage = onToggleImage || (() => setInternalShowImage(prev => !prev));
 
-  const wikiUrl = card.page_url || `https://aeonsend.wiki.gg/wiki/${card.name.replace(/ /g, '_')}`;
   const imageUrl = `https://aeonsend.wiki.gg/images/${card.name.replace(/ /g, '_')}.jpg`;
 
   return (
@@ -44,19 +44,14 @@ export default function CardDisplayItem({
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
         <h3 style={{ margin: 0 }}>
-          <a 
-            href={wikiUrl} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            style={{ color: '#4CAF50', textDecoration: 'none' }}
-          >
+          <WikiLink url={card.page_url} fallbackName={card.name} style={{ color: '#4CAF50', textDecoration: 'none' }}>
             {card.name}
-          </a>
+          </WikiLink>
         </h3>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <span style={{ fontSize: '0.8rem', color: '#aaa', flexShrink: 0 }}>{card.type}</span>
           {headerExtra}
-          <FavoriteStar category="supply" name={card.name} />
+          <FavoriteStar category="supply" id={card.id} name={card.name} />
         </div>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: '#aaa', marginBottom: '0.5rem' }}>

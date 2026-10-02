@@ -77,14 +77,14 @@ export default function SupplyRandomizerScreen() {
     if (!slot) return;
 
     // Identify cards assigned to OTHER slots to guarantee uniqueness across supply
-    const otherAssignedNames = new Set(
+    const otherAssignedIds = new Set(
       Object.entries(randomizedResult)
         .filter(([id, card]) => id !== slotId && card)
-        .map(([_, card]) => card.name)
+        .map(([_, card]) => card.id)
     );
 
     const candidates = availableCardsPool.filter(card => {
-      if (!card || otherAssignedNames.has(card.name)) return false;
+      if (!card || otherAssignedIds.has(card.id)) return false;
       return isCardMatch(card, slot);
     });
 
@@ -94,7 +94,7 @@ export default function SupplyRandomizerScreen() {
     }
 
     const currentCard = randomizedResult[slotId];
-    const alternatives = candidates.filter(c => !currentCard || c.name !== currentCard.name);
+    const alternatives = candidates.filter(c => !currentCard || c.id !== currentCard.id);
     const pool = alternatives.length > 0 ? alternatives : candidates;
     const picked = pool[Math.floor(Math.random() * pool.length)];
 

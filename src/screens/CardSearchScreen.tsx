@@ -212,10 +212,10 @@ export default function CardSearchScreen() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
             {filteredCards.map((card, idx) => (
               <CardDisplayItem 
-                key={`${card.id || card.name}-${idx}`} 
+                key={`${card.id}-${idx}`} 
                 card={card} 
-                isImageVisible={visibleImages.has(card.id || card.name)}
-                onToggleImage={() => visibleImages.toggle(card.id || card.name)}
+                isImageVisible={visibleImages.has(card.id)}
+                onToggleImage={() => visibleImages.toggle(card.id)}
               />
             ))}
           </div>

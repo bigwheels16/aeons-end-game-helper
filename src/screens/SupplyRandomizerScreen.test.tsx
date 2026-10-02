@@ -7,7 +7,7 @@ vi.mock('../../data/scraped/aeons_end_all.json', () => ({
   default: {
     supply: [
       {
-        id: 'Jade',
+        id: 'supply:jade',
         name: 'Jade',
         type: 'Gem',
         expansions: ['Base'],
@@ -15,7 +15,7 @@ vi.mock('../../data/scraped/aeons_end_all.json', () => ({
         effect: 'Gain 2 aether.'
       },
       {
-        id: 'Ruby',
+        id: 'supply:ruby',
         name: 'Ruby',
         type: 'Gem',
         expansions: ['Base'],
@@ -23,7 +23,7 @@ vi.mock('../../data/scraped/aeons_end_all.json', () => ({
         effect: 'Gain 3 aether.'
       },
       {
-        id: 'Spark',
+        id: 'supply:spark',
         name: 'Spark',
         type: 'Spell',
         expansions: ['Promo'],
@@ -31,7 +31,7 @@ vi.mock('../../data/scraped/aeons_end_all.json', () => ({
         effect: 'Deal 1 damage.'
       },
       {
-        id: 'Staff',
+        id: 'supply:staff',
         name: 'Staff',
         type: 'Relic',
         expansions: ['ExpansionX'],

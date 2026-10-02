@@ -1,6 +1,7 @@
 import DOMPurify from 'dompurify';
 import { ScrapedNemesis } from '../types/scraped';
 import FavoriteStar from './FavoriteStar';
+import WikiLink from './WikiLink';
 
 export interface NemesisDisplayItemProps {
   nemesis: ScrapedNemesis;
@@ -21,16 +22,11 @@ export default function NemesisDisplayItem({
     <div style={{ backgroundColor: '#222', padding: '0.75rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem', margin: '0 0 0.25rem 0' }}>
         <h2 style={{ margin: 0 }}>
-          <a 
-            href={nemesis.page_url || `https://aeonsend.wiki.gg/wiki/${encodeURIComponent(nemesis.name.replace(/ /g, '_'))}`} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            style={{ color: '#4CAF50', textDecoration: 'none' }}
-          >
+          <WikiLink url={nemesis.page_url} fallbackName={nemesis.name} style={{ color: '#4CAF50', textDecoration: 'none' }}>
             {nemesis.name}
-          </a>
+          </WikiLink>
         </h2>
-        <FavoriteStar category="nemeses" name={nemesis.name} />
+        <FavoriteStar category="nemeses" id={nemesis.id} name={nemesis.name} />
       </div>
       <h4 style={{ margin: '0 0 1rem 0', color: '#aaa', fontWeight: 'normal', fontStyle: 'italic' }}>
         {nemesis.expansions?.join(', ') || 'Unknown'}

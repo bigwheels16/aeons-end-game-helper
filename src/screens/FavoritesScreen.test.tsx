@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, within } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import FavoritesScreen from './FavoritesScreen';
 import CardSearchScreen from './CardSearchScreen';
@@ -7,17 +7,17 @@ import { useGameStore } from '../store';
 vi.mock('../../data/scraped/aeons_end_all.json', () => ({
   default: {
     supply: [
-      { id: 'Jade', name: 'Jade', type: 'Gem', expansions: ['Base'], cost: '2', effect: 'Gain 2 aether.' },
-      { id: 'Spark', name: 'Spark', type: 'Spell', expansions: ['Base'], cost: '1', effect: 'Deal 1 damage.' },
+      { id: 'supply:jade', name: 'Jade', type: 'Gem', expansions: ['Base'], cost: '2', effect: 'Gain 2 aether.' },
+      { id: 'supply:spark', name: 'Spark', type: 'Spell', expansions: ['Base'], cost: '1', effect: 'Deal 1 damage.' },
     ],
     unique_starters: [],
     mages: [
-      { name: 'Adelheim', type: 'Mage', expansions: ['Base'], charges: '5', ability_name: 'Aethereal Ward', breaches: [] },
+      { id: 'mage:adelheim', name: 'Adelheim', type: 'Mage', expansions: ['Base'], charges: '5', ability_name: 'Aethereal Ward', breaches: [] },
     ],
     nemeses: [
-      { name: 'Rageborne', type: 'Nemesis', expansions: ['Base'], health: '70', difficulty: '3' },
+      { id: 'nemesis:rageborne', name: 'Rageborne', type: 'Nemesis', expansions: ['Base'], health: '70', difficulty: '3' },
       // Only item in 'Promo', so 'Promo' is a real (known) expansion for the unfiltered-favorites test
-      { name: 'Prince of Gluttons', type: 'Nemesis', expansions: ['Promo'], health: '60', difficulty: '4' },
+      { id: 'nemesis:prince-of-gluttons', name: 'Prince of Gluttons', type: 'Nemesis', expansions: ['Promo'], health: '60', difficulty: '4' },
     ],
   }
 }));
@@ -33,10 +33,10 @@ describe('Favorites', () => {
   });
 
   it('toggleFavorite adds and then removes an item', () => {
-    useGameStore.getState().toggleFavorite('mages', 'Adelheim');
-    expect(useGameStore.getState().favorites.mages).toEqual(['Adelheim']);
+    useGameStore.getState().toggleFavorite('mages', 'mage:adelheim');
+    expect(useGameStore.getState().favorites.mages).toEqual(['mage:adelheim']);
 
-    useGameStore.getState().toggleFavorite('mages', 'Adelheim');
+    useGameStore.getState().toggleFavorite('mages', 'mage:adelheim');
     expect(useGameStore.getState().favorites.mages).toEqual([]);
   });
 
@@ -52,14 +52,14 @@ describe('Favorites', () => {
 
     fireEvent.click(star);
 
-    expect(useGameStore.getState().favorites.supply).toEqual(['Jade']);
+    expect(useGameStore.getState().favorites.supply).toEqual(['supply:jade']);
     const filledStar = screen.getByRole('button', { name: 'Remove Jade from favorites' });
     expect(filledStar.getAttribute('aria-pressed')).toBe('true');
     expect(filledStar.querySelector('path')?.getAttribute('fill')).toBe('#fdd835');
   });
 
   it('lists favorited mages, nemeses, and supply cards, and unstarring removes them', () => {
-    useGameStore.setState({ favorites: { supply: ['Spark'], mages: ['Adelheim'], nemeses: ['Rageborne'] } });
+    useGameStore.setState({ favorites: { supply: ['supply:spark'], mages: ['mage:adelheim'], nemeses: ['nemesis:rageborne'] } });
     render(<FavoritesScreen />);
 
     expect(screen.getByText('Favorites (3)')).toBeDefined();
@@ -75,7 +75,7 @@ describe('Favorites', () => {
 
   it('is not filtered by the Expansions setting: favorites from non-owned expansions still render', () => {
     useGameStore.setState({
-      favorites: { supply: ['Spark'], mages: ['Adelheim'], nemeses: ['Rageborne'] },
+      favorites: { supply: ['supply:spark'], mages: ['mage:adelheim'], nemeses: ['nemesis:rageborne'] },
       // Owns only an expansion none of the favorites belong to
       ownedExpansions: ['Promo'],
     });
@@ -86,12 +86,5 @@ describe('Favorites', () => {
     expect(screen.getByText('Rageborne')).toBeDefined();
     expect(screen.getByText('Spark')).toBeDefined();
     expect(screen.queryByRole('button', { name: /^Expansions:/ })).toBeNull();
-  });
-
-  it('reports favorited names that are missing from the data', () => {
-    useGameStore.setState({ favorites: { supply: ['Removed Card'], mages: [], nemeses: [] } });
-    render(<FavoritesScreen />);
-    const section = screen.getByText('Supply Cards (0)').closest('section')!;
-    expect(within(section).getByText('Not found in the current card data: Removed Card')).toBeDefined();
   });
 });

@@ -2,6 +2,7 @@ import DOMPurify from 'dompurify';
 import { ScrapedMage } from '../types/scraped';
 import { getMageStarters } from '../utils/mages';
 import FavoriteStar from './FavoriteStar';
+import WikiLink from './WikiLink';
 
 const BREACH_POSITION_COLORS: Record<string, string> = {
   open: '#4CAF50',
@@ -36,16 +37,11 @@ export default function MageDisplayItem({
     <div style={{ backgroundColor: '#222', padding: '0.75rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem', margin: '0 0 0.25rem 0' }}>
         <h2 style={{ margin: 0 }}>
-          <a
-            href={mage.page_url || `https://aeonsend.wiki.gg/wiki/${encodeURIComponent(mage.name.replace(/ /g, '_'))}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: '#4CAF50', textDecoration: 'none' }}
-          >
+          <WikiLink url={mage.page_url} fallbackName={mage.name} style={{ color: '#4CAF50', textDecoration: 'none' }}>
             {mage.name}
-          </a>
+          </WikiLink>
         </h2>
-        <FavoriteStar category="mages" name={mage.name} />
+        <FavoriteStar category="mages" id={mage.id} name={mage.name} />
       </div>
       <h4 style={{ margin: '0 0 1rem 0', color: '#aaa', fontWeight: 'normal', fontStyle: 'italic' }}>
         {mage.title ? `${mage.title} | ` : ''}{mage.expansions?.join(', ') || 'Unknown'}
@@ -123,14 +119,9 @@ export default function MageDisplayItem({
               <div key={sIdx} style={{ backgroundColor: '#333', padding: '0.75rem', borderRadius: '4px', border: '1px solid #444' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
                   <strong style={{ color: '#fff' }}>
-                    <a 
-                      href={starter.page_url || `https://aeonsend.wiki.gg/wiki/${encodeURIComponent(starter.name.replace(/ /g, '_'))}`} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      style={{ color: '#4CAF50', textDecoration: 'none' }}
-                    >
+                    <WikiLink url={starter.page_url} fallbackName={starter.name} style={{ color: '#4CAF50', textDecoration: 'none' }}>
                       {starter.name}
-                    </a>
+                    </WikiLink>
                   </strong>
                   <span style={{ fontSize: '0.8rem', color: '#aaa' }}>{starter.type}</span>
                 </div>

@@ -17,6 +17,7 @@ import json
 import time
 import re
 import argparse
+import unicodedata
 import urllib.request
 import urllib.parse
 from typing import Dict, List, Any, Optional, Set, Tuple
@@ -24,6 +25,21 @@ from typing import Dict, List, Any, Optional, Set, Tuple
 API_URL = "https://aeonsend.wiki.gg/api.php"
 BASE_PAGE_URL = "https://aeonsend.wiki.gg/wiki/"
 DEFAULT_USER_AGENT = "AeonsEndWikiScraper/1.0"
+WIKI_HOSTNAME = "aeonsend.wiki.gg"
+OUTPUT_FILENAME = "aeons_end_all.json"
+
+# Output collection -> id kind prefix. Every record in these collections gets id "<kind>:<slug>".
+ID_KIND_BY_CATEGORY: Dict[str, str] = {
+    "supply": "supply",
+    "unique_starters": "starter",
+    "mages": "mage",
+    "nemeses": "nemesis",
+    "nemesis_cards": "nemesis-card",
+}
+# Max id length in UTF-16 code units (the unit of JS string.length and the app's zod .max(200)).
+MAX_ID_LENGTH = 200
+# Apostrophe variants removed (not hyphenated) so "Transmuter's Lens" -> "transmuters-lens".
+APOSTROPHES = frozenset("'\u2019\u2018\u02bc`")
 
 KNOWN_EXPANSIONS = [
     "Aeon's End (Core Box)",
@@ -199,24 +215,121 @@ def clean_wikitext(text: Optional[str]) -> str:
 
 
 def make_page_url(title: str) -> str:
-    """Returns the canonical, validated HTTPS wiki URL for a given page title."""
+    """
+    Returns the canonical, validated HTTPS wiki URL for a given page title.
+    Raises ValueError unless the URL is https on exactly aeonsend.wiki.gg, with no port or
+    credentials, under /wiki/ (the same allowlist the app enforces at render time).
+    """
     encoded_title = urllib.parse.quote(title.replace(" ", "_"))
     url = f"{BASE_PAGE_URL}{encoded_title}"
-    if not url.startswith("https://"):
-        raise ValueError(f"Insecure URL scheme: {url}")
+    parts = urllib.parse.urlsplit(url)
+    if (
+        parts.scheme != "https"
+        or parts.hostname != WIKI_HOSTNAME
+        or parts.port is not None
+        or parts.username is not None
+        or parts.password is not None
+        or not parts.path.startswith("/wiki/")
+    ):
+        raise ValueError(f"Page URL not on the allowed wiki origin/path: {ascii(url)}")
     return url
+
+
+def _is_word_char(ch: str) -> bool:
+    """Word characters for slugs: letters (L*), numbers (N*) and combining marks (M*) of any script."""
+    return unicodedata.category(ch)[0] in ("L", "N", "M")
+
+
+def slugify(name: str) -> str:
+    """
+    Builds the Unicode slug part of a record id from its display name:
+      1. NFC; 2. lower() then NFC again; 3. remove apostrophes;
+      4./5. every run of non-word characters (anything not L*/M*/N*) becomes one '-';
+      final NFC; strip leading/trailing '-'.
+    Raises ValueError if the slug is empty or has no letter/number. Messages use ascii().
+    """
+    text = unicodedata.normalize("NFC", name)
+    text = unicodedata.normalize("NFC", text.lower())
+    text = "".join(ch for ch in text if ch not in APOSTROPHES)
+
+    out: List[str] = []
+    in_separator = False
+    for ch in text:
+        if _is_word_char(ch):
+            out.append(ch)
+            in_separator = False
+        elif not in_separator:
+            out.append("-")
+            in_separator = True
+    slug = unicodedata.normalize("NFC", "".join(out)).strip("-")
+
+    if not slug:
+        raise ValueError(f"Empty id slug for name {ascii(name)}")
+    if not any(unicodedata.category(ch)[0] in ("L", "N") for ch in slug):
+        raise ValueError(f"Id slug has no letter or number for name {ascii(name)}")
+    return slug
+
+
+def utf16_length(text: str) -> int:
+    """Length in UTF-16 code units (matches JS string.length)."""
+    return len(text.encode("utf-16-le")) // 2
+
+
+def check_id_shape(item_id: str) -> None:
+    """
+    Structurally asserts an id is "<known kind>:<slug>" where the slug is runs of word characters
+    joined by single '-', NFC-normalized, and at most MAX_ID_LENGTH UTF-16 units. Raises ValueError.
+    """
+    kind, sep, slug = item_id.partition(":")
+    valid = (
+        sep == ":"
+        and kind in ID_KIND_BY_CATEGORY.values()
+        and slug != ""
+        and all(part != "" and all(_is_word_char(ch) for ch in part) for part in slug.split("-"))
+        and unicodedata.is_normalized("NFC", slug)
+    )
+    if not valid:
+        raise ValueError(f"Malformed id {ascii(item_id)}")
+    if utf16_length(item_id) > MAX_ID_LENGTH:
+        raise ValueError(f"Id longer than {MAX_ID_LENGTH} UTF-16 units: {ascii(item_id)}")
+
+
+def make_item_id(category: str, name: str) -> str:
+    """Returns the record id "<kind>:<slug>" for an output collection. Raises ValueError."""
+    kind = ID_KIND_BY_CATEGORY.get(category)
+    if kind is None:
+        raise ValueError(f"No id kind for category {ascii(category)}")
+    item_id = f"{kind}:{slugify(name)}"
+    check_id_shape(item_id)
+    return item_id
+
+
+def validate_ids(by_category: Dict[str, List[Dict[str, Any]]]) -> None:
+    """
+    Checks that every record in every collection has a well-formed id and that ids are globally
+    unique. Raises ValueError listing ALL duplicates (with the names that produced them).
+    """
+    names_by_id: Dict[str, List[str]] = {}
+    for category, items in by_category.items():
+        for item in items:
+            item_id = item.get("id")
+            if not isinstance(item_id, str):
+                raise ValueError(f"Missing id for {category} record {ascii(item.get('name'))}")
+            check_id_shape(item_id)
+            names_by_id.setdefault(item_id, []).append(f"{category}/{item.get('name')}")
+
+    duplicates = {i: names for i, names in names_by_id.items() if len(names) > 1}
+    if duplicates:
+        details = "; ".join(
+            f"{ascii(i)} <- {', '.join(ascii(n) for n in names)}" for i, names in sorted(duplicates.items())
+        )
+        raise ValueError(f"Duplicate ids ({len(duplicates)}): {details}")
 
 
 def get_clean(params: Dict[str, str], key: str, default: str = "") -> str:
     """Retrieves and cleans wikitext for a given parameter key."""
     val = params.get(key)
     return clean_wikitext(val) if val is not None else default
-
-
-def extract_card_id(params: Dict[str, str]) -> str:
-    """Extracts and normalizes card identifier from template parameters."""
-    raw_id = params.get("id 1") or params.get("id") or ""
-    return clean_wikitext(raw_id).split("\n")[0].strip()
 
 
 def parse_template(wikitext: str, template_name: str) -> Optional[Dict[str, str]]:
@@ -424,7 +537,6 @@ def process_player_card(title: str, page_data: Dict[str, Any]) -> Optional[Tuple
     unique_to = get_clean(params, "unique to")
     is_unique = bool(unique_to) or cost == "0"
     rules = get_clean(params, "rules") or get_clean(params, "effect")
-    card_id = extract_card_id(params)
     expansions = extract_expansions(params, page_data["categories"])
 
     item: Dict[str, Any] = {
@@ -433,7 +545,6 @@ def process_player_card(title: str, page_data: Dict[str, Any]) -> Optional[Tuple
         "cost": cost,
         "effect": rules,
         "expansions": expansions,
-        "id": card_id,
         "page_url": make_page_url(title),
     }
 
@@ -616,7 +727,6 @@ def process_nemesis_card(title: str, page_data: Dict[str, Any]) -> Optional[Tupl
         "tier": tier,
         "effect": get_clean(params, "effect"),
         "nemesis": get_clean(params, "nemesis", default="Basic"),
-        "id": extract_card_id(params),
         "expansions": extract_expansions(params, page_data["categories"]),
         "page_url": make_page_url(title),
     }
@@ -758,7 +868,8 @@ def parse_and_group(
                 continue
 
         if cat in by_category:
-            by_category[cat].append(item)
+            # Generated id is the first key; it replaces the wiki's printed card number.
+            by_category[cat].append({"id": make_item_id(cat, item["name"]), **item})
 
     print(f"Successfully parsed {total_parsed} items.")
     if expansion_filter:
@@ -770,9 +881,23 @@ def parse_and_group(
 def save_dataset(by_category: Dict[str, List[Dict[str, Any]]], output_dir: str) -> None:
     """Saves the categorized records into master JSON and prints a summary."""
     os.makedirs(output_dir, exist_ok=True)
-    all_path = os.path.join(output_dir, "aeons_end_all.json")
-    with open(all_path, "w", encoding="utf-8") as f:
-        json.dump(by_category, f, indent=2, ensure_ascii=False)
+    all_path = os.path.join(output_dir, OUTPUT_FILENAME)
+    tmp_path = f"{all_path}.tmp"
+    # Atomic write: temp file in the same directory, fsync, then os.replace. A stale temp file from
+    # an earlier crash is removed (unlink never follows a symlink), and mode "x" (O_EXCL) never
+    # follows or reuses an existing path.
+    if os.path.lexists(tmp_path):
+        os.remove(tmp_path)
+    tmp_file = open(tmp_path, "x", encoding="utf-8")
+    try:
+        with tmp_file:
+            json.dump(by_category, tmp_file, indent=2, ensure_ascii=False)
+            tmp_file.flush()
+            os.fsync(tmp_file.fileno())
+        os.replace(tmp_path, all_path)
+    except BaseException:
+        os.remove(tmp_path)
+        raise
     print(f"\nSaved master JSON: {all_path}\n")
 
     print("=== Scraping Summary ===")
@@ -796,6 +921,7 @@ def scrape(args: argparse.Namespace) -> None:
         return
 
     by_category = parse_and_group(all_pages_data, expansion_filter=args.expansion)
+    validate_ids(by_category)
     save_dataset(by_category, args.output_dir)
 
 
@@ -848,7 +974,11 @@ def main():
     )
 
     args = parser.parse_args()
-    scrape(args)
+    try:
+        scrape(args)
+    except ValueError as e:
+        # Id generation/validation or URL allowlist failure: exit 1, output file left untouched.
+        sys.exit(f"Error: {e}")
 
 
 if __name__ == "__main__":

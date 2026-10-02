@@ -3,7 +3,7 @@
  */
 
 export interface ScrapedSupplyCard {
-  id?: string;
+  id: string;
   name: string;
   type: string;
   cost?: string | number;
@@ -13,7 +13,7 @@ export interface ScrapedSupplyCard {
 }
 
 export interface ScrapedUniqueStarter {
-  id?: string;
+  id: string;
   name: string;
   type: string;
   cost?: string | number;
@@ -24,6 +24,7 @@ export interface ScrapedUniqueStarter {
 }
 
 export interface ScrapedMage {
+  id: string;
   name: string;
   type: string;
   title?: string;
@@ -42,6 +43,7 @@ export interface ScrapedMage {
 }
 
 export interface ScrapedNemesis {
+  id: string;
   name: string;
   type: string;
   health?: string;
@@ -56,7 +58,7 @@ export interface ScrapedNemesis {
 }
 
 export interface ScrapedNemesisCard {
-  id?: string;
+  id: string;
   name: string;
   type: string;
   tier?: string;
