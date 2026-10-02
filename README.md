@@ -6,6 +6,7 @@ A mobile-optimized, client-side web application suite designed for the cooperati
 3. **Card Search:** A fast, multi-expansion card browser and lookup tool covering Gems, Relics, and Spells.
 4. **Mage Search:** A dedicated database for browsing all playable Mages, their starting abilities, unique starters, and official player mats.
 5. **Nemesis Search:** A quick reference for discovering and reviewing Nemeses and their mats across all expansions.
+6. **Supply Scanner:** Detects the supply cards in a photo of your table and turns them into a shareable supply link.
 
 All of the search tools and the Supply Randomizer share one app-wide **Expansions** setting, so you only pick the expansions you own once.
 
@@ -81,8 +82,15 @@ The integrated **Nemesis Search** tool allows filtering of Nemeses.
 
 ---
 
-### 6. Offline & Session Persistence
-Once the tool has been loaded in the browser, no network connection is needed for core mechanics. All logic and text data executes locally, while images are lazily loaded on demand to save bandwidth.
+### 6. Supply Scanner
+The **Supply Scanner** records the supply on your table.
+- **Photo scanning (login required):** Take a photo, choose one, or drop it on the screen. The photo is sent to the scanner service (`/api/scan`), which recognizes the cards with Google Gemini; recognized cards are added after the current supply from highest to lowest cost (equal costs in photo order), and any names it could not match are listed. Photos over 10MB are shrunk in the browser first.
+- **Login:** Scanning needs a login with the scanner role. The screen always offers **Log in** until a login is confirmed, and assumes the scanner service and its login proxy are served on the same host under `/api/` and `/oauth2/`. No user name or email is shown.
+- **Editing by hand:** Anyone can add, swap, remove and drag cards to reorder them, and switch between card images and descriptions.
+- **Share link:** The supply is kept in the page URL (`?cards=<card ids>#scanner`), so the address bar is always a share link. Unknown card ids are skipped.
+
+### 7. Offline & Session Persistence
+Once the tool has been loaded in the browser, no network connection is needed for core mechanics (photo scanning excepted). All logic and text data executes locally, while images are lazily loaded on demand to save bandwidth.
 
 ---
 
@@ -145,6 +153,9 @@ npm install
 ```bash
 # Start Vite development server
 npm run dev
+
+# Same, with /api and /oauth2 forwarded to a locally running scanner service
+SCANNER_PROXY_TARGET=http://localhost:8080 npm run dev
 
 # Run unit and integration tests
 npm test

@@ -40,6 +40,7 @@ const formatBuildTime = (isoString?: string): string => {
 const TOOLS = [
   { id: 'turn-order', label: 'Turn Order Helper' },
   { id: 'randomizer', label: 'Supply Randomizer' },
+  { id: 'scanner', label: 'Supply Scanner' },
   { id: 'card-search', label: 'Supply Card Search' },
   { id: 'mage-search', label: 'Mage Search' },
   { id: 'nemesis-search', label: 'Nemesis Search' },

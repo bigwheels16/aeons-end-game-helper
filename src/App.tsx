@@ -9,6 +9,7 @@ import NemesisSearchScreen from './screens/NemesisSearchScreen';
 import CustomDeckBuilder from './components/CustomDeckBuilder';
 import SupplyRandomizerScreen from './screens/SupplyRandomizerScreen';
 import FavoritesScreen from './screens/FavoritesScreen';
+import ScannerScreen from './screens/ScannerScreen';
 
 import { useEffect, useState } from 'react';
 
@@ -81,6 +82,8 @@ function App() {
     content = <MageSearchScreen />;
   } else if (activeTool === 'nemesis-search') {
     content = <NemesisSearchScreen />;
+  } else if (activeTool === 'scanner') {
+    content = <ScannerScreen />;
   } else if (activeTool === 'favorites') {
     content = <FavoritesScreen />;
   } else {
