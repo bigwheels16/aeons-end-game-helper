@@ -1,7 +1,7 @@
-import DOMPurify from 'dompurify';
 import { ScrapedMage } from '../types/scraped';
 import { getMageStarters } from '../utils/mages';
 import FavoriteStar from './FavoriteStar';
+import ScrapedHtml from './ScrapedHtml';
 import WikiLink from './WikiLink';
 
 const BREACH_POSITION_COLORS: Record<string, string> = {
@@ -52,16 +52,16 @@ export default function MageDisplayItem({
         {mage.ability_activation && (
           <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.85rem', color: '#bbb', textAlign: 'center' }}><em>{mage.ability_activation}</em></p>
         )}
-        <div 
+        <ScrapedHtml
+          html={mage.ability_effect}
           style={{ fontSize: '0.9rem', color: '#ddd', textAlign: 'center' }}
-          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(mage.ability_effect || '') }}
         />
         {mage.additional_rules && (
           <div style={{ marginTop: '0.75rem' }}>
             <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.85rem', color: '#bbb', textAlign: 'center' }}><em>Additional Rules:</em></p>
-            <div
+            <ScrapedHtml
+              html={mage.additional_rules}
               style={{ fontSize: '0.9rem', color: '#ddd', textAlign: 'center' }}
-              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(mage.additional_rules) }}
             />
           </div>
         )}
@@ -125,9 +125,9 @@ export default function MageDisplayItem({
                   </strong>
                   <span style={{ fontSize: '0.8rem', color: '#aaa' }}>{starter.type}</span>
                 </div>
-                <div 
+                <ScrapedHtml
+                  html={starter.effect}
                   style={{ fontSize: '0.85rem', color: '#ddd', textAlign: 'center' }}
-                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(starter.effect || '') }} 
                 />
                 <button 
                   onClick={() => onToggleStarter(starter.name)}

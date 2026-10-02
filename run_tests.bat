@@ -8,7 +8,7 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 
 echo Running tests...
-docker run --rm -v "%CD%:/app" -w /app node:22-slim sh -c "npm ci && npm run test"
+docker run --rm -v "%CD%:/app" -v /app/node_modules -w /app node:22-slim sh -c "npm ci && npm run test"
 IF %ERRORLEVEL% NEQ 0 (
     echo Tests failed. Aborting build.
     pause

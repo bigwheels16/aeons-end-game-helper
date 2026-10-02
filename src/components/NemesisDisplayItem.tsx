@@ -1,6 +1,6 @@
-import DOMPurify from 'dompurify';
 import { ScrapedNemesis } from '../types/scraped';
 import FavoriteStar from './FavoriteStar';
+import ScrapedHtml from './ScrapedHtml';
 import WikiLink from './WikiLink';
 
 export interface NemesisDisplayItemProps {
@@ -45,9 +45,9 @@ export default function NemesisDisplayItem({
       {nemesis.unleash && (
         <div style={{ marginBottom: '0.75rem' }}>
           <strong style={{ color: '#ff7043', display: 'block', marginBottom: '0.25rem' }}>Unleash:</strong>
-          <div 
+          <ScrapedHtml
+            html={nemesis.unleash}
             style={{ fontSize: '0.9rem', color: '#ddd' }}
-            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(nemesis.unleash) }} 
           />
         </div>
       )}
@@ -55,9 +55,9 @@ export default function NemesisDisplayItem({
       {nemesis.increased_difficulty && (
         <div style={{ marginBottom: '0.75rem' }}>
           <strong style={{ color: '#ef5350', display: 'block', marginBottom: '0.25rem' }}>Increased Difficulty:</strong>
-          <div 
+          <ScrapedHtml
+            html={nemesis.increased_difficulty}
             style={{ fontSize: '0.9rem', color: '#ddd' }}
-            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(nemesis.increased_difficulty) }} 
           />
         </div>
       )}
@@ -65,9 +65,9 @@ export default function NemesisDisplayItem({
       {nemesis.rules && (
         <div style={{ marginBottom: '0.75rem' }}>
           <strong style={{ color: '#42a5f5', display: 'block', marginBottom: '0.25rem' }}>Rules:</strong>
-          <div 
+          <ScrapedHtml
+            html={nemesis.rules}
             style={{ fontSize: '0.9rem', color: '#ddd' }}
-            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(nemesis.rules) }} 
           />
         </div>
       )}
@@ -75,9 +75,9 @@ export default function NemesisDisplayItem({
       {nemesis.setup && (
         <div style={{ marginBottom: '0.75rem' }}>
           <strong style={{ color: '#ffa726', display: 'block', marginBottom: '0.25rem' }}>Setup:</strong>
-          <div 
+          <ScrapedHtml
+            html={nemesis.setup}
             style={{ fontSize: '0.9rem', color: '#ddd' }}
-            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(nemesis.setup) }} 
           />
         </div>
       )}

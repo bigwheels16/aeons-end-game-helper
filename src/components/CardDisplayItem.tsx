@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import DOMPurify from 'dompurify';
 import { ScrapedSupplyCard } from '../types/scraped';
 import FavoriteStar from './FavoriteStar';
+import ScrapedHtml from './ScrapedHtml';
 import WikiLink from './WikiLink';
 
 export interface CardDisplayItemProps {
@@ -58,9 +58,9 @@ export default function CardDisplayItem({
         <span>{card.expansions?.join(', ') || 'Unknown'}</span>
         <span>Cost: {card.cost}</span>
       </div>
-      <div 
+      <ScrapedHtml
+        html={card.effect}
         style={{ fontSize: '0.9rem', color: '#ddd', marginBottom: '0.5rem', textAlign: 'center' }}
-        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(card.effect || '') }} 
       />
       <button 
         onClick={toggleImage}
