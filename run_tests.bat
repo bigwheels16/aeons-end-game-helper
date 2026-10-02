@@ -1,6 +1,6 @@
 @echo off
 echo Running Python tests...
-docker run --rm -e PYTHONDONTWRITEBYTECODE=1 -v "%CD%:/app" -w /app python:3.12-slim python -m unittest discover -s scripts -p "test_*.py"
+docker run --rm -e PYTHONDONTWRITEBYTECODE=1 -e PIP_DISABLE_PIP_VERSION_CHECK=1 -v "%CD%:/app" -w /app python:3.12-slim sh -c "pip install --no-cache-dir --root-user-action=ignore --only-binary :all: -q -r scripts/requirements.txt && python -m unittest discover -s scripts -p 'test_*.py'"
 IF %ERRORLEVEL% NEQ 0 (
     echo Python tests failed. Aborting build.
     pause

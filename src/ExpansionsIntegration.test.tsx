@@ -296,7 +296,7 @@ describe('Expansions setting: app-wide integration', () => {
       unmount();
     });
 
-    it('a legacy payload migrates to "All", drops name-keyed favorites and keeps the game, slots and results, across two reloads', async () => {
+    it('a legacy payload migrates to "All", drops name-keyed favorites and old-format results, and keeps the game and slots, across two reloads', async () => {
       const errorSpy = vi.spyOn(console, 'error');
       const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
@@ -307,9 +307,9 @@ describe('Expansions setting: app-wide integration', () => {
           randomizerExpansions: ['Base', 'Promo'],
           // Favorites saved before ids existed (by name) are dropped, not migrated
           favorites: { supply: ['Shard'], mages: ['Brama'], nemeses: ['Prince of Gluttons'] },
-          // A result saved before ids existed resolves by name to the bundled card, never trusting stored fields
+          // A result saved before ids existed (old printed number) is skipped
           randomizedResult: {
-            'slot-legacy': { id: 'BS12', name: 'Shard', type: 'Gem', effect: 'Tampered', page_url: 'javascript:alert(1)' },
+            'slot-legacy': { id: 'BS12', name: 'Shard', type: 'Gem' },
           },
         }),
         version: 0,
@@ -321,8 +321,7 @@ describe('Expansions setting: app-wide integration', () => {
       expect(state.ownedExpansions).toEqual([]);
       expect(state.favorites).toEqual({ supply: [], mages: [], nemeses: [] });
       expect(warnSpy).toHaveBeenCalledWith('favorites.supply: dropped 1 unknown or invalid entries');
-      expect(state.randomizedResult['slot-legacy']).toMatchObject({ id: 'supply:shard', name: 'Shard', effect: 'Gain 1 aether.' });
-      expect(state.randomizedResult['slot-legacy'].page_url).toBeUndefined();
+      expect(state.randomizedResult).toEqual({});
       expect(state.isPlaying).toBe(true);
       expect(state.roundNumber).toBe(2);
       expect(state.drawPile.map(c => c.id)).toEqual(['p1', 'n1']);
@@ -344,7 +343,7 @@ describe('Expansions setting: app-wide integration', () => {
       state = fresh.useGameStore.getState();
       expect(state.ownedExpansions).toEqual(['Buried Secrets']);
       expect(state.favorites.supply).toEqual([]);
-      expect(state.randomizedResult['slot-legacy'].id).toBe('supply:shard');
+      expect(state.randomizedResult).toEqual({});
       expect(state.isPlaying).toBe(true);
       expect(state.randomizerSlots.length).toBe(1);
 

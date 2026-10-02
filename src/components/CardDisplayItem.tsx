@@ -14,7 +14,7 @@ export interface CardDisplayItemProps {
 
 /**
  * Standard card presentation component matching the layout and styling of CardSearchScreen.
- * Displays card title (wiki link), type, favorite star, expansions, cost, sanitized effect,
+ * Displays card title (wiki link), type, favorite star, expansions, cost, effect,
  * and a collapsible image viewer.
  */
 export default function CardDisplayItem({

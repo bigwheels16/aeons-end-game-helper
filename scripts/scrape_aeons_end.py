@@ -3,12 +3,16 @@
 Aeon's End Wiki Scraper
 Scrapes gems, relics, spells, mages, unique starters, nemeses, and nemesis cards
 for each game and expansion from https://aeonsend.wiki.gg using the MediaWiki API.
+HTML fields are sanitized with nh3 (allowlisted tags/attributes, wiki-hosted images only), and
+every page_url must be on aeonsend.wiki.gg; a page_url failure aborts the scrape.
+
+Requires: pip install --only-binary :all: -r scripts/requirements.txt
 
 Usage:
   python scrape_aeons_end.py
   python scrape_aeons_end.py --output-dir ./data/scraped
   python scrape_aeons_end.py --expansion "The Depths"
-  docker run --rm -v ${PWD}:/app -w /app python:3 python scripts/scrape_aeons_end.py
+  docker run --rm -v ${PWD}:/app -w /app python:3 sh -c "pip install --only-binary :all: -r scripts/requirements.txt && python scripts/scrape_aeons_end.py"
 """
 
 import os
@@ -20,7 +24,10 @@ import argparse
 import unicodedata
 import urllib.request
 import urllib.parse
+from html.parser import HTMLParser
 from typing import Dict, List, Any, Optional, Set, Tuple
+
+import nh3
 
 API_URL = "https://aeonsend.wiki.gg/api.php"
 BASE_PAGE_URL = "https://aeonsend.wiki.gg/wiki/"
@@ -77,93 +84,124 @@ KNOWN_EXPANSIONS = [
 ]
 
 
-ALLOWED_HTML_TAGS = {"b", "i", "em", "strong", "br", "span", "hr", "small", "img"}
+ALLOWED_HTML_TAGS = frozenset({"b", "i", "small", "span", "br", "hr", "img"})
+ALLOWED_HTML_ATTRIBUTES = {"span": {"class"}, "img": {"src", "alt", "width", "loading"}}
+WIKI_IMAGE_PREFIX = "https://aeonsend.wiki.gg/images/"
+WIKI_IMAGE_SRC = re.compile(re.escape(WIKI_IMAGE_PREFIX) + r"[A-Za-z0-9._~%-]*[A-Za-z0-9][A-Za-z0-9._~%-]*")
+IMG_WIDTH = re.compile(r"[0-9]{1,4}")
+
+# Output collection -> fields that hold HTML. Every other string field is plain text.
+HTML_FIELDS: Dict[str, Tuple[str, ...]] = {
+    "supply": ("effect",),
+    "unique_starters": ("effect",),
+    "mages": ("ability_effect", "additional_rules", "starting_hand", "starting_deck"),
+    "nemeses": ("unleash", "increased_difficulty", "rules", "setup"),
+    "nemesis_cards": ("effect",),
+}
 
 
-def sanitize_html_markup(html: str) -> str:
-    """
-    Sanitizes HTML markup from wiki content:
-    - Strips executable/active tags and their contents (script, style, iframe, object, embed, etc.)
-    - Removes MediaWiki <nowiki> tags
-    - Enforces strict whitelist of formatting tags (b, i, em, strong, br, span, hr, small, img)
-    - Strips all JavaScript event handlers (on*) and unsafe URI schemes (javascript:, data:)
-    - Preserves only safe attributes (class="aether", trusted wiki images)
-    """
-    if not html:
-        return ""
+def img_src_rejection_reason(src: str) -> Optional[str]:
+    """Returns why an <img> src is not allowed, or None for a single file under WIKI_IMAGE_PREFIX."""
+    if not WIKI_IMAGE_SRC.fullmatch(src):
+        return f"not a single path segment under {WIKI_IMAGE_PREFIX}"
+    segment = urllib.parse.unquote(src[len(WIKI_IMAGE_PREFIX):])
+    if segment in (".", "..") or "/" in segment or "\\" in segment:
+        return "file name decodes to a dot segment or contains a path separator"
+    return None
 
-    # Strip dangerous container elements and their contents
-    html = re.sub(
-        r"<(script|style|iframe|object|embed|applet|form)[^>]*>.*?</\1>",
-        "",
+
+def _html_attribute_filter(tag: str, attr: str, value: str) -> Optional[str]:
+    """Per-value allowlist. nh3 calls it for every allowed attribute; None removes the attribute."""
+    if tag == "span" and attr == "class":
+        return value if value == "aether" else None
+    if tag == "img":
+        if attr == "src":
+            return value if img_src_rejection_reason(value) is None else None
+        if attr == "width":
+            return value if IMG_WIDTH.fullmatch(value) else None
+        if attr == "loading":
+            return value if value == "lazy" else None
+        if attr == "alt":
+            return value
+    return None
+
+
+def sanitize_html(html: str) -> str:
+    """Reduces HTML to the allowed tags and attributes (nh3). Script/style elements lose their content."""
+    return nh3.clean(
         html,
-        flags=re.DOTALL | re.IGNORECASE,
+        tags=set(ALLOWED_HTML_TAGS),
+        attributes=ALLOWED_HTML_ATTRIBUTES,
+        attribute_filter=_html_attribute_filter,
+        url_schemes={"https"},
+        link_rel=None,
+        strip_comments=True,
     )
-    # Strip dangerous self-closing/void tags (note: img is safely parsed in clean_tag)
-    html = re.sub(
-        r"<(script|style|iframe|object|embed|applet|form|input|button|svg|link|meta|base)[^>]*>",
-        "",
-        html,
-        flags=re.IGNORECASE,
-    )
-    # Strip <nowiki> tags
-    html = re.sub(r"</?nowiki\s*>", "", html, flags=re.IGNORECASE)
 
-    # Filter remaining HTML tags against allowed whitelist
-    def clean_tag(match: re.Match) -> str:
-        is_closing = bool(match.group(1))
-        tag_name = match.group(2).lower()
-        raw_attrs = match.group(3) or ""
-        is_self_closing = bool(match.group(4))
 
-        if tag_name not in ALLOWED_HTML_TAGS:
-            return ""
+class _ImgSrcCollector(HTMLParser):
+    """Collects the (entity-decoded) src of every <img> start tag and counts <img> tags without a src."""
 
-        if is_closing:
-            return f"</{tag_name}>"
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.srcs: List[str] = []
+        self.imgs_without_src = 0
 
-        if tag_name in ("br", "hr") or (is_self_closing and tag_name != "img"):
-            return f"<{tag_name}/>"
+    def handle_starttag(self, tag: str, attrs: List[Tuple[str, Optional[str]]]) -> None:
+        if tag == "img":
+            srcs = [value for name, value in attrs if name == "src" and value is not None]
+            self.srcs.extend(srcs)
+            if not srcs:
+                self.imgs_without_src += 1
 
-        if tag_name == "img":
-            src_match = re.search(r'\bsrc=[\'"]([^\'"]+)[\'"]', raw_attrs, re.IGNORECASE)
-            if not src_match:
-                return ""
-            src = src_match.group(1)
-            # Strictly validate src points to trusted HTTPS wiki images
-            if not src.startswith("https://aeonsend.wiki.gg/images/"):
-                return ""
-            img_attrs = [f'src="{src}"']
-            alt_match = re.search(r'\balt=[\'"]([^\'"]*)[\'"]', raw_attrs, re.IGNORECASE)
-            if alt_match:
-                img_attrs.append(f'alt="{alt_match.group(1)}"')
-            width_match = re.search(r'\bwidth=[\'"](\d+)[\'"]', raw_attrs, re.IGNORECASE)
-            if width_match:
-                img_attrs.append(f'width="{width_match.group(1)}"')
-            img_attrs.append('style="display: block; margin: 0.5rem auto; max-width: 100%; height: auto;"')
-            img_attrs.append('loading="lazy"')
-            return f'<img {" ".join(img_attrs)}/>'
 
-        # Block any inline event handlers (on*) or javascript: URIs
-        if re.search(r"\bon\w+\s*=", raw_attrs, re.IGNORECASE) or "javascript:" in raw_attrs.lower():
-            return f"<{tag_name}>"
+def scan_imgs(html: str) -> _ImgSrcCollector:
+    collector = _ImgSrcCollector()
+    collector.feed(html)
+    collector.close()
+    return collector
 
-        safe_attrs = []
-        if re.search(r'\bclass=[\'"]aether[\'"]', raw_attrs, re.IGNORECASE):
-            safe_attrs.append('class="aether"')
-        if re.search(r'\bstyle=[\'"][^"\']*text-align:\s*(center|left|right)[^"\']*[\'"]', raw_attrs, re.IGNORECASE):
-            safe_attrs.append('style="text-align: center;"')
 
-        attr_str = (" " + " ".join(safe_attrs)) if safe_attrs else ""
-        return f"<{tag_name}{attr_str}>"
-
-    return re.sub(r"<(/)?([a-zA-Z0-9]+)(?:\s+([^>]*?))?\s*(/)?>", clean_tag, html)
+def sanitize_record(category: str, record: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Sanitizes the record's HTML fields (HTML_FIELDS) and prints one line per rejected <img> src.
+    nh3 leaves an <img> whose src is rejected with no src. The pre-scan (html.parser) can parse
+    differently from nh3, so any <img> left without a src beyond those logged gets a fallback line.
+    """
+    html_fields = HTML_FIELDS.get(category, ())
+    sanitized = dict(record)
+    for field in html_fields:
+        value = record.get(field)
+        if not isinstance(value, str):
+            continue
+        context = (
+            f"collection={ascii(category)} id={ascii(record.get('id'))} "
+            f"name={ascii(record.get('name'))} field={ascii(field)}"
+        )
+        logged = 0
+        for src in scan_imgs(value).srcs:
+            reason = img_src_rejection_reason(src)
+            if reason is not None:
+                logged += 1
+                print(f"Rejected img src: {context} src={ascii(src)} reason={ascii(reason)}")
+        sanitized[field] = sanitize_html(value)
+        unlogged = scan_imgs(sanitized[field]).imgs_without_src - logged
+        if unlogged > 0:
+            print(
+                f"Rejected img src: {context} unlogged_count={unlogged} value={ascii(value)} "
+                f"reason={ascii('img src removed by sanitizer, not found by pre-scan')}"
+            )
+    return sanitized
 
 
 def clean_wikitext(text: Optional[str]) -> str:
-    """Cleans MediaWiki markup into safe readable text/HTML."""
+    """
+    Converts MediaWiki markup into readable text with simple HTML. The output is not sanitized;
+    HTML fields go through sanitize_html afterwards.
+    """
     if not text:
         return ""
+    text = re.sub(r"</?nowiki\s*>", "", text, flags=re.IGNORECASE)
     # Normalize any existing <br> or <br/> tags to newlines for consistent splitting
     text = re.sub(r"<br\s*/?>", "\n", text, flags=re.IGNORECASE)
     # Remove comments (including trailing unclosed comments)
@@ -193,7 +231,7 @@ def clean_wikitext(text: Optional[str]) -> str:
 
         alt = re.sub(r"\.[^.]+$", "", filename).replace("_", " ")
         encoded_file = urllib.parse.quote(filename.replace(" ", "_"))
-        return f'<img src="https://aeonsend.wiki.gg/images/{encoded_file}" alt="{alt}" width="{width}"/>'
+        return f'<img src="https://aeonsend.wiki.gg/images/{encoded_file}" alt="{alt}" width="{width}" loading="lazy"/>'
 
     text = re.sub(r"\[\[(?:File|Image):([^\]]+)\]\]", replace_file_markup, text, flags=re.IGNORECASE)
     # Strip any orphaned layout artifacts (e.g. 50px|center)
@@ -207,8 +245,6 @@ def clean_wikitext(text: Optional[str]) -> str:
     text = re.sub(r"''(.*?)''", r"<i>\1</i>", text)
     # Strip remaining parameterized metadata templates (unparameterized templates are preserved as-is)
     text = re.sub(r"\{\{[^}|]+\|[^}]*\}\}", "", text, flags=re.DOTALL)
-    # Sanitize any raw HTML and strip disallowed tags/handlers
-    text = sanitize_html_markup(text)
     # Normalize lines and join with <br/>
     lines = [l.strip() for l in text.splitlines()]
     return "<br/>".join(l for l in lines if l).strip()
@@ -217,8 +253,8 @@ def clean_wikitext(text: Optional[str]) -> str:
 def make_page_url(title: str) -> str:
     """
     Returns the canonical, validated HTTPS wiki URL for a given page title.
-    Raises ValueError unless the URL is https on exactly aeonsend.wiki.gg, with no port or
-    credentials, under /wiki/ (the same allowlist the app enforces at render time).
+    Raises ValueError unless the URL is https on exactly aeonsend.wiki.gg, with no port,
+    credentials, query or fragment, under /wiki/, and with no "." or ".." path segment.
     """
     encoded_title = urllib.parse.quote(title.replace(" ", "_"))
     url = f"{BASE_PAGE_URL}{encoded_title}"
@@ -229,7 +265,10 @@ def make_page_url(title: str) -> str:
         or parts.port is not None
         or parts.username is not None
         or parts.password is not None
+        or parts.query != ""
+        or parts.fragment != ""
         or not parts.path.startswith("/wiki/")
+        or any(segment in (".", "..") for segment in parts.path.split("/"))
     ):
         raise ValueError(f"Page URL not on the allowed wiki origin/path: {ascii(url)}")
     return url
@@ -402,7 +441,7 @@ def load_page_cache(cache_dir: str) -> Dict[str, Dict[str, Any]]:
         return all_data
 
     page_files = [
-        f for f in os.listdir(cache_dir)
+        f for f in sorted(os.listdir(cache_dir))
         if f.startswith("page_") and f.endswith(".json")
     ]
     for fname in page_files:
@@ -869,7 +908,8 @@ def parse_and_group(
 
         if cat in by_category:
             # Generated id is the first key; it replaces the wiki's printed card number.
-            by_category[cat].append({"id": make_item_id(cat, item["name"]), **item})
+            record = {"id": make_item_id(cat, item["name"]), **item}
+            by_category[cat].append(sanitize_record(cat, record))
 
     print(f"Successfully parsed {total_parsed} items.")
     if expansion_filter:

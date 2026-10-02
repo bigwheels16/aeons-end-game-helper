@@ -22,7 +22,7 @@ const allCards: ScrapedSupplyCard[] = scrapedData.supply || [];
  *
  * Provides a responsive multi-filter card lookup tool for Aeon's End supply cards (Gems, Relics, Spells).
  * Supports debounced name and effect text queries, card type filtering, cost range slider
- * filtering, and sanitized HTML effect rendering with DOMPurify. Results are restricted to the
+ * filtering, and HTML effect rendering. Results are restricted to the
  * app-wide "Expansions" setting, which this screen's "Clear All Filters" never changes.
  *
  * Filter criteria are synchronized with and persisted in the global Zustand store (`localStorage`),

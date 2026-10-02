@@ -1,19 +1,22 @@
 """
-Unit tests for the id generation, id validation, page-URL allowlist and atomic save in
-scrape_aeons_end.py. Standard library only; no network access.
+Unit tests for the HTML sanitizer, id generation, id validation, page-URL allowlist, atomic save
+and the committed dataset in scrape_aeons_end.py. Standard library plus nh3; no network access.
 
 Run from the repo root:
+  pip install --only-binary :all: -r scripts/requirements.txt
   python3 -m unittest discover -s scripts -p "test_*.py"
 """
 
 import io
 import json
 import os
+import re
 import sys
 import tempfile
 import unicodedata
 import unittest
 from contextlib import redirect_stdout
+from html.parser import HTMLParser
 from unittest import mock
 
 import scrape_aeons_end as scraper
@@ -32,9 +35,45 @@ SYNTHETIC_PAGES = {
 }
 
 
+DATASET_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "scraped", "aeons_end_all.json")
+EXPECTED_COUNTS = {"supply": 427, "unique_starters": 239, "mages": 104, "nemeses": 73, "nemesis_cards": 1276}
+WIKI_IMG = "https://aeonsend.wiki.gg/images/"
+UNSAFE_MARKUP = re.compile(r"on\w+=|javascript:|style=|<a\b|<script|<svg|<math", re.IGNORECASE)
+
+
 def _parse(pages):
     with redirect_stdout(io.StringIO()):
         return scraper.parse_and_group(pages)
+
+
+class _TagCollector(HTMLParser):
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.tags = []
+
+    def handle_starttag(self, tag, attrs):
+        self.tags.append((tag, attrs))
+
+    def handle_startendtag(self, tag, attrs):
+        self.tags.append((tag, attrs))
+
+
+def _tags(html):
+    collector = _TagCollector()
+    collector.feed(html)
+    collector.close()
+    return collector.tags
+
+
+def _string_values(value):
+    if isinstance(value, str):
+        yield value
+    elif isinstance(value, list):
+        for entry in value:
+            yield from _string_values(entry)
+    elif isinstance(value, dict):
+        for entry in value.values():
+            yield from _string_values(entry)
 
 
 class SlugifyTests(unittest.TestCase):
@@ -161,6 +200,240 @@ class ParseAndGroupTests(unittest.TestCase):
         scraper.validate_ids(by_category)  # must not raise
 
 
+class SanitizeHtmlTests(unittest.TestCase):
+    ALLOWED = '<b>a</b><br><i>b</i><hr><b><small>OR</small></b><span class="aether">Æ</span>'
+    RAGEBORNE = (
+        '<img src="https://aeonsend.wiki.gg/images/Fury_token.png" alt="Fury token" width="50" '
+        'style="display: block; margin: 0.5rem auto; max-width: 100%; height: auto;" loading="lazy"/>'
+    )
+
+    def test_allowed_markup_round_trips(self):
+        self.assertEqual(scraper.sanitize_html(self.ALLOWED), self.ALLOWED)
+
+    def test_spellings_are_canonicalized(self):
+        self.assertEqual(
+            scraper.sanitize_html('<br/><hr/><span class="aether">&AElig;</span>'),
+            '<br><hr><span class="aether">Æ</span>',
+        )
+
+    def test_token_image_loses_style_and_keeps_the_rest(self):
+        self.assertEqual(
+            scraper.sanitize_html(self.RAGEBORNE),
+            '<img src="https://aeonsend.wiki.gg/images/Fury_token.png" alt="Fury token" width="50" loading="lazy">',
+        )
+
+    def test_idempotent(self):
+        for html in [self.ALLOWED, self.RAGEBORNE] + [sample for sample, _ in MaliciousHtmlTests.CASES]:
+            with self.subTest(html=html):
+                once = scraper.sanitize_html(html)
+                self.assertEqual(scraper.sanitize_html(once), once)
+
+
+class MaliciousHtmlTests(unittest.TestCase):
+    CASES = [
+        ('<a href="https://evil.com">x</a>', 'x'),
+        ('<a href="javascript:alert(1)">x</a>', 'x'),
+        ('<script>alert(1)</script>t', 't'),
+        ('<style>b{color:red}</style>t', 't'),
+        ('<svg onload="alert(1)"><circle/></svg>t', 't'),
+        ('<math><mi>x</mi></math>t', 't'),
+        ('<template><b>x</b></template>t', 't'),
+        ('<!-- c -->t', 't'),
+        ('<iframe src="https://evil.com">x</iframe>', 'x'),
+        ('<form action="https://evil.com">x</form>', 'x'),
+        ('<object data="x">x</object>', 'x'),
+        ('<p>x</p>', 'x'),
+        ('<div>x</div>', 'x'),
+        ('<em>x</em>', 'x'),
+        ('<strong>x</strong>', 'x'),
+        ('<u>x</u>', 'x'),
+        ('<textarea><b>x</b></textarea>', '&lt;b&gt;x&lt;/b&gt;'),
+        ('<xmp><b>x</b></xmp>', '&lt;b&gt;x&lt;/b&gt;'),
+        ('<plaintext><b>x</b>', '&lt;b&gt;x&lt;/b&gt;'),
+        ('<noscript><img src=x onerror=alert(1)></noscript>t', '&lt;img src=x onerror=alert(1)&gt;t'),
+        ('<svg><style><img src=x onerror=alert(1)></style></svg>t', '<img>t'),
+        ('<b onclick="alert(1)">x</b>', '<b>x</b>'),
+        ('<b style="color:red">x</b>', '<b>x</b>'),
+        ('<b id="a" name="b">x</b>', '<b>x</b>'),
+        ('<b data-x="1" aria-label="y">x</b>', '<b>x</b>'),
+        ('<span class="aether modal">x</span>', '<span>x</span>'),
+        ('<span class="AETHER">x</span>', '<span>x</span>'),
+        ('<span constructor="x" __proto__="y">x</span>', '<span>x</span>'),
+        (f'<img src="{WIKI_IMG}A.png" srcset="{WIKI_IMG}B.png 2x">', f'<img src="{WIKI_IMG}A.png">'),
+        (f'<img src="{WIKI_IMG}A.png" width="100%">', f'<img src="{WIKI_IMG}A.png">'),
+        (f'<img src="{WIKI_IMG}A.png" loading="eager">', f'<img src="{WIKI_IMG}A.png">'),
+        ('<img src="x">', '<img>'),
+        ('<img src="http://aeonsend.wiki.gg/images/A.png">', '<img>'),
+        ('<img src="//aeonsend.wiki.gg/images/A.png">', '<img>'),
+        ('<img src="data:image/png;base64,AAAA">', '<img>'),
+        ('<img src="javascript:alert(1)">', '<img>'),
+        ('<img src="https://aeonsend.wiki.gg.evil.com/images/A.png">', '<img>'),
+        ('<img src="https://evil.com@aeonsend.wiki.gg/images/A.png">', '<img>'),
+        ('<img src="https://aeonsend.wiki.gg:443/images/A.png">', '<img>'),
+        (f'<img src="{WIKI_IMG}../A.png">', '<img>'),
+        (f'<img src="{WIKI_IMG}..">', '<img>'),
+        (f'<img src="{WIKI_IMG}a\\b.png">', '<img>'),
+        ('<img src="https:\\\\aeonsend.wiki.gg\\images\\A.png">', '<img>'),
+        (f'<img src=" {WIKI_IMG}A.png ">', '<img>'),
+        (f'<img src="{WIKI_IMG}A.png?x=1">', '<img>'),
+        (f'<img src="{WIKI_IMG}%2e%2e">', '<img>'),
+        (f'<img src="{WIKI_IMG}.%2E">', '<img>'),
+        (f'<img src="{WIKI_IMG}%2fx">', '<img>'),
+        (f'<img src="{WIKI_IMG}%5Cx">', '<img>'),
+        ('<img src="&#104;ttps://evil.com/A.png">', '<img>'),
+        (
+            f'<img src="{WIKI_IMG}A.png" alt="&quot;><script>alert(1)</script>">',
+            f'<img src="{WIKI_IMG}A.png" alt="&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;">',
+        ),
+    ]
+
+    def test_samples(self):
+        for sample, expected in self.CASES:
+            with self.subTest(sample=sample):
+                out = scraper.sanitize_html(sample)
+                self.assertEqual(out, expected)
+                markup = "".join(re.findall(r"<[^>]*>", out))
+                self.assertIsNone(UNSAFE_MARKUP.search(markup), out)
+                for tag, attrs in _tags(out):
+                    self.assertIn(tag, scraper.ALLOWED_HTML_TAGS)
+                    for name, value in attrs:
+                        self.assertIn(name, scraper.ALLOWED_HTML_ATTRIBUTES[tag])
+                        if name == "src":
+                            self.assertIsNone(scraper.img_src_rejection_reason(value), value)
+
+
+class AttributeFilterTests(unittest.TestCase):
+    def _filter(self, tag, attr, value):
+        return scraper._html_attribute_filter(tag, attr, value)
+
+    def test_span_class_is_exact(self):
+        self.assertEqual(self._filter("span", "class", "aether"), "aether")
+        for bad in ["AETHER", "aether ", "aether modal", ""]:
+            with self.subTest(bad=bad):
+                self.assertIsNone(self._filter("span", "class", bad))
+
+    def test_img_width_digits_up_to_four(self):
+        for ok in ["0", "50", "9999"]:
+            with self.subTest(ok=ok):
+                self.assertEqual(self._filter("img", "width", ok), ok)
+        for bad in ["10000", "100%", "50px", "", " 50", "-1"]:
+            with self.subTest(bad=bad):
+                self.assertIsNone(self._filter("img", "width", bad))
+
+    def test_img_loading_is_exact(self):
+        self.assertEqual(self._filter("img", "loading", "lazy"), "lazy")
+        for bad in ["eager", "LAZY", "lazy "]:
+            with self.subTest(bad=bad):
+                self.assertIsNone(self._filter("img", "loading", bad))
+
+    def test_img_alt_is_kept(self):
+        self.assertEqual(self._filter("img", "alt", 'a "b" <c>'), 'a "b" <c>')
+
+    def test_img_src(self):
+        for ok in [f"{WIKI_IMG}Fury_token.png", f"{WIKI_IMG}A%27s_%28x%29.png", f"{WIKI_IMG}.a", f"{WIKI_IMG}a~b-c"]:
+            with self.subTest(ok=ok):
+                self.assertEqual(self._filter("img", "src", ok), ok)
+        for bad in [WIKI_IMG, f"{WIKI_IMG}.", f"{WIKI_IMG}..", f"{WIKI_IMG}%2e", f"{WIKI_IMG}%2E%2e",
+                    f"{WIKI_IMG}a/b.png", f"{WIKI_IMG}a%2Fb.png", f"{WIKI_IMG}a%5cb.png", f"{WIKI_IMG}a#b",
+                    f"{WIKI_IMG}a@b", f"{WIKI_IMG}a:b", "https://aeonsend.wiki.gg/wiki/A.png"]:
+            with self.subTest(bad=bad):
+                self.assertIsNone(self._filter("img", "src", bad))
+                self.assertIsNotNone(scraper.img_src_rejection_reason(bad))
+
+    def test_other_attributes_are_removed(self):
+        for tag, attr in [("b", "class"), ("span", "style"), ("img", "style"), ("img", "onerror"), ("i", "title")]:
+            with self.subTest(tag=tag, attr=attr):
+                self.assertIsNone(self._filter(tag, attr, "x"))
+
+
+class HtmlFieldsTests(unittest.TestCase):
+    PAGES = {
+        "Big Bad": _page(
+            4, "Big Bad",
+            "{{Nemesis|life=<nowiki>*</nowiki>|difficulty level=5|expedition battle=A & B"
+            "|rules=<script>alert(1)</script>Keep <img src=https://evil.com/x> this"
+            "|unleash=Gain [[File:Fury token.png|50px]]|box=The Depths}}",
+        ),
+        "X (Mage)": _page(3, "X (Mage)", "{{Mage|title=Fire & Ice|effect=Deal 1 <b onclick=x>damage</b>}}"),
+    }
+
+    def _parse_with_log(self, pages):
+        buffer = io.StringIO()
+        with redirect_stdout(buffer):
+            by_category = scraper.parse_and_group(pages)
+        return by_category, buffer.getvalue()
+
+    def test_html_fields_are_sanitized(self):
+        by_category, _ = self._parse_with_log(self.PAGES)
+        nemesis = by_category["nemeses"][0]
+        self.assertEqual(nemesis["rules"], "Keep <img> this")
+        self.assertEqual(
+            nemesis["unleash"],
+            f'Gain <img src="{WIKI_IMG}Fury_token.png" alt="Fury token" width="50" loading="lazy">',
+        )
+        self.assertEqual(by_category["mages"][0]["ability_effect"], "Deal 1 <b>damage</b>")
+
+    def test_plain_text_fields_are_not_escaped(self):
+        by_category, _ = self._parse_with_log(self.PAGES)
+        self.assertEqual(by_category["nemeses"][0]["expedition_battle"], "A & B")
+        self.assertEqual(by_category["mages"][0]["title"], "Fire & Ice")
+
+    def test_nowiki_is_stripped_from_plain_text(self):
+        by_category, _ = self._parse_with_log(self.PAGES)
+        self.assertEqual(by_category["nemeses"][0]["health"], "*")
+
+    def test_rejected_img_src_is_logged_with_context(self):
+        _, log = self._parse_with_log(self.PAGES)
+        lines = [line for line in log.splitlines() if line.startswith("Rejected img src:")]
+        self.assertEqual(len(lines), 1)
+        for fragment in ["collection='nemeses'", "id='nemesis:big-bad'", "name='Big Bad'", "field='rules'",
+                         "src='https://evil.com/x'", "reason="]:
+            self.assertIn(fragment, lines[0])
+
+    def test_scheme_rejected_by_nh3_is_logged_too(self):
+        pages = {"Big Bad": _page(4, "Big Bad", '{{Nemesis|setup=<img src="javascript:alert(1)">}}')}
+        by_category, log = self._parse_with_log(pages)
+        self.assertEqual(by_category["nemeses"][0]["setup"], "<img>")
+        self.assertIn("src='javascript:alert(1)'", log)
+
+    def test_log_escapes_scraped_text(self):
+        pages = {"A‮B\x1b[2J": _page(4, "A‮B\x1b[2J", '{{Nemesis|setup=<img src="x‮\x1b[31m">}}')}
+        _, log = self._parse_with_log(pages)
+        line = next(line for line in log.splitlines() if line.startswith("Rejected img src:"))
+        self.assertTrue(line.isascii(), line)
+        self.assertNotIn("\x1b", line)
+        self.assertIn("\\u202e", line)
+        self.assertIn("\\x1b", line)
+
+    def test_img_src_parsed_differently_by_pre_scan_is_still_logged(self):
+        cases = [
+            ("<image src=x>", "<img>", "unlogged_count=1 value='<image src=x>'"),
+            ("<img src=\x00x>", "<img>", "src='\\x00x'"),
+        ]
+        for setup, expected_html, expected_log in cases:
+            with self.subTest(setup=setup):
+                record = {"id": "nemesis:big-bad", "name": "Big Bad", "setup": setup}
+                buffer = io.StringIO()
+                with redirect_stdout(buffer):
+                    sanitized = scraper.sanitize_record("nemeses", record)
+                log = buffer.getvalue()
+                self.assertEqual(sanitized["setup"], expected_html)
+                lines = [line for line in log.splitlines() if line.startswith("Rejected img src:")]
+                self.assertEqual(len(lines), 1, log)
+                for fragment in ["collection='nemeses'", "id='nemesis:big-bad'", "name='Big Bad'",
+                                 "field='setup'", expected_log, "reason="]:
+                    self.assertIn(fragment, lines[0])
+
+    def test_logged_rejection_gets_no_fallback_line(self):
+        pages = {"Big Bad": _page(4, "Big Bad", '{{Nemesis|setup=<img src="javascript:alert(1)">}}')}
+        _, log = self._parse_with_log(pages)
+        self.assertNotIn("unlogged_count=", log)
+
+    def test_valid_wiki_images_are_not_logged(self):
+        _, log = self._parse_with_log({"Big Bad": self.PAGES["Big Bad"]})
+        self.assertNotIn("Fury_token", log)
+
+
 class ValidateIdsTests(unittest.TestCase):
     def _supply(self, *names):
         return {"supply": [{"id": scraper.make_item_id("supply", n), "name": n} for n in names]}
@@ -236,6 +509,18 @@ class MainExitTests(unittest.TestCase):
             self.assertFalse(os.path.exists(out_path + ".tmp"))
 
 
+class LoadPageCacheTests(unittest.TestCase):
+    def test_pages_load_in_sorted_file_name_order(self):
+        with tempfile.TemporaryDirectory() as cache_dir:
+            names = ["page_3.json", "page_1.json", "page_2.json"]
+            for name in names:
+                with open(os.path.join(cache_dir, name), "w", encoding="utf-8") as f:
+                    json.dump({"title": name}, f)
+            with mock.patch.object(scraper.os, "listdir", return_value=names):
+                pages = scraper.load_page_cache(cache_dir)
+        self.assertEqual(list(pages), sorted(names))
+
+
 class SaveDatasetTests(unittest.TestCase):
     def test_failure_during_write_removes_temp_and_keeps_original(self):
         with tempfile.TemporaryDirectory() as output_dir:
@@ -267,6 +552,10 @@ class MakePageUrlTests(unittest.TestCase):
             "https://user:pw@aeonsend.wiki.gg/wiki/",
             "http://aeonsend.wiki.gg/wiki/",
             "https://aeonsend.wiki.gg/index.php?title=",
+            "https://aeonsend.wiki.gg/wiki/?q=",
+            "https://aeonsend.wiki.gg/wiki/#",
+            "https://aeonsend.wiki.gg/wiki/../",
+            "https://aeonsend.wiki.gg/wiki/./",
         ]
         for base in bad_bases:
             with self.subTest(base=base):
@@ -274,6 +563,12 @@ class MakePageUrlTests(unittest.TestCase):
                     with self.assertRaises(ValueError) as ctx:
                         scraper.make_page_url("Jade")
                     self.assertTrue(str(ctx.exception).isascii())
+
+    def test_rejects_dot_segment_titles(self):
+        for title in [".", ".."]:
+            with self.subTest(title=title):
+                with self.assertRaises(ValueError):
+                    scraper.make_page_url(title)
 
 
 class UnicodeSlugEdgeCaseTests(unittest.TestCase):
@@ -385,22 +680,67 @@ class UnicodeSlugEdgeCaseTests(unittest.TestCase):
 
 
 class BundledDatasetTests(unittest.TestCase):
-    """The committed JSON is reproducible from its own names by the current slug rules."""
+    """
+    Gate for the committed JSON: it must be exactly what the current scraper produces for its HTML,
+    ids and page URLs. A missing file or an empty collection fails; nothing here is skipped.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        with open(DATASET_PATH, encoding="utf-8") as f:
+            cls.data = json.load(f)
+
+    def _records(self):
+        for category in scraper.ID_KIND_BY_CATEGORY:
+            for record in self.data[category]:
+                yield category, record
+
+    def test_counts(self):
+        self.assertEqual({c: len(self.data[c]) for c in EXPECTED_COUNTS}, EXPECTED_COUNTS)
+        self.assertEqual(sum(1 for _ in self._records()), 2119)
 
     def test_committed_ids_match_make_item_id(self):
-        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "scraped", "aeons_end_all.json")
-        with open(path, encoding="utf-8") as f:
-            data = json.load(f)
-        mismatches = []
-        count = 0
-        for category in scraper.ID_KIND_BY_CATEGORY:
-            for record in data[category]:
-                count += 1
-                if scraper.make_item_id(category, record["name"]) != record["id"]:
-                    mismatches.append(record["id"])
+        mismatches = [r["id"] for c, r in self._records() if scraper.make_item_id(c, r["name"]) != r["id"]]
         self.assertEqual(mismatches, [])
-        self.assertEqual(count, 2119)
-        scraper.validate_ids({c: data[c] for c in scraper.ID_KIND_BY_CATEGORY})
+        scraper.validate_ids({c: self.data[c] for c in scraper.ID_KIND_BY_CATEGORY})
+
+    def test_id_is_first_key_and_no_legacy_keys(self):
+        for category, record in self._records():
+            with self.subTest(id=record.get("id")):
+                self.assertEqual(next(iter(record)), "id")
+                self.assertNotIn("card_number", record)
+                self.assertNotIn("page_id", record)
+
+    def test_html_fields_are_already_sanitized(self):
+        checked = 0
+        dirty = []
+        for category, record in self._records():
+            for field in scraper.HTML_FIELDS[category]:
+                value = record.get(field)
+                if isinstance(value, str):
+                    checked += 1
+                    if scraper.sanitize_html(value) != value:
+                        dirty.append(f"{record['id']}.{field}")
+        self.assertEqual(dirty, [])
+        self.assertGreater(checked, 2000)
+
+    def test_no_style_attribute_anywhere(self):
+        with open(DATASET_PATH, encoding="utf-8") as f:
+            self.assertEqual(f.read().count("style="), 0)
+
+    def test_plain_text_fields_have_no_markup(self):
+        offenders = []
+        for category, record in self._records():
+            for key, value in record.items():
+                if key in scraper.HTML_FIELDS[category]:
+                    continue
+                if any("<" in text for text in _string_values(value)):
+                    offenders.append(f"{record['id']}.{key}")
+        self.assertEqual(offenders, [])
+
+    def test_every_page_url_round_trips(self):
+        mismatches = [r["id"] for _, r in self._records() if scraper.make_page_url(r["name"]) != r["page_url"]]
+        self.assertEqual(mismatches, [])
 
 
 class MainFailureLeavesOutputTests(unittest.TestCase):

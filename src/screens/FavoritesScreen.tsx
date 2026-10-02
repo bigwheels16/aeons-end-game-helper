@@ -6,10 +6,7 @@ import CardDisplayItem from '../components/CardDisplayItem';
 import MageDisplayItem from '../components/MageDisplayItem';
 import NemesisDisplayItem from '../components/NemesisDisplayItem';
 
-/**
- * Resolves favorited record ids to bundled items, sorted by name. Unknown ids are skipped; the
- * store's load-time filter already drops them, so in practice every id resolves.
- */
+/** Resolves favorited record ids to items, sorted by name. Unknown ids are skipped. */
 function resolveFavorites<T extends { name: string }>(ids: string[], lookup: (id: string) => T | undefined): T[] {
   const found: T[] = [];
   ids.forEach(id => {

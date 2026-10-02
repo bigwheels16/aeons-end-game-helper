@@ -3,7 +3,7 @@ import { getUniqueExpansions, ItemWithExpansions } from './cards';
 
 /**
  * Union of every expansion name found across supply cards, mages and nemeses,
- * sorted. Derived once at module load from the bundled (trusted, build-time) data.
+ * sorted. Derived once at module load.
  *
  * Scope: global, in-memory, never persisted. This is the only list of expansion
  * names the UI ever renders; persisted names are intersected with it first.

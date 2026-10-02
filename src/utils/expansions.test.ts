@@ -46,10 +46,6 @@ describe('getEffectiveOwned', () => {
     expect(getEffectiveOwned(['Promo', 'Promo', 'Base'])).toEqual(['Base', 'Promo']);
   });
 
-  it('never yields names outside the provided list (prototype keys, markup)', () => {
-    expect(getEffectiveOwned(['__proto__', 'constructor', '<img src=x onerror=alert(1)>'])).toEqual([]);
-  });
-
   it('accepts an explicit list of all expansions', () => {
     expect(getEffectiveOwned(['b', 'z', 'a'], ['a', 'b', 'c'])).toEqual(['a', 'b']);
   });

@@ -4,7 +4,7 @@ import { createJSONStorage, persist, StateStorage } from 'zustand/middleware';
 import { z } from 'zod';
 import { CARD_TYPES, Card, CardType, generateDeck, shuffleDeck } from './deckEngine';
 import { ALL_EXPANSIONS } from './utils/expansions';
-import { getSupplyCardById, getSupplyCardByLegacyName, isKnownFavoriteId } from './utils/cards';
+import { getSupplyCardById, isKnownFavoriteId } from './utils/cards';
 import { ScrapedSupplyCard } from './types/scraped';
 
 export type VisibilityOption = 'current' | 'next' | 'all';
@@ -20,30 +20,20 @@ const CardSchema = z.object({
 
 const VisibilityOptionSchema = z.enum(['current', 'next', 'all']);
 
-/** Upper bounds for the persisted ownedExpansions array (untrusted localStorage input). */
-const MAX_EXPANSION_NAME_LENGTH = 200;
-const MAX_OWNED_EXPANSIONS = 500;
-
-/** Upper bounds for persisted favorites (untrusted localStorage input). Supply has 427 cards today. */
-const MAX_FAVORITES_PER_CATEGORY = 1000;
-const MAX_FAVORITE_ID_LENGTH = 200;
-
 /**
- * Persisted favorites of one category: a list of bundled record ids. Every element that is not a
- * known id of this category (old name-keyed favorites, other kinds, unknown ids, non-strings) and
- * every duplicate is dropped, never migrated. A non-array or over-long array resets only this
- * category to []. Warnings carry counts and field names only, never stored values.
+ * Persisted favorites of one category: a list of record ids. Every element that is not a known id
+ * of this category (old name-keyed favorites, other kinds, unknown ids, non-strings) and every
+ * duplicate is dropped, never migrated. A non-array resets only this category to []. Warnings
+ * carry counts and field names only, never stored values.
  */
 const favoriteIdList = (category: FavoriteCategory) =>
   z.array(z.unknown())
-    .max(MAX_FAVORITES_PER_CATEGORY)
     .transform((raw) => {
       const out: string[] = [];
       const seen = new Set<string>();
       let dropped = 0;
       for (const v of raw) {
-        if (typeof v === 'string' && v.length <= MAX_FAVORITE_ID_LENGTH
-            && isKnownFavoriteId(category, v) && !seen.has(v)) {
+        if (typeof v === 'string' && isKnownFavoriteId(category, v) && !seen.has(v)) {
           seen.add(v);
           out.push(v);
         } else {
@@ -62,23 +52,13 @@ const favoriteIdList = (category: FavoriteCategory) =>
 
 const emptyFavorites = (): Favorites => ({ supply: [], mages: [], nemeses: [] });
 
-/** Upper bounds for the persisted randomizedResult record (untrusted localStorage input). */
-const MAX_RESULT_ENTRIES = 500;
-const MAX_SLOT_ID_LENGTH = 200;
-/** Shape of a new-format (id-keyed) supply card id. Defence in depth: the real gate is the exact lookup. */
-const SUPPLY_ID_PATTERN = /^supply:[\p{L}\p{M}\p{N}]+(?:-[\p{L}\p{M}\p{N}]+)*$/u;
-/** Only these stored fields are ever read; every other stored field (page_url, effect, ...) is ignored. */
-const PersistedResultEntrySchema = z.object({
-  id: z.string().max(200).optional(),
-  name: z.string().max(200).optional(),
-});
+/** Only the stored card id is read; the card itself comes from the current card list. */
+const PersistedResultEntrySchema = z.object({ id: z.string() });
 
 /**
- * Re-resolves persisted randomizer results against the bundled dataset, never trusting stored
- * card fields. A new-format entry resolves by its exact `supply:` id only (no name fallback);
- * a legacy entry (old printed number, "" or no id) resolves by name once. Unknown, stale or
- * malformed entries drop only themselves; a non-object, too many keys or an over-long slot id
- * resets the whole field to {}. Never throws. Warnings carry counts only.
+ * Resolves persisted randomizer results by card id, so saved slots show current card data.
+ * Entries without a known id are skipped; a non-object resets the field to {}. Never throws.
+ * Warnings carry counts only.
  */
 function resolvePersistedRandomizedResult(raw: unknown): Record<string, ScrapedSupplyCard> {
   if (raw === undefined) return {};
@@ -86,39 +66,18 @@ function resolvePersistedRandomizedResult(raw: unknown): Record<string, ScrapedS
     console.warn('randomizedResult: invalid persisted value, reset to empty');
     return {};
   }
-  const slotIds = Object.keys(raw);
-  if (slotIds.length > MAX_RESULT_ENTRIES || slotIds.some((slotId) => slotId.length > MAX_SLOT_ID_LENGTH)) {
-    console.warn('randomizedResult: persisted value exceeds bounds, reset to empty');
-    return {};
+  const entries = Object.entries(raw);
+  const resolved: [string, ScrapedSupplyCard][] = [];
+  for (const [slotId, entry] of entries) {
+    const parsed = PersistedResultEntrySchema.safeParse(entry);
+    const card = parsed.success ? getSupplyCardById(parsed.data.id) : undefined;
+    if (card) resolved.push([slotId, card]);
   }
-  const entries = raw as Record<string, unknown>;
-  const out: Record<string, ScrapedSupplyCard> = {};
-  let dropped = 0;
-  for (const slotId of slotIds) {
-    if (slotId === '__proto__') {
-      dropped++;
-      continue;
-    }
-    const parsed = PersistedResultEntrySchema.safeParse(entries[slotId]);
-    let card: ScrapedSupplyCard | undefined;
-    if (parsed.success) {
-      const { id, name } = parsed.data;
-      if (id !== undefined && SUPPLY_ID_PATTERN.test(id)) {
-        card = getSupplyCardById(id);
-      } else if (name !== undefined) {
-        card = getSupplyCardByLegacyName(name);
-      }
-    }
-    if (card) {
-      out[slotId] = card;
-    } else {
-      dropped++;
-    }
-  }
+  const dropped = entries.length - resolved.length;
   if (dropped > 0) {
     console.warn(`randomizedResult: dropped ${dropped} persisted results that were invalid or stale`);
   }
-  return out;
+  return Object.fromEntries(resolved);
 }
 
 const GameStateSchema = z.object({
@@ -151,7 +110,7 @@ const GameStateSchema = z.object({
     difficultyRange: z.tuple([z.number(), z.number()]).optional().default([1, 10]),
   }).optional(),
   /**
-   * Favorites by bundled record id. Old name-keyed favorites are dropped (not migrated). Any
+   * Favorites by record id. Old name-keyed favorites are dropped (not migrated). Any
    * invalid value resets only the affected category, or only `favorites`, never the whole store.
    */
   favorites: z.object({
@@ -167,11 +126,11 @@ const GameStateSchema = z.object({
     }),
   // LEGACY randomizerExpansions is no longer declared, so the top-level (strip) object drops it.
   /**
-   * App-wide "Expansions". Untrusted input from localStorage: bounded, and any invalid
-   * value resets only this field to [] (= All) instead of failing the whole parse.
+   * App-wide "Expansions". Non-string entries are skipped; a non-array resets only this field
+   * to [] (= All) instead of failing the whole parse.
    */
-  ownedExpansions: z.array(z.string().max(MAX_EXPANSION_NAME_LENGTH))
-    .max(MAX_OWNED_EXPANSIONS)
+  ownedExpansions: z.array(z.unknown())
+    .transform((names) => names.filter((name): name is string => typeof name === 'string'))
     .optional()
     .default([])
     .catch([]),
@@ -197,10 +156,7 @@ const GameStateSchema = z.object({
       searchTerm: slot.searchTerm,
     };
   })).optional(),
-  /**
-   * Untrusted input from localStorage: only `id` (or, for legacy entries, `name`) is read, and
-   * each entry is replaced by the bundled card. Never fails the whole parse.
-   */
+  /** Only each entry's `id` is read, and the entry is replaced by that card. Never fails the whole parse. */
   randomizedResult: z.unknown()
     .transform(resolvePersistedRandomizedResult)
     .catch(() => {
@@ -283,7 +239,7 @@ export interface NemesisSearchFilters {
 
 export type FavoriteCategory = 'supply' | 'mages' | 'nemeses';
 
-/** Bundled record ids ("supply:…", "mage:…", "nemesis:…") of favorited items, grouped by category. */
+/** Record ids of favorited items, grouped by category. */
 export type Favorites = Record<FavoriteCategory, string[]>;
 
 /**
@@ -330,7 +286,7 @@ export interface SlotCriteria {
 export interface SupplyRandomizerSlice {
   /** Configured criteria for each supply slot */
   randomizerSlots: SlotCriteria[];
-  /** Map of slot IDs to assigned (bundled) supply cards */
+  /** Map of slot IDs to assigned supply cards */
   randomizedResult: Record<string, ScrapedSupplyCard>;
   /** Adds a new slot with specified criteria */
   addSlot: (slot: SlotCriteria) => void;
@@ -555,7 +511,7 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
     const currentTotal = state.drawPile.length + state.discardPile.length;
     const newTotal = newDrawPile.length + newDiscardPile.length;
     if (currentTotal !== newTotal) {
-      console.warn('Cheating detected: card count mismatch');
+      console.warn(`Card move rejected: card count changed from ${currentTotal} to ${newTotal}`);
       return false;
     }
     
