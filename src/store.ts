@@ -58,6 +58,13 @@ const GameStateSchema = z.object({
   }).catch(emptyFavorites),
   /** App-wide "Expansions". An invalid value resets it to [] (= All). */
   ownedExpansions: z.array(z.string()).catch([]),
+  /** Expansion profiles and the active ones; an invalid value resets to []. */
+  expansionProfiles: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    expansions: z.array(z.string()),
+  })).catch([]),
+  activeProfileIds: z.array(z.string()).catch([]),
   randomizerSlots: z.array(z.object({
     id: z.string(),
     cardTypes: z.array(z.enum(['Gem', 'Relic', 'Spell'])).default(['Gem', 'Relic', 'Spell']),
@@ -203,6 +210,14 @@ export interface SupplyRandomizerSlice {
   clearRandomizer: () => void;
 }
 
+/** A named preset of expansions, e.g. one player's collection. */
+export interface ExpansionProfile {
+  id: string;
+  name: string;
+  /** May contain stale names, like ownedExpansions. */
+  expansions: string[];
+}
+
 /**
  * Zustand slice holding the app-wide "Expansions" setting.
  *
@@ -218,10 +233,23 @@ export interface ExpansionsSlice {
    * getEffectiveOwned()/useOwnedExpansions(), never read this raw for filtering or display.
    */
   ownedExpansions: string[];
+  /** Saved profiles, in creation order. */
+  expansionProfiles: ExpansionProfile[];
+  /**
+   * Ids of the active profiles. While any is active, ownedExpansions is the union of their
+   * expansions; editing the selection directly turns every profile off.
+   */
+  activeProfileIds: string[];
   /** Adds or removes one expansion. */
   toggleOwnedExpansion: (name: string) => void;
   /** Replaces the selection (Select All / Clear Selection). */
   setOwnedExpansions: (names: readonly string[]) => void;
+  /** Turns a profile on or off. */
+  toggleExpansionProfile: (id: string) => void;
+  /** Adds a profile, or replaces the one with the same id. */
+  saveExpansionProfile: (profile: ExpansionProfile) => void;
+  /** Deletes a profile. */
+  deleteExpansionProfile: (id: string) => void;
 }
 
 type GameState = ConfigSlice & PlaySlice & SearchSlice & SupplyRandomizerSlice & ExpansionsSlice;
@@ -418,21 +446,51 @@ const createRandomizerSlice: StateCreator<GameState, [], [], SupplyRandomizerSli
   clearRandomizer: () => set({ randomizerSlots: [], randomizedResult: {} })
 });
 
+/** Active ids and selection for these active profiles; no active profile selects nothing (= All). */
+const activateProfiles = (profiles: ExpansionProfile[], activeIds: string[]) => {
+  const active = profiles.filter((p) => activeIds.includes(p.id));
+  return {
+    activeProfileIds: active.map((p) => p.id),
+    ownedExpansions: [...new Set(active.flatMap((p) => p.expansions))],
+  };
+};
+
 /**
- * Creates the app-wide "Expansions" slice. These two actions are the only writers
+ * Creates the app-wide "Expansions" slice. These actions are the only writers
  * of ownedExpansions; no "Clear Filters" action may touch it.
  */
 const createExpansionsSlice: StateCreator<GameState, [], [], ExpansionsSlice> = (set) => ({
   ownedExpansions: [],
+  expansionProfiles: [],
+  activeProfileIds: [],
   toggleOwnedExpansion: (name) => set((state) => {
     const current = state.ownedExpansions;
     return {
       ownedExpansions: current.includes(name)
         ? current.filter((n) => n !== name)
         : [...current, name],
+      activeProfileIds: [],
     };
   }),
-  setOwnedExpansions: (names) => set({ ownedExpansions: [...names] }),
+  setOwnedExpansions: (names) => set({ ownedExpansions: [...names], activeProfileIds: [] }),
+  toggleExpansionProfile: (id) => set((state) => {
+    const current = state.activeProfileIds;
+    const activeIds = current.includes(id) ? current.filter((a) => a !== id) : [...current, id];
+    return activateProfiles(state.expansionProfiles, activeIds);
+  }),
+  saveExpansionProfile: (profile) => set((state) => {
+    const exists = state.expansionProfiles.some((p) => p.id === profile.id);
+    const expansionProfiles = exists
+      ? state.expansionProfiles.map((p) => (p.id === profile.id ? profile : p))
+      : [...state.expansionProfiles, profile];
+    if (!state.activeProfileIds.includes(profile.id)) return { expansionProfiles };
+    return { expansionProfiles, ...activateProfiles(expansionProfiles, state.activeProfileIds) };
+  }),
+  deleteExpansionProfile: (id) => set((state) => {
+    const expansionProfiles = state.expansionProfiles.filter((p) => p.id !== id);
+    if (!state.activeProfileIds.includes(id)) return { expansionProfiles };
+    return { expansionProfiles, ...activateProfiles(expansionProfiles, state.activeProfileIds) };
+  }),
 });
 
 /**

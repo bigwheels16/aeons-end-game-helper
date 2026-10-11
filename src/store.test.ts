@@ -186,6 +186,98 @@ describe('Expansions setting (ownedExpansions)', () => {
   });
 });
 
+describe('Expansion profiles', () => {
+  const [expA, expB, expC] = ALL_EXPANSIONS;
+  const mine = { id: 'p-mine', name: 'Mine', expansions: [expA, expB] };
+  const theirs = { id: 'p-theirs', name: 'Theirs', expansions: [expB, expC] };
+
+  beforeEach(() => {
+    useGameStore.setState({ ownedExpansions: [], expansionProfiles: [mine, theirs], activeProfileIds: [] });
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    localStorage.clear();
+  });
+
+  it('selects the union of the active profiles, and All once none is active', () => {
+    const { toggleExpansionProfile } = useGameStore.getState();
+
+    toggleExpansionProfile(mine.id);
+    expect(useGameStore.getState().ownedExpansions).toEqual([expA, expB]);
+
+    toggleExpansionProfile(theirs.id);
+    expect(useGameStore.getState().activeProfileIds).toEqual([mine.id, theirs.id]);
+    expect(useGameStore.getState().ownedExpansions).toEqual([expA, expB, expC]);
+
+    toggleExpansionProfile(mine.id);
+    expect(useGameStore.getState().ownedExpansions).toEqual([expB, expC]);
+
+    toggleExpansionProfile(theirs.id);
+    expect(useGameStore.getState().activeProfileIds).toEqual([]);
+    expect(useGameStore.getState().ownedExpansions).toEqual([]);
+  });
+
+  it.each([
+    ['toggleOwnedExpansion', () => useGameStore.getState().toggleOwnedExpansion(expA), [expB]],
+    ['setOwnedExpansions', () => useGameStore.getState().setOwnedExpansions([expC]), [expC]],
+  ])('%s turns the profiles off and edits the current selection', (_name, edit, expected) => {
+    useGameStore.getState().toggleExpansionProfile(mine.id);
+    edit();
+    expect(useGameStore.getState().activeProfileIds).toEqual([]);
+    expect(useGameStore.getState().ownedExpansions).toEqual(expected);
+  });
+
+  it('saveExpansionProfile adds a profile, and updates the selection only when the profile is active', () => {
+    const { saveExpansionProfile, toggleExpansionProfile } = useGameStore.getState();
+    saveExpansionProfile({ id: 'p-new', name: 'New', expansions: [expC] });
+    expect(useGameStore.getState().expansionProfiles.map((p) => p.name)).toEqual(['Mine', 'Theirs', 'New']);
+    expect(useGameStore.getState().ownedExpansions).toEqual([]);
+
+    toggleExpansionProfile(mine.id);
+    saveExpansionProfile({ ...mine, name: 'Renamed', expansions: [expA] });
+    expect(useGameStore.getState().expansionProfiles[0]).toEqual({ id: mine.id, name: 'Renamed', expansions: [expA] });
+    expect(useGameStore.getState().ownedExpansions).toEqual([expA]);
+  });
+
+  it('deleteExpansionProfile drops an active profile from the selection', () => {
+    const { toggleExpansionProfile, deleteExpansionProfile } = useGameStore.getState();
+    toggleExpansionProfile(mine.id);
+    toggleExpansionProfile(theirs.id);
+
+    deleteExpansionProfile(mine.id);
+
+    const state = useGameStore.getState();
+    expect(state.expansionProfiles).toEqual([theirs]);
+    expect(state.activeProfileIds).toEqual([theirs.id]);
+    expect(state.ownedExpansions).toEqual([expB, expC]);
+  });
+
+  it('restores profiles and active ids from storage', async () => {
+    useGameStore.setState({ expansionProfiles: [], activeProfileIds: [] });
+    writePersisted({ ...makeSavedState(), ownedExpansions: [expA, expB], expansionProfiles: [mine], activeProfileIds: [mine.id] });
+
+    await useGameStore.persist.rehydrate();
+
+    const state = useGameStore.getState();
+    expect(state.expansionProfiles).toEqual([mine]);
+    expect(state.activeProfileIds).toEqual([mine.id]);
+    expect(state.ownedExpansions).toEqual([expA, expB]);
+  });
+
+  it('resets invalid saved profiles and keeps the rest of the save', async () => {
+    writePersisted({ ...makeSavedState(), ownedExpansions: [expA], expansionProfiles: [{ name: 'No id' }], activeProfileIds: 'p-mine' });
+
+    await useGameStore.persist.rehydrate();
+
+    const state = useGameStore.getState();
+    expect(state.expansionProfiles).toEqual([]);
+    expect(state.activeProfileIds).toEqual([]);
+    expect(state.ownedExpansions).toEqual([expA]);
+    expect(state.favorites).toEqual(SAVED_FAVORITES);
+  });
+});
+
 describe('persisted randomizerSlots', () => {
   afterEach(() => {
     vi.restoreAllMocks();

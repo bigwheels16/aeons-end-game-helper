@@ -18,9 +18,10 @@ All of the search tools and the Supply Randomizer share one app-wide **Expansion
 Tell the app which expansions you own **once**; every tool that has an expansion concept uses it.
 - **Where:** The *Expansions — applies to all tools* chip on the Home screen and at the top of Card Search, Mage Search, Nemesis Search and the Supply Randomizer. Every chip opens the same picker.
 - **Picker:** Tap expansion tiles to toggle them (a check mark shows the selected ones). Includes a name search plus quick **Select All** and **Clear Selection** actions. Changes apply instantly; there is no save step.
+- **Profiles:** Save a set of expansions under a name (for example, one per player's collection) with **+ New Profile**, which starts from the current selection. Tap profiles to turn them on; with several on, every expansion in any of them is selected, and the Expansions chip shows their names. Turning the last one off selects nothing (All Expansions). Tapping an expansion, **Select All** or **Clear Selection** turns the profiles off and edits the current selection. The ✎ button renames a profile, changes its expansions or deletes it; changes to a profile that is on apply right away.
 - **Empty selection = All Expansions:** With nothing selected, nothing is filtered. Expansions added to the data later are *not* automatically added to an explicit selection.
 - **Never cleared by "Clear Filters":** Each tool's *Clear All Filters* / *Clear All* button only resets that tool's own search filters or slots.
-- **Persistent:** Saved in the browser's `localStorage` and restored on every visit. If storage is unavailable (e.g. private browsing), the setting still works for the current session. With several tabs open, the last tab to save wins.
+- **Persistent:** The selection and profiles are saved in the browser's `localStorage` and restored on every visit. If storage is unavailable (e.g. private browsing), the setting still works for the current session. With several tabs open, the last tab to save wins.
 - **Not applied to Favorites:** The Favorites screen always shows everything you starred.
 
 ### 1. Turn Order Helper

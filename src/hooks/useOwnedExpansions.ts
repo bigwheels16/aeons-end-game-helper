@@ -15,6 +15,8 @@ export interface OwnedExpansionsView {
   total: number;
   /** Short badge label: "All" or "N of M". */
   label: string;
+  /** Names of the active profiles, in profile order. */
+  activeProfileNames: string[];
 }
 
 /**
@@ -23,6 +25,8 @@ export interface OwnedExpansionsView {
  */
 export function useOwnedExpansions(): OwnedExpansionsView {
   const raw = useGameStore((state) => state.ownedExpansions);
+  const profiles = useGameStore((state) => state.expansionProfiles);
+  const activeIds = useGameStore((state) => state.activeProfileIds);
   return useMemo(() => {
     const owned = getEffectiveOwned(raw);
     const isAll = owned.length === 0;
@@ -33,6 +37,7 @@ export function useOwnedExpansions(): OwnedExpansionsView {
       count: owned.length,
       total: ALL_EXPANSIONS.length,
       label: isAll ? 'All' : `${owned.length} of ${ALL_EXPANSIONS.length}`,
+      activeProfileNames: profiles.filter((p) => activeIds.includes(p.id)).map((p) => p.name),
     };
-  }, [raw]);
+  }, [raw, profiles, activeIds]);
 }
