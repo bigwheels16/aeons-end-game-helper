@@ -71,6 +71,7 @@ The integrated **Card Search** tool allows quick browsing, searching, and filter
 ### 4. Mage Search Tool
 The integrated **Mage Search** tool allows quick browsing of playable Mages.
 - **Ability Search:** Look up Mages by name or specific ability keywords.
+- **Starting Cards:** Each Mage shows its starting hand and starting deck.
 - **Mage Mats:** Expand to view a Mage's official Front/Back mats and their unique starter cards.
 - **Expansions:** Results only include Mages from your app-wide **Expansions** setting.
 

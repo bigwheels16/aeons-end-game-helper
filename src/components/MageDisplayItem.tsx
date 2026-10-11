@@ -51,9 +51,20 @@ function UniqueStarter({ starter }: { starter: ScrapedUniqueStarter }) {
   );
 }
 
+/** One starting card list (hand or deck), one card per line. */
+function StartingCards({ label, html }: { label: string; html: string | undefined }) {
+  if (!html) return null;
+  return (
+    <div style={{ flex: '1 1 140px' }}>
+      <strong style={{ color: '#ccc', display: 'block', marginBottom: '0.25rem' }}>{label}:</strong>
+      <ScrapedHtml html={html} style={{ lineHeight: 1.5 }} />
+    </div>
+  );
+}
+
 /**
  * Mage presentation card: title (wiki link), favorite star, special ability and additional rules,
- * complexity, color-coded breach positions, mat images, and unique starter cards.
+ * complexity, color-coded breach positions, starting hand and deck, mat images, and unique starter cards.
  */
 export default function MageDisplayItem({ mage }: MageDisplayItemProps) {
   const [showMats, setShowMats] = useState(false);
@@ -107,6 +118,13 @@ export default function MageDisplayItem({ mage }: MageDisplayItemProps) {
               {type}: <span style={{ color: BREACH_POSITION_COLORS[pos] ?? '#bbb' }}>{pos}</span>
             </span>
           ))}
+        </div>
+      )}
+
+      {(mage.starting_hand || mage.starting_deck) && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem 1.5rem', marginBottom: '1rem', fontSize: '0.85rem', color: '#bbb' }}>
+          <StartingCards label="Starting Hand" html={mage.starting_hand} />
+          <StartingCards label="Starting Deck" html={mage.starting_deck} />
         </div>
       )}
 
