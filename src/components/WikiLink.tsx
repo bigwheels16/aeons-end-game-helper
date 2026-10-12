@@ -1,16 +1,17 @@
 import { CSSProperties, ReactNode } from 'react';
+import { wikiPageUrl } from '../utils/wikiUrls';
 
 export interface WikiLinkProps {
-  /** Wiki page URL of the record. */
-  url: string;
+  /** Wiki page title of the record. */
+  title: string;
   style?: CSSProperties;
   children: ReactNode;
 }
 
 /** Link to a record's wiki page, opened in a new tab. */
-export default function WikiLink({ url, style, children }: WikiLinkProps) {
+export default function WikiLink({ title, style, children }: WikiLinkProps) {
   return (
-    <a href={url} target="_blank" rel="noopener noreferrer" style={style}>
+    <a href={wikiPageUrl(title)} target="_blank" rel="noopener noreferrer" style={style}>
       {children}
     </a>
   );

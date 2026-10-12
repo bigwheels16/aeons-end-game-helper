@@ -26,7 +26,7 @@ function UniqueStarter({ starter }: { starter: ScrapedUniqueStarter }) {
     <div style={{ backgroundColor: '#333', padding: '0.75rem', borderRadius: '4px', border: '1px solid #444' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
         <strong style={{ color: '#fff' }}>
-          <WikiLink url={starter.page_url} style={{ color: '#4CAF50', textDecoration: 'none' }}>
+          <WikiLink title={starter.name} style={{ color: '#4CAF50', textDecoration: 'none' }}>
             {starter.name}
           </WikiLink>
         </strong>
@@ -44,7 +44,7 @@ function UniqueStarter({ starter }: { starter: ScrapedUniqueStarter }) {
       </button>
       {showImage && (
         <div style={{ marginTop: '0.5rem' }}>
-          <WikiImage name={starter.name} />
+          {starter.images?.map(file => <WikiImage key={file} file={file} />)}
         </div>
       )}
     </div>
@@ -74,7 +74,7 @@ export default function MageDisplayItem({ mage }: MageDisplayItemProps) {
     <div style={{ backgroundColor: '#222', padding: '0.75rem', borderRadius: '8px', border: '1px solid #444', color: 'white', overflow: 'hidden' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem', margin: '0 0 0.25rem 0' }}>
         <h2 style={{ margin: 0 }}>
-          <WikiLink url={mage.page_url} style={{ color: '#4CAF50', textDecoration: 'none' }}>
+          <WikiLink title={mage.name} style={{ color: '#4CAF50', textDecoration: 'none' }}>
             {mage.name}
           </WikiLink>
         </h2>
@@ -136,8 +136,7 @@ export default function MageDisplayItem({ mage }: MageDisplayItemProps) {
       </button>
       {showMats && (
         <div style={{ marginBottom: '1rem', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          <WikiImage name={`${mage.name} Front`} />
-          <WikiImage name={`${mage.name} Back`} />
+          {mage.images?.map(file => <WikiImage key={file} file={file} />)}
         </div>
       )}
 

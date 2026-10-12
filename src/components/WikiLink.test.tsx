@@ -3,14 +3,14 @@ import { describe, it, expect } from 'vitest';
 import WikiLink from './WikiLink';
 
 describe('WikiLink', () => {
-  it('links to page_url in a new tab with noopener noreferrer', () => {
+  it('links to the encoded wiki page in a new tab with noopener noreferrer', () => {
     render(
-      <WikiLink url="https://aeonsend.wiki.gg/wiki/Jade" style={{ color: 'green' }}>
-        Jade
+      <WikiLink title="Bishop: Returned" style={{ color: 'green' }}>
+        Bishop
       </WikiLink>
     );
-    const link = screen.getByRole('link', { name: 'Jade' });
-    expect(link.getAttribute('href')).toBe('https://aeonsend.wiki.gg/wiki/Jade');
+    const link = screen.getByRole('link', { name: 'Bishop' });
+    expect(link.getAttribute('href')).toBe('https://aeonsend.wiki.gg/wiki/Bishop%3A_Returned');
     expect(link.getAttribute('target')).toBe('_blank');
     expect(link.getAttribute('rel')).toBe('noopener noreferrer');
     expect(link.style.color).toBe('green');

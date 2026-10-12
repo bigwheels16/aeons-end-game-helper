@@ -4,8 +4,9 @@ import CardDisplayItem from './CardDisplayItem';
 
 describe('CardDisplayItem', () => {
   it('Show Image reveals the encoded, lazily loaded wiki image as a new-tab link; Hide Image removes it', () => {
-    render(<CardDisplayItem card={{ id: 'supply:what', name: 'What? #1', type: 'Gem', cost: '2', page_url: 'https://aeonsend.wiki.gg/wiki/What%3F_%231' }} />);
+    render(<CardDisplayItem card={{ id: 'supply:what', name: 'What? #1', type: 'Gem', cost: '2', images: ['What?_#1.jpg'] }} />);
     expect(screen.queryByRole('img')).toBeNull();
+    expect(screen.getByRole('link', { name: 'What? #1' }).getAttribute('href')).toBe('https://aeonsend.wiki.gg/wiki/What%3F_%231');
 
     fireEvent.click(screen.getByRole('button', { name: 'Show Image' }));
 

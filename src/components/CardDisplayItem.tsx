@@ -37,7 +37,7 @@ export default function CardDisplayItem({
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
         <h3 style={{ margin: 0 }}>
-          <WikiLink url={card.page_url} style={{ color: '#4CAF50', textDecoration: 'none' }}>
+          <WikiLink title={card.name} style={{ color: '#4CAF50', textDecoration: 'none' }}>
             {card.name}
           </WikiLink>
         </h3>
@@ -63,7 +63,7 @@ export default function CardDisplayItem({
       </button>
       {showImage && (
         <div style={{ marginTop: '0.5rem' }}>
-          <WikiImage name={card.name} />
+          {card.images?.map(file => <WikiImage key={file} file={file} />)}
         </div>
       )}
     </div>

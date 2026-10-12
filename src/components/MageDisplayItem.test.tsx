@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import MageDisplayItem from './MageDisplayItem';
 import { ScrapedMage } from '../types/scraped';
@@ -9,7 +9,7 @@ const mage: ScrapedMage = {
   type: 'Mage',
   starting_hand: '1x Buried Light<br>4x Crystal',
   starting_deck: '3x Crystal<br>2x Spark',
-  page_url: 'https://aeonsend.wiki.gg/wiki/Brama',
+  images: ['Brama_Front.jpg', 'Brama_Back.jpg'],
 };
 
 describe('MageDisplayItem', () => {
@@ -26,5 +26,17 @@ describe('MageDisplayItem', () => {
     render(<MageDisplayItem mage={{ ...mage, starting_hand: undefined, starting_deck: undefined }} />);
     expect(screen.queryByText('Starting Hand:')).toBeNull();
     expect(screen.queryByText('Starting Deck:')).toBeNull();
+  });
+
+  it('Show Mat Images shows the mat images in order', () => {
+    render(<MageDisplayItem mage={mage} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Show Mat Images' }));
+
+    const srcs = screen.getAllByRole('img').map(img => img.getAttribute('src'));
+    expect(srcs).toEqual([
+      'https://aeonsend.wiki.gg/images/Brama_Front.jpg',
+      'https://aeonsend.wiki.gg/images/Brama_Back.jpg',
+    ]);
+    expect(screen.getByRole('img', { name: 'Brama Front' })).toBeTruthy();
   });
 });

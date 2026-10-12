@@ -3,8 +3,10 @@
 Aeon's End Wiki Scraper
 Scrapes gems, relics, spells, mages, unique starters, nemeses, and nemesis cards
 for each game and expansion from https://aeonsend.wiki.gg using the MediaWiki API.
-HTML fields are sanitized with nh3 (allowlisted tags/attributes, wiki-hosted images only), and
-every page_url must be on aeonsend.wiki.gg; a page_url failure aborts the scrape.
+HTML fields are sanitized with nh3 (allowlisted tags/attributes, wiki-hosted images only).
+Each record lists the wiki file names of its card or mat images in "images".
+With --download-images, those images and the images inside the records' HTML fields are
+downloaded one at a time into <output-dir>/images/, skipping unchanged files.
 
 Requires: pip install --only-binary :all: -r scripts/requirements.txt
 
@@ -12,6 +14,7 @@ Usage:
   python scrape_aeons_end.py
   python scrape_aeons_end.py --output-dir ./data/scraped
   python scrape_aeons_end.py --expansion "The Depths"
+  python scrape_aeons_end.py --download-images
   docker run --rm -v ${PWD}:/app -w /app python:3 sh -c "pip install --only-binary :all: -r scripts/requirements.txt && python scripts/scrape_aeons_end.py"
 """
 
@@ -21,7 +24,10 @@ import json
 import time
 import re
 import argparse
+import hashlib
+import http.client
 import unicodedata
+import urllib.error
 import urllib.request
 import urllib.parse
 from html.parser import HTMLParser
@@ -30,9 +36,19 @@ from typing import Dict, List, Any, Optional, Set, Tuple
 import nh3
 
 API_URL = "https://aeonsend.wiki.gg/api.php"
-BASE_PAGE_URL = "https://aeonsend.wiki.gg/wiki/"
 DEFAULT_USER_AGENT = "AeonsEndWikiScraper/1.0"
 OUTPUT_FILENAME = "aeons_end_all.json"
+IMAGES_DIRNAME = "images"
+IMAGE_MANIFEST_FILENAME = "images.json"
+
+HTTP_TIMEOUT = 30
+# Throttling and server errors are retried with a doubling backoff; any other HTTP error aborts at once.
+RETRY_STATUSES = frozenset({429, 500, 502, 503, 504})
+MAX_RETRIES = 4
+RETRY_BASE_DELAY = 15.0
+# A longer Retry-After aborts the run instead of waiting.
+MAX_RETRY_AFTER = 600.0
+API_TITLES_PER_QUERY = 50
 
 # Output collection -> id kind prefix. Every record in these collections gets id "<kind>:<slug>".
 ID_KIND_BY_CATEGORY: Dict[str, str] = {
@@ -95,6 +111,23 @@ HTML_FIELDS: Dict[str, Tuple[str, ...]] = {
     "nemeses": ("unleash", "increased_difficulty", "rules", "setup"),
     "nemesis_cards": ("effect",),
 }
+
+# Output collection -> wiki template and its (image parameter, default file name suffix) pairs.
+RECORD_IMAGES: Dict[str, Tuple[str, Tuple[Tuple[str, str], ...]]] = {
+    "supply": ("PlayerCard", (("image", ""),)),
+    "unique_starters": ("PlayerCard", (("image", ""),)),
+    "mages": ("Mage", (("image_front", " Front"), ("image_back", " Back"))),
+    "nemeses": ("Nemesis", (("image_front", " Front"), ("image_back", " Back"))),
+    "nemesis_cards": ("NemesisCard", (("image", ""),)),
+}
+# Characters a MediaWiki title can't hold; such image names are reported missing without a lookup.
+INVALID_TITLE_CHARS = re.compile(r"[#<>\[\]|{}\x00-\x1f\x7f]")
+# Characters that can't appear in a local file name on Linux or Windows.
+UNSAFE_FILE_NAME_CHARS = re.compile(r'[\x00-\x1f\x7f/\\:*?"<>|]')
+
+
+class HttpError(Exception):
+    """An HTTP request failed, after retries where the failure allows them."""
 
 
 def img_src_rejection_reason(src: str) -> Optional[str]:
@@ -245,18 +278,6 @@ def clean_wikitext(text: Optional[str]) -> str:
     # Normalize lines and join with <br/>
     lines = [l.strip() for l in text.splitlines()]
     return "<br/>".join(l for l in lines if l).strip()
-
-
-def make_page_url(title: str) -> str:
-    """
-    Returns the HTTPS wiki URL for a given page title. The constant BASE_PAGE_URL plus the quoted
-    title keeps it on aeonsend.wiki.gg under /wiki/. Raises ValueError on a "." or ".." path segment.
-    """
-    encoded_title = urllib.parse.quote(title.replace(" ", "_"))
-    url = f"{BASE_PAGE_URL}{encoded_title}"
-    if any(segment in (".", "..") for segment in encoded_title.split("/")):
-        raise ValueError(f"Page URL has a '.' or '..' path segment: {ascii(url)}")
-    return url
 
 
 def _is_word_char(ch: str) -> bool:
@@ -424,13 +445,45 @@ def save_page_file(cache_dir: str, page_data: Dict[str, Any]) -> str:
     return target_path
 
 
+def http_get(url: str, user_agent: str) -> Tuple[bytes, str]:
+    """
+    GETs a URL and returns the body and content type. RETRY_STATUSES and network errors are retried
+    up to MAX_RETRIES times, waiting the server's Retry-After seconds or a doubling backoff; other
+    HTTP errors raise HttpError at once.
+    """
+    attempt = 0
+    while True:
+        retry_after = ""
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": user_agent})
+            with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as resp:
+                return resp.read(), resp.headers.get_content_type()
+        except urllib.error.HTTPError as e:
+            failure = f"HTTP {e.code} from {url}"
+            if e.code == 403:
+                raise HttpError(f"{failure}; the wiki may be blocking this client, wait before running again") from e
+            if e.code not in RETRY_STATUSES:
+                raise HttpError(failure) from e
+            retry_after = (e.headers.get("Retry-After") or "").strip()
+        except (OSError, http.client.HTTPException) as e:
+            failure = f"{type(e).__name__} ({e}) from {url}"
+
+        if attempt == MAX_RETRIES:
+            raise HttpError(f"{failure}, after {MAX_RETRIES} retries; wait before running again")
+        wait = float(retry_after) if retry_after.isdigit() else RETRY_BASE_DELAY * 2 ** attempt
+        if wait > MAX_RETRY_AFTER:
+            raise HttpError(f"{failure}; the server asked to wait {wait:.0f}s, wait before running again")
+        attempt += 1
+        print(f"  {failure}; retry {attempt}/{MAX_RETRIES} in {wait:.0f}s")
+        time.sleep(wait)
+
+
 def api_get(params: Dict[str, Any], user_agent: str) -> Dict[str, Any]:
-    """Performs an HTTP GET request to the MediaWiki API with a timeout."""
+    """Performs an HTTP GET request to the MediaWiki API (retried as in http_get)."""
     params["format"] = "json"
     url = f"{API_URL}?{urllib.parse.urlencode(params)}"
-    req = urllib.request.Request(url, headers={"User-Agent": user_agent})
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        return json.loads(resp.read().decode("utf-8"))
+    body, _ = http_get(url, user_agent)
+    return json.loads(body.decode("utf-8"))
 
 
 def get_category_members(category_title: str, user_agent: str, delay: float = 0.1) -> List[str]:
@@ -528,7 +581,6 @@ def process_player_card(title: str, page_data: Dict[str, Any]) -> Optional[Tuple
         "cost": cost,
         "effect": rules,
         "expansions": expansions,
-        "page_url": make_page_url(title),
     }
 
     if is_unique:
@@ -663,7 +715,6 @@ def process_mage(title: str, page_data: Dict[str, Any]) -> Optional[Tuple[str, D
         "starting_deck": get_clean(params, "starting deck"),
         "breaches": parse_mage_breaches(params, wikitext),
         "additional_rules": parse_mage_additional_rules(params, wikitext),
-        "page_url": make_page_url(title),
     }
     return "mages", item
 
@@ -686,7 +737,6 @@ def process_nemesis(title: str, page_data: Dict[str, Any]) -> Optional[Tuple[str
         "rules": get_clean(params, "rules"),
         "setup": get_clean(params, "setup"),
         "expansions": extract_expansions(params, page_data["categories"]),
-        "page_url": make_page_url(title),
     }
     return "nemeses", item
 
@@ -711,7 +761,6 @@ def process_nemesis_card(title: str, page_data: Dict[str, Any]) -> Optional[Tupl
         "effect": get_clean(params, "effect"),
         "nemesis": get_clean(params, "nemesis", default="Basic"),
         "expansions": extract_expansions(params, page_data["categories"]),
-        "page_url": make_page_url(title),
     }
 
     if card_type == "Minion":
@@ -746,6 +795,31 @@ def process_nemesis_card(title: str, page_data: Dict[str, Any]) -> Optional[Tupl
             card["power"] = power_val
 
     return "nemesis_cards", card
+
+
+def wiki_file_name(name: str) -> str:
+    """
+    Returns a wiki file name in its URL form: runs of spaces and underscores become one underscore,
+    the ends are trimmed and the first letter is upper case.
+    """
+    name = re.sub(r"[ _]+", "_", name).strip("_")
+    return name[:1].upper() + name[1:]
+
+
+def record_image_names(category: str, page_data: Dict[str, Any]) -> List[str]:
+    """
+    Wiki file names of a record's card or mat images, built the way the wiki templates build them:
+    the template's image parameter (percent-decoded), or else the page name plus the suffix, then
+    ".jpg". The page name loses its colons, except in the Mage template.
+    """
+    template, images = RECORD_IMAGES[category]
+    params = parse_template(page_data["wikitext"], template) or {}
+    page_name = page_data["title"] if template == "Mage" else page_data["title"].replace(":", "")
+    names: List[str] = []
+    for param, suffix in images:
+        override = urllib.parse.unquote(params.get(param, "").strip())
+        names.append(wiki_file_name(f"{override or page_name + suffix}.jpg"))
+    return names
 
 
 def collect_or_load_pages(args: argparse.Namespace, cache_dir: str) -> Optional[Dict[str, Dict[str, Any]]]:
@@ -852,7 +926,7 @@ def parse_and_group(
 
         if cat in by_category:
             # Generated id is the first key; it replaces the wiki's printed card number.
-            record = {"id": make_item_id(cat, item["name"]), **item}
+            record = {"id": make_item_id(cat, item["name"]), **item, "images": record_image_names(cat, page_data)}
             by_category[cat].append(sanitize_record(cat, record))
 
     print(f"Successfully parsed {total_parsed} items.")
@@ -881,6 +955,191 @@ def save_dataset(by_category: Dict[str, List[Dict[str, Any]]], output_dir: str) 
     print("Scraping complete!")
 
 
+def write_file_atomically(path: str, data: bytes) -> None:
+    """Writes data through a temporary file, so an existing file is only ever replaced whole."""
+    tmp_path = f"{path}.tmp"
+    with open(tmp_path, "wb") as f:
+        f.write(data)
+    os.replace(tmp_path, path)
+
+
+def file_sha1(path: str) -> Optional[str]:
+    """Returns the hex sha1 of a file, or None if it doesn't exist."""
+    try:
+        with open(path, "rb") as f:
+            return hashlib.sha1(f.read()).hexdigest()
+    except FileNotFoundError:
+        return None
+
+
+def collect_image_names(by_category: Dict[str, List[Dict[str, Any]]]) -> Dict[str, List[str]]:
+    """Returns image file name -> ids of the records that show it, as a card/mat image or in an HTML field."""
+    used_by: Dict[str, List[str]] = {}
+    for category, records in by_category.items():
+        for record in records:
+            srcs = [
+                src
+                for field in HTML_FIELDS[category]
+                if isinstance(record.get(field), str)
+                for src in scan_imgs(record[field]).srcs
+            ]
+            inline = {urllib.parse.unquote(src[len(WIKI_IMAGE_PREFIX):]) for src in srcs if src.startswith(WIKI_IMAGE_PREFIX)}
+            for name in sorted(inline.union(record["images"])):
+                used_by.setdefault(name, []).append(record["id"])
+    return used_by
+
+
+def fetch_image_info(names: List[str], user_agent: str, delay: float) -> Dict[str, Optional[Dict[str, Any]]]:
+    """
+    Looks up wiki files by name, API_TITLES_PER_QUERY per request and following redirects. Maps each
+    name to the file's title, url, size and sha1, or to None when the wiki has no such file.
+    """
+    info_by_name: Dict[str, Optional[Dict[str, Any]]] = {}
+    for i in range(0, len(names), API_TITLES_PER_QUERY):
+        if i:
+            time.sleep(delay)
+        batch = names[i : i + API_TITLES_PER_QUERY]
+        data = api_get(
+            {
+                "action": "query",
+                "prop": "imageinfo",
+                "iiprop": "url|size|sha1",
+                "redirects": 1,
+                "titles": "|".join(f"File:{name}" for name in batch),
+            },
+            user_agent,
+        )
+        if "error" in data or "continue" in data:
+            raise ValueError(f"Unexpected imageinfo response: {ascii(data.get('error') or data.get('continue'))}")
+        query = data.get("query", {})
+        renames = {entry["from"]: entry["to"] for entry in query.get("normalized", []) + query.get("redirects", [])}
+        pages = {page["title"]: page for page in query.get("pages", {}).values()}
+        for name in batch:
+            title = f"File:{name}"
+            seen: Set[str] = set()
+            while title in renames and title not in seen:
+                seen.add(title)
+                title = renames[title]
+            page = pages.get(title, {})
+            info = page.get("imageinfo")
+            info_by_name[name] = {"title": page["title"], **info[0]} if info else None
+    return info_by_name
+
+
+def image_url_rejection_reason(url: str, file_name: str) -> Optional[str]:
+    """Returns why an image URL is not allowed, or None for WIKI_IMAGE_PREFIX + file_name (any query)."""
+    parts = urllib.parse.urlsplit(url)
+    allowed = urllib.parse.urlsplit(WIKI_IMAGE_PREFIX)
+    if (parts.scheme, parts.netloc) != (allowed.scheme, allowed.netloc):
+        return f"not on {allowed.scheme}://{allowed.netloc}"
+    if urllib.parse.unquote(parts.path) != allowed.path + file_name:
+        return f"not the path {allowed.path}{file_name}"
+    return None
+
+
+def load_image_manifest(path: str) -> Dict[str, str]:
+    """Returns images.json (file name -> wiki sha1 of the version on disk), or {} if there is none."""
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            files = json.load(f)
+        return {str(file_name): str(sha1) for file_name, sha1 in files.items()}
+    except FileNotFoundError:
+        return {}
+    except (ValueError, AttributeError) as e:
+        raise ValueError(f"Can't read {path} ({e!r}); delete it to download every image again") from e
+
+
+def download_images(by_category: Dict[str, List[Dict[str, Any]]], args: argparse.Namespace) -> None:
+    """
+    Downloads the records' card and mat images, and the images in their HTML fields, into
+    <output-dir>/images/ under the names the records use, one request at a time, waiting
+    args.image_delay seconds after each download. images.json maps each file name to the wiki sha1 of
+    the version on disk and is saved even when the downloads stop early; a file is only requested
+    again when the wiki's sha1 changes. The wiki's CDN may re-encode images, so a download only has
+    to be a non-empty image. Images the wiki doesn't have, or whose name is unsafe as a local file
+    name, are listed and skipped.
+    """
+    images_dir = os.path.join(args.output_dir, IMAGES_DIRNAME)
+    manifest_path = os.path.join(images_dir, IMAGE_MANIFEST_FILENAME)
+    used_by = collect_image_names(by_category)
+    names = sorted(used_by)
+
+    print(f"\nLooking up {len(names)} images on the wiki...")
+    info_by_name = fetch_image_info(
+        [name for name in names if not INVALID_TITLE_CHARS.search(name)], args.user_agent, args.delay
+    )
+
+    info_by_file: Dict[str, Dict[str, Any]] = {}
+    skipped = 0
+    for name in names:
+        context = f"file={ascii(name)} used_by={ascii(', '.join(used_by[name]))}"
+        info = info_by_name.get(name)
+        if info is None:
+            skipped += 1
+            print(f"Missing image: {context}")
+            continue
+        if UNSAFE_FILE_NAME_CHARS.search(name) or name.endswith("."):
+            skipped += 1
+            print(f"Skipped image: {context} reason='unsafe local file name'")
+            continue
+        wiki_name = info["title"].split(":", 1)[1].replace(" ", "_")
+        reason = image_url_rejection_reason(info["url"], wiki_name)
+        if reason is not None:
+            raise ValueError(f"Image URL {ascii(info['url'])} for {context} is {reason}")
+        if wiki_name != name:
+            # The wiki serves the file only under its own name, so a link to this name doesn't load.
+            print(f"Renamed image: {context} wiki_file={ascii(wiki_name)}")
+        info_by_file[name] = info
+
+    os.makedirs(images_dir, exist_ok=True)
+    known_sha1 = {
+        file_name: sha1
+        for file_name, sha1 in load_image_manifest(manifest_path).items()
+        if os.path.isfile(os.path.join(images_dir, file_name))
+    }
+    # Files missing from images.json still count as current when they are byte-identical to the wiki's.
+    for file_name, info in info_by_file.items():
+        if known_sha1.get(file_name) != info["sha1"] and file_sha1(os.path.join(images_dir, file_name)) == info["sha1"]:
+            known_sha1[file_name] = info["sha1"]
+    to_download = sorted(f for f, info in info_by_file.items() if known_sha1.get(f) != info["sha1"])
+    print(
+        f"Images found: {len(info_by_file)} | Up to date: {len(info_by_file) - len(to_download)} | "
+        f"To download: {len(to_download)} (about {sum(info_by_file[f]['size'] for f in to_download) / 1e6:.1f} MB) | "
+        f"Missing or skipped: {skipped}"
+    )
+
+    downloaded_bytes = 0
+    reencoded = 0
+    try:
+        for n, file_name in enumerate(to_download, 1):
+            info = info_by_file[file_name]
+            body, content_type = http_get(info["url"], args.user_agent)
+            if not body or not content_type.startswith("image/"):
+                raise ValueError(
+                    f"Download of {ascii(info['url'])} is not an image ({ascii(content_type)}, {len(body)} bytes)"
+                )
+            write_file_atomically(os.path.join(images_dir, file_name), body)
+            known_sha1[file_name] = info["sha1"]
+            downloaded_bytes += len(body)
+            if hashlib.sha1(body).hexdigest() != info["sha1"]:
+                reencoded += 1
+            print(f"  [{n}/{len(to_download)}] {ascii(file_name)} ({len(body) // 1024} KB)")
+            time.sleep(args.image_delay)
+    except KeyboardInterrupt:
+        print("\n\nImage download interrupted by user (Ctrl+C).")
+        print(f"Downloaded images are kept in {images_dir}/; re-run with --download-images to fetch the rest.")
+        sys.exit(130)
+    finally:
+        manifest = json.dumps(dict(sorted(known_sha1.items())), indent=2, ensure_ascii=False)
+        write_file_atomically(manifest_path, manifest.encode("utf-8"))
+
+    print("\n=== Image Summary ===")
+    print(f"  Downloaded        : {len(to_download)} ({downloaded_bytes / 1e6:.1f} MB, {reencoded} re-encoded by the wiki's CDN)")
+    print(f"  Already up to date: {len(info_by_file) - len(to_download)}")
+    print(f"  Missing or skipped: {skipped}{' (listed above)' if skipped else ''}")
+    print(f"Images saved in {images_dir}/")
+
+
 def scrape(args: argparse.Namespace) -> None:
     """Main scraping orchestrator."""
     print("=== Starting Aeon's End Wiki Scrape ===")
@@ -895,6 +1154,8 @@ def scrape(args: argparse.Namespace) -> None:
     by_category = parse_and_group(all_pages_data, expansion_filter=args.expansion)
     validate_ids(by_category)
     save_dataset(by_category, args.output_dir)
+    if args.download_images:
+        download_images(by_category, args)
 
 
 def main():
@@ -944,12 +1205,25 @@ def main():
         default=DEFAULT_USER_AGENT,
         help="Custom User-Agent header for API requests",
     )
+    parser.add_argument(
+        "--download-images",
+        action="store_true",
+        help="Also download card, mat and rules-text images into <output-dir>/images/; unchanged images are skipped",
+    )
+    parser.add_argument(
+        "--image-delay",
+        type=float,
+        default=1.0,
+        help="Delay in seconds after each image download, to stay under the wiki's rate limits",
+    )
 
     args = parser.parse_args()
+    if args.download_images and args.cache_only:
+        parser.error("--download-images needs network access and can't be combined with --cache-only")
     try:
         scrape(args)
-    except ValueError as e:
-        # Id generation/validation or URL allowlist failure: exit 1, output file left untouched.
+    except (ValueError, HttpError) as e:
+        # Validation, URL allowlist or HTTP failure: exit 1 with the message.
         sys.exit(f"Error: {e}")
 
 
