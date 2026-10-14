@@ -30,12 +30,18 @@
   background-color: #f44336;
 }
 
-.randomizeBtn {
+.resultButtons {
+  display: flex;
+  gap: 1rem;
+  margin-left: auto;
+}
+
+.randomizeBtn,
+.sendBtn {
   padding: 0.75rem 1.5rem;
   border-radius: 4px;
   border: none;
   font-weight: bold;
-  margin-left: auto;
   text-align: center;
   box-sizing: border-box;
 }
@@ -46,7 +52,14 @@
   cursor: pointer;
 }
 
-.randomizeBtnDisabled {
+.sendBtn {
+  background-color: #673AB7;
+  color: white;
+  cursor: pointer;
+}
+
+.randomizeBtnDisabled,
+.sendBtn:disabled {
   background-color: #555;
   color: #888;
   cursor: not-allowed;
@@ -78,8 +91,15 @@
     padding: 0.75rem 1rem;
   }
 
-  .randomizeBtn {
+  .resultButtons {
     width: 100%;
     margin-left: 0;
+    gap: 0.75rem;
+  }
+
+  .randomizeBtn,
+  .sendBtn {
+    flex: 1;
+    padding: 0.75rem 1rem;
   }
 }

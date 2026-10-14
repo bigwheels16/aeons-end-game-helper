@@ -65,6 +65,7 @@ The **Supply Randomizer** tool automates creating randomized, balanced market se
   - *Live Match Previews:* Real-time matching card counter and horizontally scrollable preview chips that immediately indicate whether constraints can be satisfied.
 - **Intelligent Backtracking Randomization:** Employs a depth-first constraint satisfaction solver using the Most Constrained Variable (MRV) heuristic. It guarantees 100% unique card selection across all slots with zero duplicate cards, fast execution, loop/timeout protection, and graceful error messaging if constraints cannot be met.
 - **Visual Card Preview & Inline Image:** Upon randomization, each slot reveals the assigned card name, type, cost, and effect text. Players can click "Show Image" on any assigned slot to expand the official card artwork, and click the image to open it full size in a new tab.
+- **Send to Scanner:** Once every slot has a card, *Send to Scanner* opens the **Supply Scanner** with those cards in slot order, replacing the scanner's current supply.
 
 ---
 
@@ -98,7 +99,7 @@ The **Supply Scanner** records the supply on your table.
 - **Login:** Scanning needs a login with the scanner role. The screen always offers **Log in** until a login is confirmed, and assumes the scanner service and its login proxy are served on the same host under `/api/` and `/oauth2/`. No user name or email is shown.
 - **Editing by hand:** Anyone can add, swap, remove and drag cards to reorder them, and switch between card images and descriptions.
 - **Share link:** The supply is kept in the page URL (`?cards=<card ids>#scanner`), so the address bar is always a share link. Unknown card ids are skipped.
-- **Saved supply:** The supply is also saved in the browser and restored when you come back to the scanner, even after closing the app. Opening a share link replaces the saved supply with the linked one.
+- **Saved supply:** The supply is also saved in the browser and restored when you come back to the scanner, even after closing the app. Opening a share link, or sending a supply from the Supply Randomizer, replaces the saved supply.
 
 ### 7. Offline & Session Persistence
 Once the tool has been loaded in the browser, no network connection is needed for core mechanics (photo scanning excepted). All logic and text data executes locally, while images are lazily loaded on demand to save bandwidth.

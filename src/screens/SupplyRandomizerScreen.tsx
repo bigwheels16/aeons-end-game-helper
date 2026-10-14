@@ -17,7 +17,7 @@ const allCards: ScrapedSupplyCard[] = scrapedData.supply;
  * Allows players to configure custom market slots with type, cost, and search criteria
  * and run intelligent backtracking randomization to build unique 9-card (or custom-sized)
  * market supplies. The card pool is restricted to the app-wide "Expansions" setting,
- * which "Clear All" never changes.
+ * which "Clear All" never changes. A fully randomized supply can be sent to the Supply Scanner.
  */
 export default function SupplyRandomizerScreen() {
   const randomizerSlots = useGameStore((state) => state.randomizerSlots);
@@ -28,6 +28,7 @@ export default function SupplyRandomizerScreen() {
   const updateSlot = useGameStore((state) => state.updateSlot);
   const setRandomizedResult = useGameStore((state) => state.setRandomizedResult);
   const clearRandomizer = useGameStore((state) => state.clearRandomizer);
+  const setScannerSupply = useGameStore((state) => state.setScannerSupply);
 
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const { ownedSet, isAll, label: ownedLabel } = useOwnedExpansions();
@@ -107,6 +108,14 @@ export default function SupplyRandomizerScreen() {
     return matches.length === 0;
   });
 
+  const isFullyRandomized = randomizerSlots.length > 0 && randomizerSlots.every(slot => randomizedResult[slot.id]);
+
+  // Replaces the scanner's supply with the cards in slot order, then opens the scanner
+  const handleSendToScanner = () => {
+    setScannerSupply(randomizerSlots.map(slot => randomizedResult[slot.id].id));
+    window.location.hash = 'scanner';
+  };
+
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto', backgroundColor: '#1a1a1a' }}>
       <div style={{ padding: '1rem', borderBottom: '1px solid #555' }}>
@@ -129,13 +138,22 @@ export default function SupplyRandomizerScreen() {
               Clear All
             </button>
           </div>
-          <button 
-            onClick={handleRandomize}
-            disabled={hasZeroMatches || randomizerSlots.length === 0}
-            className={`${styles.randomizeBtn} ${hasZeroMatches || randomizerSlots.length === 0 ? styles.randomizeBtnDisabled : styles.randomizeBtnEnabled}`}
-          >
-            Randomize
-          </button>
+          <div className={styles.resultButtons}>
+            <button
+              onClick={handleRandomize}
+              disabled={hasZeroMatches || randomizerSlots.length === 0}
+              className={`${styles.randomizeBtn} ${hasZeroMatches || randomizerSlots.length === 0 ? styles.randomizeBtnDisabled : styles.randomizeBtnEnabled}`}
+            >
+              Randomize
+            </button>
+            <button
+              onClick={handleSendToScanner}
+              disabled={!isFullyRandomized}
+              className={styles.sendBtn}
+            >
+              Send to Scanner
+            </button>
+          </div>
         </div>
 
         {hasZeroMatches && !isAll && (

@@ -48,7 +48,38 @@ vi.mock('../../data/scraped/aeons_end_all.json', () => ({
 describe('SupplyRandomizerScreen', () => {
   beforeEach(() => {
     useGameStore.getState().clearRandomizer();
-    useGameStore.setState({ ownedExpansions: [] });
+    useGameStore.setState({ ownedExpansions: [], scannerSupply: [] });
+    window.history.replaceState(null, '', '/#randomizer');
+  });
+
+  it('sends the supply to the scanner in slot order once every slot has a card', async () => {
+    useGameStore.setState({ scannerSupply: ['supply:staff'] });
+    render(<SupplyRandomizerScreen />);
+
+    const sendButton = screen.getByRole('button', { name: 'Send to Scanner' });
+    expect(sendButton).toHaveProperty('disabled', true);
+
+    fireEvent.click(screen.getByText('+ Add Slot'));
+    fireEvent.click(screen.getByText('+ Add Slot'));
+    const [firstSearch, secondSearch] = screen.getAllByPlaceholderText('Filter by name or effect...');
+    fireEvent.change(firstSearch, { target: { value: 'Ruby' } });
+    fireEvent.change(secondSearch, { target: { value: 'Jade' } });
+    expect(sendButton).toHaveProperty('disabled', true);
+
+    fireEvent.click(screen.getByRole('button', { name: /^Randomize$/i }));
+    await waitFor(() => expect(sendButton).toHaveProperty('disabled', false));
+
+    fireEvent.click(screen.getAllByTitle('Slot Menu')[1]);
+    fireEvent.click(screen.getByRole('button', { name: 'Edit Criteria' }));
+    expect(sendButton).toHaveProperty('disabled', true);
+
+    fireEvent.click(screen.getAllByTitle('Slot Menu')[1]);
+    fireEvent.click(screen.getAllByRole('button', { name: 'Randomize' })[1]);
+    expect(sendButton).toHaveProperty('disabled', false);
+
+    fireEvent.click(sendButton);
+    expect(useGameStore.getState().scannerSupply).toEqual(['supply:ruby', 'supply:jade']);
+    expect(window.location.hash).toBe('#scanner');
   });
 
   it('restricts the live match count to the Expansions setting', async () => {
