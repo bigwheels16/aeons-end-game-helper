@@ -24,6 +24,13 @@ Tell the app which expansions you own **once**; every tool that has an expansion
 - **Persistent:** The selection and profiles are saved in the browser's `localStorage` and restored on every visit. If storage is unavailable (e.g. private browsing), the setting still works for the current session. With several tabs open, the last tab to save wins.
 - **Not applied to Favorites:** The Favorites screen always shows everything you starred.
 
+### Notes (app-wide)
+Keep one note of your own on any mage, nemesis or supply card.
+- **Where:** The note icon next to the favorites star on every mage, nemesis and supply card, wherever it is shown (search screens, Favorites, Supply Randomizer and Supply Scanner). Unique starter cards don't take notes; use their mage's note instead.
+- **At a glance:** The icon is filled when the item has a note. Hovering over it shows the note.
+- **Editing:** Tap the icon to write or edit the note. Nothing changes until *Save*; *Cancel* or Escape discards the edit, and *Delete* (tap twice) removes the note.
+- **Persistent:** Notes are saved in the browser's `localStorage` with the rest of the app's state, so they stay in this browser only.
+
 ### 1. Turn Order Helper
 
 #### Game Setup & Configuration
@@ -73,6 +80,7 @@ The integrated **Mage Search** tool allows quick browsing of playable Mages.
 - **Ability Search:** Look up Mages by name or specific ability keywords.
 - **Starting Cards:** Each Mage shows its starting hand and starting deck.
 - **Mage Mats:** Expand to view a Mage's official Front/Back mats and their unique starter cards.
+- **Unique Starters:** Unique starter cards use the Card Search layout (type, cost, effect and image), without an expansion, note or favorites star.
 - **Expansions:** Results only include Mages from your app-wide **Expansions** setting.
 
 ---
@@ -90,6 +98,7 @@ The **Supply Scanner** records the supply on your table.
 - **Login:** Scanning needs a login with the scanner role. The screen always offers **Log in** until a login is confirmed, and assumes the scanner service and its login proxy are served on the same host under `/api/` and `/oauth2/`. No user name or email is shown.
 - **Editing by hand:** Anyone can add, swap, remove and drag cards to reorder them, and switch between card images and descriptions.
 - **Share link:** The supply is kept in the page URL (`?cards=<card ids>#scanner`), so the address bar is always a share link. Unknown card ids are skipped.
+- **Saved supply:** The supply is also saved in the browser and restored when you come back to the scanner, even after closing the app. Opening a share link replaces the saved supply with the linked one.
 
 ### 7. Offline & Session Persistence
 Once the tool has been loaded in the browser, no network connection is needed for core mechanics (photo scanning excepted). All logic and text data executes locally, while images are lazily loaded on demand to save bandwidth.

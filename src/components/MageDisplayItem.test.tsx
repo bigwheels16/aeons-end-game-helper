@@ -28,6 +28,18 @@ describe('MageDisplayItem', () => {
     expect(screen.queryByText('Starting Deck:')).toBeNull();
   });
 
+  it('shows unique starters in the supply card layout, without an expansion, note or favorites star', () => {
+    render(<MageDisplayItem mage={{ ...mage, unique_cards: ['Buried Light'] }} />);
+    expect(screen.getByRole('link', { name: 'Buried Light' })).toBeTruthy();
+    expect(screen.getByText('Spell')).toBeTruthy();
+    expect(screen.getByText('Cost: 0')).toBeTruthy();
+    expect(screen.queryByText("Aeon's End (Core Box)")).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Add Buried Light to favorites' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Add note on Buried Light' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Add Brama to favorites' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Add note on Brama' })).toBeTruthy();
+  });
+
   it('Show Mat Images shows the mat images in order', () => {
     render(<MageDisplayItem mage={mage} />);
     fireEvent.click(screen.getByRole('button', { name: 'Show Mat Images' }));

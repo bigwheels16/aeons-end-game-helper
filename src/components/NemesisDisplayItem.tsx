@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ScrapedNemesis } from '../types/scraped';
 import FavoriteStar from './FavoriteStar';
+import NoteButton from './NoteButton';
 import ScrapedHtml from './ScrapedHtml';
 import WikiImage from './WikiImage';
 import WikiLink from './WikiLink';
@@ -18,7 +19,7 @@ export interface NemesisDisplayItemProps {
 }
 
 /**
- * Nemesis presentation card: title (wiki link), favorite star, health and difficulty,
+ * Nemesis presentation card: title (wiki link), note icon, favorite star, health and difficulty,
  * unleash, increased difficulty, rules, setup, and mat images.
  */
 export default function NemesisDisplayItem({ nemesis }: NemesisDisplayItemProps) {
@@ -32,7 +33,10 @@ export default function NemesisDisplayItem({ nemesis }: NemesisDisplayItemProps)
             {nemesis.name}
           </WikiLink>
         </h2>
-        <FavoriteStar category="nemeses" id={nemesis.id} name={nemesis.name} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
+          <NoteButton category="nemeses" id={nemesis.id} name={nemesis.name} />
+          <FavoriteStar category="nemeses" id={nemesis.id} name={nemesis.name} />
+        </div>
       </div>
       <h4 style={{ margin: '0 0 1rem 0', color: '#aaa', fontWeight: 'normal', fontStyle: 'italic' }}>
         {nemesis.expansions?.join(', ') || 'Unknown'}

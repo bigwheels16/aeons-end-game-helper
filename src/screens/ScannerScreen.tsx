@@ -19,6 +19,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import scrapedData from '../../data/scraped/aeons_end_all.json';
+import { useGameStore } from '../store';
 import { ScrapedSupplyCard } from '../types/scraped';
 import { getSupplyCardById } from '../utils/cards';
 import { MAX_UPLOAD_BYTES, shrinkImage } from '../utils/image';
@@ -45,12 +46,11 @@ interface SupplyEntry {
 
 const toEntry = (card: ScrapedSupplyCard): SupplyEntry => ({ key: crypto.randomUUID(), card });
 
-/** Supply from the URL; unknown ids are skipped. */
-function readSupplyFromUrl(): SupplyEntry[] {
+/** Supply from the URL, or the saved supply when the URL has none; unknown ids are skipped. */
+function readInitialSupply(): SupplyEntry[] {
   const raw = new URLSearchParams(window.location.search).get(CARDS_PARAM);
-  if (!raw) return [];
-  return raw
-    .split(',')
+  const ids = raw ? raw.split(',') : useGameStore.getState().scannerSupply;
+  return ids
     .map((id) => getSupplyCardById(id.trim()))
     .filter((card): card is ScrapedSupplyCard => !!card)
     .map(toEntry);
@@ -215,10 +215,11 @@ function reportScan(total: number, added: number, unmatched: string[]) {
  *
  * Detects supply cards in a photo through the scanner service (login required), and lets anyone
  * build, reorder and edit a supply by hand. The supply lives in the page URL, so the address is
- * always a share link.
+ * always a share link, and is saved so it is restored on the next visit.
  */
 export default function ScannerScreen() {
-  const [supply, setSupply] = useState<SupplyEntry[]>(readSupplyFromUrl);
+  const [supply, setSupply] = useState<SupplyEntry[]>(readInitialSupply);
+  const setScannerSupply = useGameStore((state) => state.setScannerSupply);
   // False while the login is being checked too, which shows the login link
   const [loggedIn, setLoggedIn] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
@@ -242,7 +243,8 @@ export default function ScannerScreen() {
 
   useEffect(() => {
     writeSupplyToUrl(supply);
-  }, [supply]);
+    setScannerSupply(supply.map((e) => e.card.id));
+  }, [supply, setScannerSupply]);
 
   // Leaving the screen drops the supply from the URL so other tools don't carry it
   useEffect(() => () => writeSupplyToUrl([]), []);

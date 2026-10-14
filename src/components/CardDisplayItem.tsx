@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ScrapedSupplyCard } from '../types/scraped';
 import FavoriteStar from './FavoriteStar';
+import NoteButton from './NoteButton';
 import ScrapedHtml from './ScrapedHtml';
 import WikiImage from './WikiImage';
 import WikiLink from './WikiLink';
@@ -9,17 +10,20 @@ export interface CardDisplayItemProps {
   card: ScrapedSupplyCard;
   headerExtra?: React.ReactNode;
   containerStyle?: React.CSSProperties;
+  /** Supply cards show the note icon, favorites star and expansions; unique starters don't. */
+  isSupplyCard?: boolean;
 }
 
 /**
- * Standard card presentation component matching the layout and styling of CardSearchScreen.
- * Displays card title (wiki link), type, favorite star, expansions, cost, effect,
+ * Supply or unique starter card presentation, matching the layout and styling of CardSearchScreen.
+ * Displays card title (wiki link), type, note icon, favorite star, expansions, cost, effect,
  * and a collapsible image viewer.
  */
 export default function CardDisplayItem({
   card,
   headerExtra,
-  containerStyle
+  containerStyle,
+  isSupplyCard = true
 }: CardDisplayItemProps) {
   const [showImage, setShowImage] = useState(false);
 
@@ -44,11 +48,16 @@ export default function CardDisplayItem({
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <span style={{ fontSize: '0.8rem', color: '#aaa', flexShrink: 0 }}>{card.type}</span>
           {headerExtra}
-          <FavoriteStar category="supply" id={card.id} name={card.name} />
+          {isSupplyCard && (
+            <>
+              <NoteButton category="supply" id={card.id} name={card.name} />
+              <FavoriteStar category="supply" id={card.id} name={card.name} />
+            </>
+          )}
         </div>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: '#aaa', marginBottom: '0.5rem' }}>
-        <span>{card.expansions?.join(', ') || 'Unknown'}</span>
+        {isSupplyCard && <span>{card.expansions?.join(', ') || 'Unknown'}</span>}
         <span>Cost: {card.cost}</span>
       </div>
       <ScrapedHtml

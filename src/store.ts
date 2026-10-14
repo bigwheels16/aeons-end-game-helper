@@ -24,6 +24,11 @@ const FavoriteIdsSchema = z.array(z.string()).catch([]);
 
 const emptyFavorites = (): Favorites => ({ supply: [], mages: [], nemeses: [] });
 
+/** Persisted notes of one category by record id; an invalid value resets the category to {}. */
+const NotesByIdSchema = z.record(z.string()).catch({});
+
+const emptyNotes = (): Notes => ({ supply: {}, mages: {}, nemeses: {} });
+
 const GameStateSchema = z.object({
   playerCount: z.union([z.number().min(1).max(4), z.literal('custom')]),
   customDeck: z.array(CardTypeSchema).default([]),
@@ -56,6 +61,12 @@ const GameStateSchema = z.object({
     mages: FavoriteIdsSchema,
     nemeses: FavoriteIdsSchema,
   }).catch(emptyFavorites),
+  /** Notes by record id, kept like favorites. */
+  notes: z.object({
+    supply: NotesByIdSchema,
+    mages: NotesByIdSchema,
+    nemeses: NotesByIdSchema,
+  }).catch(emptyNotes),
   /** App-wide "Expansions". An invalid value resets it to [] (= All). */
   ownedExpansions: z.array(z.string()).catch([]),
   /** Expansion profiles and the active ones; an invalid value resets to []. */
@@ -82,6 +93,8 @@ const GameStateSchema = z.object({
       return resolved;
     })
     .catch({}),
+  /** Supply Scanner card ids in supply order; an invalid value resets it to []. */
+  scannerSupply: z.array(z.string()).catch([]),
 });
 
 /**
@@ -149,10 +162,14 @@ export interface NemesisSearchFilters {
   difficultyRange: [number, number];
 }
 
-export type FavoriteCategory = 'supply' | 'mages' | 'nemeses';
+/** Kinds of items that can be favorited and given a note. */
+export type ItemCategory = 'supply' | 'mages' | 'nemeses';
 
 /** Record ids of favorited items, grouped by category. */
-export type Favorites = Record<FavoriteCategory, string[]>;
+export type Favorites = Record<ItemCategory, string[]>;
+
+/** The user's note on each item, by category and record id. */
+export type Notes = Record<ItemCategory, Record<string, string>>;
 
 /**
  * Zustand slice managing card search filter state.
@@ -173,7 +190,11 @@ export interface SearchSlice {
   /** Persisted favorited supply cards, mages, and nemeses, by record id */
   favorites: Favorites;
   /** Adds the item with this record id to its category's favorites, or removes it if already favorited */
-  toggleFavorite: (category: FavoriteCategory, id: string) => void;
+  toggleFavorite: (category: ItemCategory, id: string) => void;
+  /** Persisted notes on supply cards, mages, and nemeses, by record id */
+  notes: Notes;
+  /** Sets the note on the item with this record id; an empty note removes it */
+  setNote: (category: ItemCategory, id: string, text: string) => void;
 }
 
 /**
@@ -252,7 +273,17 @@ export interface ExpansionsSlice {
   deleteExpansionProfile: (id: string) => void;
 }
 
-type GameState = ConfigSlice & PlaySlice & SearchSlice & SupplyRandomizerSlice & ExpansionsSlice;
+/**
+ * Zustand slice holding the Supply Scanner's supply, so it is kept between visits.
+ */
+export interface ScannerSlice {
+  /** Card ids of the supply, in order. May contain ids not in the dataset; the screen skips them. */
+  scannerSupply: string[];
+  /** Replaces the supply. */
+  setScannerSupply: (ids: string[]) => void;
+}
+
+type GameState = ConfigSlice & PlaySlice & SearchSlice & SupplyRandomizerSlice & ExpansionsSlice & ScannerSlice;
 
 const applyVisibility = (drawPile: Card[], visibilityOption: VisibilityOption): Card[] => {
   let newPile = drawPile.map(c => ({ ...c, isRevealed: !!c.isRevealed }));
@@ -424,6 +455,16 @@ const createSearchSlice: StateCreator<GameState, [], [], SearchSlice> = (set) =>
       : [...current, id];
     return { favorites: { ...state.favorites, [category]: updated } };
   }),
+  notes: emptyNotes(),
+  setNote: (category, id, text) => set((state) => {
+    const byId = { ...state.notes[category] };
+    if (text) {
+      byId[id] = text;
+    } else {
+      delete byId[id];
+    }
+    return { notes: { ...state.notes, [category]: byId } };
+  }),
 });
 
 /**
@@ -493,6 +534,11 @@ const createExpansionsSlice: StateCreator<GameState, [], [], ExpansionsSlice> = 
   }),
 });
 
+const createScannerSlice: StateCreator<GameState, [], [], ScannerSlice> = (set) => ({
+  scannerSupply: [],
+  setScannerSupply: (ids) => set({ scannerSupply: ids }),
+});
+
 /**
  * localStorage whose writes are guarded, so a full or blocked storage (quota exceeded, private mode)
  * logs the error and the session continues in memory. Read errors are reported by zustand through
@@ -518,6 +564,7 @@ export const useGameStore = create<GameState>()(
       ...createSearchSlice(...a),
       ...createRandomizerSlice(...a),
       ...createExpansionsSlice(...a),
+      ...createScannerSlice(...a),
     }),
     {
       name: 'aeons-end-game-storage',

@@ -1,7 +1,7 @@
-import { useGameStore, FavoriteCategory } from '../store';
+import { useGameStore, ItemCategory } from '../store';
 
 export interface FavoriteStarProps {
-  category: FavoriteCategory;
+  category: ItemCategory;
   /** Bundled record id: the favorites key. */
   id: string;
   /** Display name: used only for the aria-label. */

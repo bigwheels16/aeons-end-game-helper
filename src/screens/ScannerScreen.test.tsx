@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import ScannerScreen from './ScannerScreen';
+import { useGameStore } from '../store';
 
 vi.mock('../../data/scraped/aeons_end_all.json', () => ({
   default: {
@@ -39,10 +40,12 @@ const tileNames = () =>
 describe('ScannerScreen', () => {
   beforeEach(() => {
     window.history.replaceState(null, '', '/#scanner');
+    useGameStore.setState({ scannerSupply: [] });
   });
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    localStorage.clear();
   });
 
   it('restores the supply from the URL, skipping unknown ids, and keeps the URL in sync', async () => {
@@ -62,14 +65,49 @@ describe('ScannerScreen', () => {
     expect(cardsParam()).toBeNull();
   });
 
-  it('drops the supply from the URL when leaving the screen', () => {
+  it('drops the supply from the URL when leaving the screen, and restores it on the next visit', async () => {
     mockFetch({ '/oauth2/userinfo': () => json({}, 401) });
-    window.history.replaceState(null, '', '/?cards=supply:ruby#scanner');
+    window.history.replaceState(null, '', '/?cards=supply:ruby,supply:jade#scanner');
 
     const { unmount } = render(<ScannerScreen />);
+    fireEvent.click(screen.getByRole('button', { name: 'Remove Jade' }));
     unmount();
 
     expect(cardsParam()).toBeNull();
+    expect(useGameStore.getState().scannerSupply).toEqual(['supply:ruby']);
+
+    render(<ScannerScreen />);
+    await screen.findByRole('link', { name: 'Log in' });
+
+    expect(tileNames()).toEqual(['Ruby']);
+    expect(cardsParam()).toBe('supply:ruby');
+  });
+
+  it('restores the saved supply when the URL has none, skipping unknown ids', async () => {
+    mockFetch({ '/oauth2/userinfo': () => json({}, 401) });
+    useGameStore.setState({ scannerSupply: ['supply:opal', 'supply:nope', 'supply:spark'] });
+
+    render(<ScannerScreen />);
+    await screen.findByRole('link', { name: 'Log in' });
+
+    expect(tileNames()).toEqual(['Opal', 'Spark']);
+    expect(cardsParam()).toBe('supply:opal,supply:spark');
+    expect(useGameStore.getState().scannerSupply).toEqual(['supply:opal', 'supply:spark']);
+  });
+
+  it('replaces the saved supply with the one in a share link', async () => {
+    mockFetch({ '/oauth2/userinfo': () => json({}, 401) });
+    useGameStore.setState({ scannerSupply: ['supply:opal'] });
+    window.history.replaceState(null, '', '/?cards=supply:jade#scanner');
+
+    render(<ScannerScreen />);
+    await screen.findByRole('link', { name: 'Log in' });
+
+    expect(tileNames()).toEqual(['Jade']);
+    expect(useGameStore.getState().scannerSupply).toEqual(['supply:jade']);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Clear All' }));
+    expect(useGameStore.getState().scannerSupply).toEqual([]);
   });
 
   it('offers a login that returns to the current supply when logged out', async () => {

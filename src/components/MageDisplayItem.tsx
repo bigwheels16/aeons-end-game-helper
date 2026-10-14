@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { ScrapedMage, ScrapedUniqueStarter } from '../types/scraped';
+import { ScrapedMage } from '../types/scraped';
 import { getMageStarters } from '../utils/mages';
+import CardDisplayItem from './CardDisplayItem';
 import FavoriteStar from './FavoriteStar';
+import NoteButton from './NoteButton';
 import ScrapedHtml from './ScrapedHtml';
 import WikiImage from './WikiImage';
 import WikiLink from './WikiLink';
@@ -18,39 +20,6 @@ export interface MageDisplayItemProps {
   mage: ScrapedMage;
 }
 
-/** One unique starter card: title (wiki link), type, effect, and a collapsible image. */
-function UniqueStarter({ starter }: { starter: ScrapedUniqueStarter }) {
-  const [showImage, setShowImage] = useState(false);
-
-  return (
-    <div style={{ backgroundColor: '#333', padding: '0.75rem', borderRadius: '4px', border: '1px solid #444' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-        <strong style={{ color: '#fff' }}>
-          <WikiLink title={starter.name} style={{ color: '#4CAF50', textDecoration: 'none' }}>
-            {starter.name}
-          </WikiLink>
-        </strong>
-        <span style={{ fontSize: '0.8rem', color: '#aaa' }}>{starter.type}</span>
-      </div>
-      <ScrapedHtml
-        html={starter.effect}
-        style={{ fontSize: '0.85rem', color: '#ddd', textAlign: 'center' }}
-      />
-      <button 
-        onClick={() => setShowImage(prev => !prev)}
-        style={{ marginTop: '0.5rem', background: 'none', border: 'none', color: '#2196F3', cursor: 'pointer', padding: 0, fontSize: '0.875rem' }}
-      >
-        {showImage ? 'Hide Image' : 'Show Image'}
-      </button>
-      {showImage && (
-        <div style={{ marginTop: '0.5rem' }}>
-          {starter.images?.map(file => <WikiImage key={file} file={file} />)}
-        </div>
-      )}
-    </div>
-  );
-}
-
 /** One starting card list (hand or deck), one card per line. */
 function StartingCards({ label, html }: { label: string; html: string | undefined }) {
   if (!html) return null;
@@ -63,7 +32,7 @@ function StartingCards({ label, html }: { label: string; html: string | undefine
 }
 
 /**
- * Mage presentation card: title (wiki link), favorite star, special ability and additional rules,
+ * Mage presentation card: title (wiki link), note icon, favorite star, special ability and additional rules,
  * complexity, color-coded breach positions, starting hand and deck, mat images, and unique starter cards.
  */
 export default function MageDisplayItem({ mage }: MageDisplayItemProps) {
@@ -78,7 +47,10 @@ export default function MageDisplayItem({ mage }: MageDisplayItemProps) {
             {mage.name}
           </WikiLink>
         </h2>
-        <FavoriteStar category="mages" id={mage.id} name={mage.name} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
+          <NoteButton category="mages" id={mage.id} name={mage.name} />
+          <FavoriteStar category="mages" id={mage.id} name={mage.name} />
+        </div>
       </div>
       <h4 style={{ margin: '0 0 1rem 0', color: '#aaa', fontWeight: 'normal', fontStyle: 'italic' }}>
         {mage.title ? `${mage.title} | ` : ''}{mage.expansions?.join(', ') || 'Unknown'}
@@ -145,7 +117,12 @@ export default function MageDisplayItem({ mage }: MageDisplayItemProps) {
           <strong style={{ color: '#ccc', display: 'block', marginBottom: '0.5rem' }}>Unique Starters:</strong>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             {starters.map(starter => (
-              <UniqueStarter key={starter.id} starter={starter} />
+              <CardDisplayItem
+                key={starter.id}
+                card={starter}
+                isSupplyCard={false}
+                containerStyle={{ backgroundColor: '#333' }}
+              />
             ))}
           </div>
         </div>

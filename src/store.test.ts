@@ -351,3 +351,94 @@ describe('persisted randomizedResult', () => {
     expect(result).toEqual({ 'slot-2': jade });
   });
 });
+
+describe('notes', () => {
+  beforeEach(() => {
+    useGameStore.setState({ notes: { supply: {}, mages: {}, nemeses: {} } });
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    localStorage.clear();
+  });
+
+  it('setNote sets and replaces one note per item, and an empty note removes it', () => {
+    useGameStore.getState().setNote('mages', 'mage:brama', 'First');
+    useGameStore.getState().setNote('mages', 'mage:brama', 'Second');
+    useGameStore.getState().setNote('supply', 'supply:jade', 'Jade note');
+    expect(useGameStore.getState().notes).toEqual({
+      supply: { 'supply:jade': 'Jade note' },
+      mages: { 'mage:brama': 'Second' },
+      nemeses: {},
+    });
+
+    useGameStore.getState().setNote('mages', 'mage:brama', '');
+    expect(useGameStore.getState().notes.mages).toEqual({});
+  });
+
+  it('restores saved notes from storage', async () => {
+    const saved = { supply: { 'supply:jade': 'Buy early.' }, mages: {}, nemeses: { 'nemesis:rageborne': 'Rush it.' } };
+    writePersisted({ ...makeSavedState(), notes: saved });
+
+    await useGameStore.persist.rehydrate();
+
+    expect(useGameStore.getState().notes).toEqual(saved);
+  });
+
+  it('starts with no notes when the save has none, and keeps the rest of the save', async () => {
+    writePersisted(makeSavedState());
+
+    await useGameStore.persist.rehydrate();
+
+    expect(useGameStore.getState().notes).toEqual({ supply: {}, mages: {}, nemeses: {} });
+    expect(useGameStore.getState().favorites).toEqual(SAVED_FAVORITES);
+  });
+
+  it('resets an invalid category to no notes and keeps the other categories', async () => {
+    writePersisted({
+      ...makeSavedState(),
+      notes: { supply: { 'supply:jade': 5 }, mages: { 'mage:brama': 'Keep me.' }, nemeses: [] },
+    });
+
+    await useGameStore.persist.rehydrate();
+
+    expect(useGameStore.getState().notes).toEqual({ supply: {}, mages: { 'mage:brama': 'Keep me.' }, nemeses: {} });
+    expect(useGameStore.getState().favorites).toEqual(SAVED_FAVORITES);
+  });
+});
+
+describe('persisted scannerSupply', () => {
+  beforeEach(() => {
+    useGameStore.setState({ scannerSupply: [] });
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    localStorage.clear();
+  });
+
+  it('saves the supply to storage', () => {
+    useGameStore.getState().setScannerSupply(['supply:jade', 'supply:transmuters-lens']);
+
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)!);
+    expect(saved.state.scannerSupply).toEqual(['supply:jade', 'supply:transmuters-lens']);
+  });
+
+  it('restores the saved supply from storage', async () => {
+    writePersisted({ ...makeSavedState(), scannerSupply: ['supply:transmuters-lens', 'supply:jade'] });
+
+    await useGameStore.persist.rehydrate();
+
+    expect(useGameStore.getState().scannerSupply).toEqual(['supply:transmuters-lens', 'supply:jade']);
+  });
+
+  it('resets an invalid saved supply to empty and keeps the rest of the save', async () => {
+    writePersisted({ ...makeSavedState(), scannerSupply: 'supply:jade' });
+
+    await useGameStore.persist.rehydrate();
+
+    expect(useGameStore.getState().scannerSupply).toEqual([]);
+    expect(useGameStore.getState().favorites).toEqual(SAVED_FAVORITES);
+  });
+});

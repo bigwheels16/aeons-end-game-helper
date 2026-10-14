@@ -12,15 +12,8 @@ export interface ScrapedSupplyCard {
   images?: string[];
 }
 
-export interface ScrapedUniqueStarter {
-  id: string;
-  name: string;
-  type: string;
-  cost?: string | number;
-  effect?: string;
-  expansions?: string[];
+export interface ScrapedUniqueStarter extends ScrapedSupplyCard {
   mage?: string;
-  images?: string[];
 }
 
 export interface ScrapedMage {
