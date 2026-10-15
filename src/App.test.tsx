@@ -49,7 +49,16 @@ describe('App Integration', () => {
   });
 
   it('plays a full round by tapping the current turn card, then starts a new round', () => {
-    vi.useFakeTimers();
+    vi.useFakeTimers({
+      toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date', 'requestAnimationFrame', 'cancelAnimationFrame'],
+    });
+    /** Runs the frames a draw waits for, then loads the drawn card's image, which ends the draw. */
+    const finishDraw = () => {
+      act(() => {
+        vi.advanceTimersByTime(32);
+      });
+      fireEvent.load(screen.getByRole('button', { name: /Draw next turn card|Start new round/ }).querySelector('img')!);
+    };
     try {
       render(<App />);
       fireEvent.click(screen.getByText('Turn Order Helper'));
@@ -64,6 +73,7 @@ describe('App Integration', () => {
         const before = useGameStore.getState().discardPile.length;
         const top = useGameStore.getState().discardPile[before - 1];
         fireEvent.click(screen.getByRole('button', { name: `${top.type}. Draw next turn card` }));
+        finishDraw();
         expect(useGameStore.getState().discardPile).toHaveLength(before + 1);
         act(() => {
           vi.advanceTimersByTime(1000);
@@ -76,6 +86,7 @@ describe('App Integration', () => {
       const card = screen.getByRole('button', { name: `${last.type}. Start new round` });
       expect(screen.getByText('(tap the card to draw the next one)')).toBeDefined();
       fireEvent.click(card);
+      finishDraw();
 
       expect(useGameStore.getState().roundNumber).toBe(2);
       expect(useGameStore.getState().discardPile).toHaveLength(1);

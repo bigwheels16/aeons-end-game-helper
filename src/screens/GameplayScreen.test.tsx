@@ -2,7 +2,7 @@ import { render, screen, fireEvent, act, within } from '@testing-library/react';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import GameplayScreen from './GameplayScreen';
 import { useGameStore } from '../store';
-import { Card } from '../deckEngine';
+import { Card, CARD_IMAGES } from '../deckEngine';
 
 describe('GameplayScreen Component', () => {
   beforeEach(() => {
@@ -80,8 +80,19 @@ describe('GameplayScreen Component', () => {
     ];
     const currentCard: Card = { id: 'p0', type: 'Player 3', imageFaceUrl: 'url0', isRevealed: true };
 
+    const drawButton = () => screen.getByRole('button', { name: /Draw next turn card|Start new round/ });
+    const indicator = () => screen.queryByTestId('drawing-indicator');
+    /** Runs the frames a draw waits for, so the tapped draw happens. */
+    const paintFrames = () => act(() => {
+      vi.advanceTimersByTime(32);
+    });
+    /** Fires the load event of the current card's image, as the browser does once the image has loaded. */
+    const loadCurrentCard = () => fireEvent.load(drawButton().querySelector('img')!);
+
     beforeEach(() => {
-      vi.useFakeTimers();
+      vi.useFakeTimers({
+        toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date', 'requestAnimationFrame', 'cancelAnimationFrame'],
+      });
       useGameStore.setState({ drawPile: drawCards, discardPile: [currentCard] });
     });
 
@@ -109,6 +120,7 @@ describe('GameplayScreen Component', () => {
       render(<GameplayScreen />);
 
       fireEvent.click(screen.getByRole('button', { name: /Draw next turn card/ }));
+      paintFrames();
 
       const state = useGameStore.getState();
       expect(state.discardPile.map(c => c.id)).toEqual(['p0', 'p1']);
@@ -117,20 +129,120 @@ describe('GameplayScreen Component', () => {
 
     it('ignores a second tap within 1s and reflects the disabled state on the card', () => {
       render(<GameplayScreen />);
-      const cardButton = screen.getByRole('button', { name: /Draw next turn card/ });
 
-      fireEvent.click(cardButton);
-      expect(cardButton.getAttribute('aria-disabled')).toBe('true');
-      fireEvent.click(cardButton);
+      fireEvent.click(drawButton());
+      expect(drawButton().getAttribute('aria-disabled')).toBe('true');
+      fireEvent.click(drawButton());
+      paintFrames();
       expect(useGameStore.getState().discardPile).toHaveLength(2);
+      loadCurrentCard();
+      expect(drawButton().getAttribute('aria-disabled')).toBe('true');
 
       act(() => {
         vi.advanceTimersByTime(1000);
       });
 
-      expect(cardButton.getAttribute('aria-disabled')).toBe('false');
-      fireEvent.click(cardButton);
+      expect(drawButton().getAttribute('aria-disabled')).toBe('false');
+      fireEvent.click(drawButton());
+      paintFrames();
       expect(useGameStore.getState().discardPile).toHaveLength(3);
+    });
+
+    it('shows the working indicator from the tap until the drawn card has loaded, and ignores taps meanwhile', () => {
+      render(<GameplayScreen />);
+      expect(indicator()).toBeNull();
+      expect(drawButton().getAttribute('aria-busy')).toBe('false');
+
+      fireEvent.click(drawButton());
+      // The indicator shows at once; the draw waits until it has been painted
+      expect(indicator()).not.toBeNull();
+      expect(drawButton().getAttribute('aria-busy')).toBe('true');
+      expect(useGameStore.getState().discardPile).toHaveLength(1);
+
+      paintFrames();
+      expect(useGameStore.getState().discardPile.map(c => c.id)).toEqual(['p0', 'p1']);
+      expect(indicator()).not.toBeNull();
+
+      // Past the 1s debounce, taps are still ignored while the drawn card loads
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+      fireEvent.click(drawButton());
+      paintFrames();
+      expect(useGameStore.getState().discardPile).toHaveLength(2);
+      expect(drawButton().getAttribute('aria-disabled')).toBe('true');
+
+      loadCurrentCard();
+      expect(indicator()).toBeNull();
+      expect(drawButton().getAttribute('aria-busy')).toBe('false');
+      expect(drawButton().getAttribute('aria-disabled')).toBe('false');
+
+      fireEvent.click(drawButton());
+      paintFrames();
+      expect(useGameStore.getState().discardPile).toHaveLength(3);
+    });
+
+    it('hides the indicator when the drawn card fails to load', () => {
+      render(<GameplayScreen />);
+
+      fireEvent.click(drawButton());
+      paintFrames();
+      fireEvent.error(drawButton().querySelector('img')!);
+
+      expect(indicator()).toBeNull();
+    });
+
+    it('keeps the other controls usable while drawing', () => {
+      render(<GameplayScreen />);
+      fireEvent.click(drawButton());
+      paintFrames();
+      expect(indicator()).not.toBeNull();
+
+      fireEvent.click(screen.getByText('Special Actions'));
+      expect(screen.getByText('Move Cards')).toBeDefined();
+      fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+      expect(screen.queryByText('Move Cards')).toBeNull();
+
+      fireEvent.click(screen.getByText('End Game'));
+      expect(screen.getByText('Are you sure you want to end the game?')).toBeDefined();
+    });
+
+    it('hides the indicator when a new round starts with a card of the same id as the last one', () => {
+      const onlyCard: Card = { id: 'Player 1-0', type: 'Player 1', imageFaceUrl: CARD_IMAGES['Player 1'], isRevealed: true };
+      useGameStore.setState({ playerCount: 'custom', customDeck: ['Player 1'], drawPile: [], discardPile: [onlyCard], roundNumber: 1 });
+      render(<GameplayScreen />);
+      const imageBefore = drawButton().querySelector('img');
+
+      fireEvent.click(drawButton());
+      paintFrames();
+      expect(useGameStore.getState().roundNumber).toBe(2);
+      expect(useGameStore.getState().discardPile.map(c => c.id)).toEqual(['Player 1-0']);
+      // A new image is mounted, so its load event ends the draw
+      expect(drawButton().querySelector('img')).not.toBe(imageBefore);
+
+      loadCurrentCard();
+      expect(indicator()).toBeNull();
+    });
+
+    it('hides the indicator when the draw leaves no current card', () => {
+      useGameStore.setState({ playerCount: 'custom', customDeck: [], drawPile: [], discardPile: [], roundNumber: 1 });
+      render(<GameplayScreen />);
+
+      fireEvent.click(screen.getByRole('button', { name: /^Round Over\. Start new round$/ }));
+      paintFrames();
+
+      expect(useGameStore.getState().roundNumber).toBe(2);
+      expect(indicator()).toBeNull();
+    });
+
+    it('does not draw if the screen is closed before the draw runs', () => {
+      const { unmount } = render(<GameplayScreen />);
+
+      fireEvent.click(drawButton());
+      unmount();
+      paintFrames();
+
+      expect(useGameStore.getState().discardPile).toHaveLength(1);
     });
 
     it('starts a new round when the draw pile is empty', () => {
@@ -138,6 +250,7 @@ describe('GameplayScreen Component', () => {
       render(<GameplayScreen />);
 
       fireEvent.click(screen.getByRole('button', { name: /^Player 3\. Start new round$/ }));
+      paintFrames();
 
       expect(useGameStore.getState().roundNumber).toBe(2);
     });
@@ -170,6 +283,7 @@ describe('GameplayScreen Component', () => {
       render(<GameplayScreen />);
 
       fireEvent.click(screen.getByRole('button', { name: /^Player 3\. Draw next turn card$/ }));
+      paintFrames();
 
       // Drawing reveals the card, so the name reports its type
       expect(screen.getByRole('button', { name: /^Player 1\. Draw next turn card$/ })).toBeDefined();
@@ -192,6 +306,7 @@ describe('GameplayScreen Component', () => {
       expect(screen.getByText('(tap the card to draw the next one)')).toBeDefined();
 
       fireEvent.click(cardButton);
+      paintFrames();
       expect(useGameStore.getState().roundNumber).toBe(4);
     });
   });

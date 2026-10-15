@@ -31,6 +31,14 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
+/** Runs the callback in the frame after the next one is painted; returns a function that cancels it. */
+const afterNextPaint = (callback: () => void) => {
+  let frame = requestAnimationFrame(() => {
+    frame = requestAnimationFrame(callback);
+  });
+  return () => cancelAnimationFrame(frame);
+};
+
 interface CardViewProps {
   card: Card;
   isSelected?: boolean;
@@ -173,25 +181,34 @@ const CardPile = ({ cards, limit, emptyText, customClass, onCardClick, selectedI
 
 interface CurrentTurnDisplayProps {
   currentTurn: Card | null;
+  /** Round of the current card; card ids repeat across rounds. */
+  roundNumber: number;
   /** When provided, the card acts as the "draw next turn" control. */
   onDraw?: () => void;
   /** Temporarily blocks drawing (e.g. double-tap debounce) while keeping focus on the card. */
   isDrawDisabled?: boolean;
+  /** Shows the working indicator over the card while a draw is in progress. */
+  isDrawing?: boolean;
+  /** Called when the current card's image has loaded or failed to load. */
+  onCardShown?: () => void;
   /** True when the draw pile is empty, so drawing starts a new round. */
   startsNewRound?: boolean;
 }
 
-const CurrentTurnDisplay = ({ currentTurn, onDraw, isDrawDisabled = false, startsNewRound = false }: CurrentTurnDisplayProps) => {
+const CurrentTurnDisplay = ({ currentTurn, roundNumber, onDraw, isDrawDisabled = false, isDrawing = false, onCardShown, startsNewRound = false }: CurrentTurnDisplayProps) => {
   const showFace = currentTurn ? !!currentTurn.isRevealed : false;
   const cardLabel = currentTurn ? (showFace ? currentTurn.type : 'Card Back') : 'Round Over';
   // Inside the button the image is decorative (alt="") because the button's label already names the card.
+  // Keyed by round as well, so every draw mounts a new image and gets its own load event.
   const renderCardImage = (alt: string) => currentTurn ? (
     <img
-      key={currentTurn.id}
+      key={`${roundNumber}-${currentTurn.id}`}
       src={showFace ? currentTurn.imageFaceUrl : CARD_BACK_URL}
       alt={alt}
       className={styles.currentTurnImage}
       draggable={false}
+      onLoad={onCardShown}
+      onError={onCardShown}
     />
   ) : null;
 
@@ -212,9 +229,15 @@ const CurrentTurnDisplay = ({ currentTurn, onDraw, isDrawDisabled = false, start
         className={styles.currentTurnButton}
         onClick={onDraw}
         aria-disabled={isDrawDisabled}
+        aria-busy={isDrawing}
         aria-label={`${cardLabel}. ${actionLabel}`}
       >
         {renderCardImage('') ?? <span className={styles.roundOverText}>Round Over</span>}
+        {isDrawing && (
+          <span className={styles.drawingIndicator} data-testid="drawing-indicator">
+            <span className={styles.drawingSpinner} />
+          </span>
+        )}
       </button>
       <p className={styles.currentTurnHint}>(tap the card to draw the next one)</p>
     </div>
@@ -258,12 +281,36 @@ const GameplayScreen: React.FC = () => {
     : (localDiscardPile.length > 0 ? localDiscardPile[localDiscardPile.length - 1] : null);
 
   const [isNextTurnDisabled, setIsNextTurnDisabled] = useState(false);
+  const [isDrawing, setIsDrawing] = useState(false);
+  // Cancels a draw that is still waiting for the indicator to be painted
+  const cancelPendingDraw = useRef<(() => void) | null>(null);
+  // Set from the draw until the drawn card's image has loaded
+  const isLoadingDrawnCard = useRef(false);
+
+  useEffect(() => () => cancelPendingDraw.current?.(), []);
 
   const handleNextTurn = () => {
-    if (specialMode === 'NONE' && !isNextTurnDisabled) {
-      nextTurn();
+    if (specialMode === 'NONE' && !isNextTurnDisabled && !isDrawing) {
+      // Shows the indicator first and draws once it is on screen, so it stays visible while the drawn card loads
+      setIsDrawing(true);
+      cancelPendingDraw.current = afterNextPaint(() => {
+        cancelPendingDraw.current = null;
+        nextTurn();
+        if (useGameStore.getState().discardPile.length > 0) {
+          isLoadingDrawnCard.current = true;
+        } else {
+          setIsDrawing(false);
+        }
+      });
       setIsNextTurnDisabled(true);
       setTimeout(() => setIsNextTurnDisabled(false), 1000);
+    }
+  };
+
+  const handleCardShown = () => {
+    if (isLoadingDrawnCard.current) {
+      isLoadingDrawnCard.current = false;
+      setIsDrawing(false);
     }
   };
   
@@ -485,8 +532,11 @@ const GameplayScreen: React.FC = () => {
         
         <CurrentTurnDisplay
           currentTurn={currentTurn}
+          roundNumber={roundNumber}
           onDraw={specialMode === 'NONE' ? handleNextTurn : undefined}
-          isDrawDisabled={isNextTurnDisabled}
+          isDrawDisabled={isNextTurnDisabled || isDrawing}
+          isDrawing={isDrawing}
+          onCardShown={handleCardShown}
           startsNewRound={drawPile.length === 0}
         />
 

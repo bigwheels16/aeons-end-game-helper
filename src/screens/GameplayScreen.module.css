@@ -148,6 +148,39 @@
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  position: relative;
+}
+
+@keyframes drawingFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes drawingSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Working indicator over the current card while a draw is in progress; taps pass through to the card. */
+.drawingIndicator {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  animation: drawingFadeIn 0.15s ease-out;
+}
+
+.drawingSpinner {
+  width: 25%;
+  aspect-ratio: 1;
+  box-sizing: border-box;
+  border: 6px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: drawingSpin 0.8s linear infinite;
 }
 
 .currentTurnButton:focus {
