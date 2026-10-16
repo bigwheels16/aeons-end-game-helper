@@ -23,6 +23,7 @@ const ConfigScreen: React.FC = () => {
             playerCount: store.playerCount,
             allowConsecutiveNemesis: store.allowConsecutiveNemesis,
             allowConsecutivePlayer: store.allowConsecutivePlayer,
+            shuffleEachRound: store.shuffleEachRound,
             visibilityOption: store.visibilityOption,
           }}
           onChange={store.setGameOptions}

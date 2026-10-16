@@ -442,3 +442,109 @@ describe('persisted scannerSupply', () => {
     expect(useGameStore.getState().favorites).toEqual(SAVED_FAVORITES);
   });
 });
+
+describe('turn order kept between rounds', () => {
+  beforeEach(() => {
+    useGameStore.setState({
+      playerCount: 4,
+      customDeck: [],
+      allowConsecutiveNemesis: true,
+      allowConsecutivePlayer: true,
+      shuffleEachRound: false,
+      visibilityOption: 'current',
+      isPlaying: false,
+      drawPile: [],
+      discardPile: [],
+      roundNumber: 0,
+      keptTurnOrder: [],
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    localStorage.clear();
+  });
+
+  /** Starts a game the way the setup screen does, drawing the first turn. */
+  const startGame = () => {
+    useGameStore.getState().startGame();
+    useGameStore.getState().nextTurn();
+  };
+
+  /** Draws the rest of the round and the first turn of the next one. */
+  const nextRound = () => {
+    while (useGameStore.getState().drawPile.length > 0) useGameStore.getState().nextTurn();
+    useGameStore.getState().nextTurn();
+  };
+
+  /** Card ids of the current round, in turn order, while no turn after the first has been drawn. */
+  const roundOrder = () => {
+    const { discardPile, drawPile } = useGameStore.getState();
+    return [...discardPile, ...drawPile].map(c => c.id);
+  };
+
+  it('shuffles a preset deck once and deals every later round in that order', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+    startGame();
+    const firstRound = roundOrder();
+    expect(firstRound).not.toEqual(generateDeck(4).map(c => c.id));
+    vi.restoreAllMocks();
+
+    for (let round = 2; round <= 4; round++) {
+      nextRound();
+      expect(useGameStore.getState().roundNumber).toBe(round);
+      expect(roundOrder()).toEqual(firstRound);
+    }
+  });
+
+  it('deals a custom deck in the order it was built every round', () => {
+    const customDeck = ['Nemesis', 'Player 2', 'Player 1', 'Nemesis'] as const;
+    useGameStore.setState({ playerCount: 'custom', customDeck: [...customDeck], allowConsecutiveNemesis: false });
+
+    startGame();
+    for (let round = 1; round <= 3; round++) {
+      const { discardPile, drawPile } = useGameStore.getState();
+      expect([...discardPile, ...drawPile].map(c => c.type)).toEqual(customDeck);
+      nextRound();
+    }
+  });
+
+  it('keeps the order when only the visibility changes, and deals a new one when a turn order option changes', () => {
+    startGame();
+    const kept = useGameStore.getState().keptTurnOrder;
+    expect(kept.map(c => c.id)).toEqual(roundOrder());
+
+    const options = { playerCount: 4, allowConsecutiveNemesis: true, allowConsecutivePlayer: true, shuffleEachRound: false } as const;
+    useGameStore.getState().setGameOptions({ ...options, visibilityOption: 'all' });
+    expect(useGameStore.getState().keptTurnOrder).toBe(kept);
+
+    useGameStore.getState().setGameOptions({ ...options, playerCount: 2, visibilityOption: 'all' });
+    expect(useGameStore.getState().keptTurnOrder).toEqual([]);
+
+    nextRound();
+    const secondRound = roundOrder();
+    expect([...secondRound].sort()).toEqual(generateDeck(2).map(c => c.id).sort());
+    nextRound();
+    expect(roundOrder()).toEqual(secondRound);
+  });
+
+  it('keeps no order while shuffling each round', () => {
+    useGameStore.setState({ shuffleEachRound: true });
+    startGame();
+    nextRound();
+    expect(useGameStore.getState().keptTurnOrder).toEqual([]);
+  });
+
+  it('restores the option and kept order from storage, defaulting for saves without them', async () => {
+    writePersisted(makeSavedState());
+    await useGameStore.persist.rehydrate();
+    expect(useGameStore.getState().shuffleEachRound).toBe(true);
+    expect(useGameStore.getState().keptTurnOrder).toEqual([]);
+
+    const keptTurnOrder = generateDeck(2);
+    writePersisted({ ...makeSavedState(), shuffleEachRound: false, keptTurnOrder });
+    await useGameStore.persist.rehydrate();
+    expect(useGameStore.getState().shuffleEachRound).toBe(false);
+    expect(useGameStore.getState().keptTurnOrder).toEqual(keptTurnOrder);
+  });
+});

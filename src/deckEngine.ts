@@ -105,18 +105,21 @@ export function generateDeck(playerCount: number | 'custom', customDeck: CardTyp
  *   - If the previous round ended with a Nemesis turn (`lastTurnType === 'Nemesis'`),
  *     the new round will not begin with a Nemesis turn.
  *   - In unavoidable cases (e.g. deck contains only Nemesis cards), rule is suspended.
+ * - If `repeating` is true, the order is played every round, so its last card is also checked against its first.
  * - Resets `isRevealed` on all cards in the deck upon shuffling.
  *
  * @param deck - The deck of cards to shuffle
  * @param allowConsecutiveNemesis - Whether back-to-back Nemesis turns are permitted
  * @param lastTurnType - The card type played on the last turn of the previous round, if applicable
+ * @param repeating - Whether the shuffled order is kept for every later round
  * @returns A newly shuffled array of Card objects
  */
 export function shuffleDeck(
   deck: Card[],
   allowConsecutiveNemesis: boolean,
   allowConsecutivePlayer: boolean,
-  lastTurnType: CardType | null
+  lastTurnType: CardType | null,
+  repeating = false
 ): Card[] {
   let shuffled = deck.map(c => {
     const { isRevealed, ...rest } = c;
@@ -126,6 +129,9 @@ export function shuffleDeck(
   let attempts = 0;
 
   const isPlayerCard = (type: CardType) => type.startsWith('Player');
+  const isForbiddenPair = (first: CardType, second: CardType) =>
+    (!allowConsecutiveNemesis && first === 'Nemesis' && second === 'Nemesis') ||
+    (!allowConsecutivePlayer && isPlayerCard(first) && first === second);
 
   // We will just try 100 times. If it fails, it returns the last attempt.
   // This handles both unavoidable cases (returns whatever it gets) and
@@ -137,20 +143,18 @@ export function shuffleDeck(
     valid = true;
     
     // Check first card against last turn of previous round
-    if (!allowConsecutiveNemesis && lastTurnType === 'Nemesis' && shuffled[0].type === 'Nemesis') {
+    if (lastTurnType && shuffled.length > 0 && isForbiddenPair(lastTurnType, shuffled[0].type)) {
       valid = false;
     }
-    if (!allowConsecutivePlayer && lastTurnType && isPlayerCard(lastTurnType) && shuffled[0].type === lastTurnType) {
+
+    // Check the last card against the first one when the order repeats
+    if (repeating && shuffled.length > 1 && isForbiddenPair(shuffled[shuffled.length - 1].type, shuffled[0].type)) {
       valid = false;
     }
 
     // Check consecutive cards in the new deck
     for (let i = 0; i < shuffled.length - 1; i++) {
-      if (!allowConsecutiveNemesis && shuffled[i].type === 'Nemesis' && shuffled[i + 1].type === 'Nemesis') {
-        valid = false;
-        break;
-      }
-      if (!allowConsecutivePlayer && isPlayerCard(shuffled[i].type) && shuffled[i].type === shuffled[i + 1].type) {
+      if (isForbiddenPair(shuffled[i].type, shuffled[i + 1].type)) {
         valid = false;
         break;
       }

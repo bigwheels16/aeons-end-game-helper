@@ -35,6 +35,7 @@ Keep one note of your own on any mage, nemesis or supply card.
 
 #### Game Setup & Configuration
 - **Player Count:** Supports standard 1 to 4 player counts with official card distributions, as well as a **Custom** option for constructing user-defined turn order decks.
+- **Turn Order:** *Shuffle each round* (default) reshuffles the deck at the start of every round. *Same order each round* plays a custom deck in the order it was built, and shuffles any other deck once and then plays it in that order every round. Changing the player count, the consecutive turn options or this option during a game shuffles a new order at the start of the next round.
 - **Consecutive Turns:** Option to allow or prevent consecutive Nemesis turns or same-player turns.
 - **Card Visibility:**
   - *Current turn:* Displays only the current turn card face; all draw pile cards are shown face-down. (default)
@@ -43,7 +44,7 @@ Keep one note of your own on any mage, nemesis or supply card.
 
 #### Nemesis Turn Rules & Shuffling Logic
 - **Consecutive Nemesis Prevention:** When disabled, the deck engine ensures no two Nemesis cards appear consecutively within a round.
-- **Cross-Round Transitions:** If the previous round concluded on a Nemesis turn, the subsequent round will not begin with a Nemesis turn upon reshuffling.
+- **Cross-Round Transitions:** If the previous round concluded on a Nemesis turn, the subsequent round will not begin with a Nemesis turn upon reshuffling. An order kept for every round is also shuffled so that its last turn does not repeat into its first.
 - **Unavoidable Case Fallback:** If the remaining cards in a deck are all Nemesis cards, the rule is gracefully suspended.
 
 #### Custom Actions & Deck Manipulation

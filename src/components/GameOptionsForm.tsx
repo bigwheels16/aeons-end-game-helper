@@ -52,6 +52,24 @@ export const GameOptionsForm: React.FC<GameOptionsFormProps> = ({ options, onCha
       </div>
 
       <div>
+        <h4 style={{ margin: '0 0 10px 0', color: 'inherit' }} title="Shuffle the deck every round, or play the same order every round. A custom deck keeps the order it was built in; other decks are shuffled once.">
+          Turn Order <span style={{ fontSize: '0.8em', color: '#888', cursor: 'help' }}>ⓘ</span>
+        </h4>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <OptionCard 
+            title="Shuffle each round" 
+            active={options.shuffleEachRound} 
+            onClick={() => updateOption('shuffleEachRound', true)} 
+          />
+          <OptionCard 
+            title="Same order each round" 
+            active={!options.shuffleEachRound} 
+            onClick={() => updateOption('shuffleEachRound', false)} 
+          />
+        </div>
+      </div>
+
+      <div>
         <h4 style={{ margin: '0 0 10px 0', color: 'inherit' }} title="Toggle whether the Nemesis or the same Player can take multiple turns in a row.">
           Consecutive Turns <span style={{ fontSize: '0.8em', color: '#888', cursor: 'help' }}>ⓘ</span>
         </h4>

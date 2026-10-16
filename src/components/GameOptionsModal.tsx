@@ -20,6 +20,7 @@ function GameOptionsDialog({ onClose }: { onClose: () => void }) {
     playerCount: store.playerCount,
     allowConsecutiveNemesis: store.allowConsecutiveNemesis,
     allowConsecutivePlayer: store.allowConsecutivePlayer,
+    shuffleEachRound: store.shuffleEachRound,
     visibilityOption: store.visibilityOption,
   });
 

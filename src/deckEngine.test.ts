@@ -52,6 +52,14 @@ describe('deckEngine', () => {
     }
   });
 
+  it('should not let a repeating order end and start with a Nemesis if not allowed', () => {
+    const deck = generateDeck(1); // 3x Player 1, 2x Nemesis
+    for (let run = 0; run < 20; run++) {
+      const shuffled = shuffleDeck(deck, false, true, null, true);
+      expect([shuffled[shuffled.length - 1].type, shuffled[0].type]).not.toEqual(['Nemesis', 'Nemesis']);
+    }
+  });
+
   it('should shuffle without consecutive player cards if not allowed', () => {
     const deck = generateDeck(2); // 2 players: 2x Player 1, 2x Player 2, 2x Nemesis
     const shuffled = shuffleDeck(deck, true, false, null);

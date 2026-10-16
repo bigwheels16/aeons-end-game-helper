@@ -311,9 +311,10 @@ describe('GameplayScreen Component', () => {
     });
   });
 
-  it('Update Game Options: Cancel discards the changes; Save applies all four and reveals the draw pile', () => {
+  it('Update Game Options: Cancel discards the changes; Save applies every option and reveals the draw pile', () => {
     useGameStore.setState({
       allowConsecutivePlayer: true,
+      shuffleEachRound: true,
       drawPile: [
         { id: 'p1', type: 'Player 1', imageFaceUrl: 'url1', isRevealed: false },
         { id: 'n1', type: 'Nemesis', imageFaceUrl: 'url2', isRevealed: false },
@@ -326,8 +327,8 @@ describe('GameplayScreen Component', () => {
       return within(screen.getByRole('heading', { name: 'Update Game Options' }).parentElement!);
     };
     const savedOptions = () => {
-      const { playerCount, allowConsecutiveNemesis, allowConsecutivePlayer, visibilityOption } = useGameStore.getState();
-      return { playerCount, allowConsecutiveNemesis, allowConsecutivePlayer, visibilityOption };
+      const { playerCount, allowConsecutiveNemesis, allowConsecutivePlayer, shuffleEachRound, visibilityOption } = useGameStore.getState();
+      return { playerCount, allowConsecutiveNemesis, allowConsecutivePlayer, shuffleEachRound, visibilityOption };
     };
     const before = savedOptions();
 
@@ -344,6 +345,7 @@ describe('GameplayScreen Component', () => {
     fireEvent.click(dialog.getByText('3'));
     fireEvent.click(dialog.getByText('Nemesis'));
     fireEvent.click(dialog.getByText('Same Player'));
+    fireEvent.click(dialog.getByText('Same order each round'));
     fireEvent.click(dialog.getByText('All turns'));
     fireEvent.click(dialog.getByRole('button', { name: 'Save Options' }));
 
@@ -351,6 +353,7 @@ describe('GameplayScreen Component', () => {
       playerCount: 3,
       allowConsecutiveNemesis: false,
       allowConsecutivePlayer: false,
+      shuffleEachRound: false,
       visibilityOption: 'all',
     });
     expect(screen.queryByAltText('Card Back')).toBeNull();

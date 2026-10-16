@@ -34,11 +34,14 @@ const GameStateSchema = z.object({
   customDeck: z.array(CardTypeSchema).default([]),
   allowConsecutiveNemesis: z.boolean(),
   allowConsecutivePlayer: z.boolean().default(true),
+  shuffleEachRound: z.boolean().default(true),
   visibilityOption: VisibilityOptionSchema,
   isPlaying: z.boolean(),
   drawPile: z.array(CardSchema),
   discardPile: z.array(CardSchema),
   roundNumber: z.number().min(0),
+  /** An invalid value resets it to [], so the next round deals a new order. */
+  keptTurnOrder: z.array(CardSchema).catch([]),
   turnHistory: z.array(z.object({
     roundNumber: z.number(),
     card: CardSchema,
@@ -109,6 +112,11 @@ export interface ConfigSlice {
   allowConsecutiveNemesis: boolean;
   /** Whether consecutive player turns are allowed */
   allowConsecutivePlayer: boolean;
+  /**
+   * Whether the deck is shuffled every round. When false, a custom deck is played in the order it was
+   * built, and any other deck is shuffled once and then played in that order every round.
+   */
+  shuffleEachRound: boolean;
   /** Active draw pile visibility setting */
   visibilityOption: VisibilityOption;
   /** Updates configured player count */
@@ -120,7 +128,10 @@ export interface ConfigSlice {
 }
 
 /** The game options edited by GameOptionsForm. */
-export type GameOptionsData = Pick<ConfigSlice, 'playerCount' | 'allowConsecutiveNemesis' | 'allowConsecutivePlayer' | 'visibilityOption'>;
+export type GameOptionsData = Pick<ConfigSlice, 'playerCount' | 'allowConsecutiveNemesis' | 'allowConsecutivePlayer' | 'shuffleEachRound' | 'visibilityOption'>;
+
+/** Options that change which order the next round is dealt in. */
+const TURN_ORDER_OPTIONS = ['playerCount', 'allowConsecutiveNemesis', 'allowConsecutivePlayer', 'shuffleEachRound'] as const;
 
 export interface TurnHistoryEntry {
   roundNumber: number;
@@ -132,6 +143,8 @@ export interface PlaySlice {
   drawPile: Card[];
   discardPile: Card[];
   roundNumber: number;
+  /** The order every round is dealt in while shuffleEachRound is off; empty until a round deals one. */
+  keptTurnOrder: Card[];
   turnHistory: TurnHistoryEntry[];
   startGame: () => void;
   nextTurn: () => void;
@@ -295,6 +308,18 @@ const applyVisibility = (drawPile: Card[], visibilityOption: VisibilityOption): 
   return newPile;
 };
 
+/** The deck for a new round, and the order to keep for the rounds after it. */
+const dealRound = (state: GameState, lastTurnType: CardType | null): { deck: Card[]; keptTurnOrder: Card[] } => {
+  const deck = generateDeck(state.playerCount, state.customDeck);
+  if (state.shuffleEachRound) {
+    return { deck: shuffleDeck(deck, state.allowConsecutiveNemesis, state.allowConsecutivePlayer, lastTurnType), keptTurnOrder: [] };
+  }
+  if (state.playerCount === 'custom') return { deck, keptTurnOrder: [] };
+  if (state.keptTurnOrder.length > 0) return { deck: state.keptTurnOrder, keptTurnOrder: state.keptTurnOrder };
+  const shuffled = shuffleDeck(deck, state.allowConsecutiveNemesis, state.allowConsecutivePlayer, lastTurnType, true);
+  return { deck: shuffled, keptTurnOrder: shuffled };
+};
+
 const updateRoundHistory = (
   turnHistory: TurnHistoryEntry[],
   roundNumber: number,
@@ -309,10 +334,20 @@ const createConfigSlice: StateCreator<GameState, [], [], ConfigSlice> = (set, ge
   customDeck: [],
   allowConsecutiveNemesis: true,
   allowConsecutivePlayer: true,
+  shuffleEachRound: true,
   visibilityOption: 'current',
   setPlayerCount: (count) => set({ playerCount: count }),
   setCustomDeck: (deck) => set({ customDeck: deck }),
-  setGameOptions: (options) => set({ ...options, drawPile: applyVisibility(get().drawPile, options.visibilityOption) }),
+  setGameOptions: (options) => {
+    const state = get();
+    // Changing the deck or how it is ordered deals a new kept order next round
+    const turnOrderChanged = TURN_ORDER_OPTIONS.some((key) => options[key] !== state[key]);
+    set({
+      ...options,
+      drawPile: applyVisibility(state.drawPile, options.visibilityOption),
+      keptTurnOrder: turnOrderChanged ? [] : state.keptTurnOrder,
+    });
+  },
 });
 
 const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) => ({
@@ -320,20 +355,19 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
   drawPile: [],
   discardPile: [],
   roundNumber: 0,
+  keptTurnOrder: [],
   turnHistory: [],
 
   startGame: () => {
     const state = get();
-    const initialDeck = generateDeck(state.playerCount, state.customDeck);
-    let shuffled = shuffleDeck(initialDeck, state.allowConsecutiveNemesis, state.allowConsecutivePlayer, null);
-    
-    shuffled = applyVisibility(shuffled, state.visibilityOption);
+    const { deck, keptTurnOrder } = dealRound({ ...state, keptTurnOrder: [] }, null);
     
     set({
       isPlaying: true,
-      drawPile: shuffled,
+      drawPile: applyVisibility(deck, state.visibilityOption),
       discardPile: [],
       roundNumber: 1,
+      keptTurnOrder,
       turnHistory: [],
     });
   },
@@ -350,23 +384,18 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
         turnHistory: [...state.turnHistory, { roundNumber: state.roundNumber, card: revealed }],
       });
     } else {
-      const initialDeck = generateDeck(state.playerCount, state.customDeck);
       const lastTurnType = state.discardPile.length > 0 ? state.discardPile[state.discardPile.length - 1].type : null;
-      let shuffled = shuffleDeck(initialDeck, state.allowConsecutiveNemesis, state.allowConsecutivePlayer, lastTurnType);
-      
-      let nextCard = shuffled.shift() || null;
-      if (nextCard) {
-        nextCard = { ...nextCard, isRevealed: true };
-      }
-      
-      shuffled = applyVisibility(shuffled, state.visibilityOption);
+      const { deck, keptTurnOrder } = dealRound(state, lastTurnType);
+      const [first, ...rest] = deck;
+      const nextCard = first ? { ...first, isRevealed: true } : null;
       
       const turnHistory = nextCard ? [...state.turnHistory, { roundNumber: state.roundNumber + 1, card: nextCard }] : state.turnHistory;
 
       set({
         discardPile: nextCard ? [nextCard] : [],
-        drawPile: shuffled,
+        drawPile: applyVisibility(rest, state.visibilityOption),
         roundNumber: state.roundNumber + 1,
+        keptTurnOrder,
         turnHistory,
       });
     }
@@ -378,6 +407,7 @@ const createPlaySlice: StateCreator<GameState, [], [], PlaySlice> = (set, get) =
       drawPile: [],
       discardPile: [],
       roundNumber: 0,
+      keptTurnOrder: [],
       turnHistory: [],
     });
   },
