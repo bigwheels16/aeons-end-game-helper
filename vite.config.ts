@@ -9,6 +9,10 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    // Build output with hashed file names, served with a long-lived cache
+    build: {
+      assetsDir: 'immutable',
+    },
     server: {
       watch: {
         usePolling: true,
