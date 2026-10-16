@@ -4,7 +4,7 @@ import CardSearchScreen from './CardSearchScreen';
 import { useGameStore } from '../store';
 
 // Mock the scraped data to keep the test predictable and fast
-vi.mock('../../data/scraped/aeons_end_all.json', () => ({
+vi.mock('../../data/aeons_end_all.json', () => ({
   default: {
     supply: [
       {

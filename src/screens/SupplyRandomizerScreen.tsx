@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useGameStore } from '../store';
-import scrapedData from '../../data/scraped/aeons_end_all.json';
+import scrapedData from '../../data/aeons_end_all.json';
 import { matchesOwned } from '../utils/expansions';
 import { useOwnedExpansions } from '../hooks/useOwnedExpansions';
 import { MyExpansionsChip } from '../components/MyExpansions';

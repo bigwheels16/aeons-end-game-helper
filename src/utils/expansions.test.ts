@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { ALL_EXPANSIONS, formatOwnedList, getEffectiveOwned, getUniqueExpansions, matchesOwned } from './expansions';
 
-vi.mock('../../data/scraped/aeons_end_all.json', () => ({
+vi.mock('../../data/aeons_end_all.json', () => ({
   default: {
     supply: [
       { name: 'Jade', type: 'Gem', expansions: ['Base'] },

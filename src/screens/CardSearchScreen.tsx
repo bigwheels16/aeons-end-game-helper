@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import scrapedData from '../../data/scraped/aeons_end_all.json';
+import scrapedData from '../../data/aeons_end_all.json';
 import { useGameStore } from '../store';
 import { useDebounce } from '../hooks/useDebounce';
 import { useOwnedExpansions } from '../hooks/useOwnedExpansions';

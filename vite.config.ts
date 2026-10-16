@@ -16,6 +16,8 @@ export default defineConfig(({ mode }) => {
     server: {
       watch: {
         usePolling: true,
+        // Scraper cache and downloaded images aren't watched
+        ignored: ['**/data/scraped/**'],
       },
       proxy: scannerTarget
         ? {

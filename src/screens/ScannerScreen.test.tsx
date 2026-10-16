@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import ScannerScreen from './ScannerScreen';
 import { useGameStore } from '../store';
 
-vi.mock('../../data/scraped/aeons_end_all.json', () => ({
+vi.mock('../../data/aeons_end_all.json', () => ({
   default: {
     supply: [
       { id: 'supply:jade', name: 'Jade', type: 'Gem', expansions: ['Base'], cost: '2', effect: 'Gain 2 aether.', images: ['Jade.jpg'] },

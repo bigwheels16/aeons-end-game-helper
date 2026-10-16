@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import SupplyRandomizerScreen from './SupplyRandomizerScreen';
 import { useGameStore } from '../store';
 
-vi.mock('../../data/scraped/aeons_end_all.json', () => ({
+vi.mock('../../data/aeons_end_all.json', () => ({
   default: {
     supply: [
       {

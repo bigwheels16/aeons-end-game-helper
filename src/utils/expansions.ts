@@ -1,4 +1,4 @@
-import scrapedData from '../../data/scraped/aeons_end_all.json';
+import scrapedData from '../../data/aeons_end_all.json';
 
 export interface ItemWithExpansions {
   expansions?: string[];

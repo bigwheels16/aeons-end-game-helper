@@ -18,7 +18,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import scrapedData from '../../data/scraped/aeons_end_all.json';
+import scrapedData from '../../data/aeons_end_all.json';
 import { useGameStore } from '../store';
 import { ScrapedSupplyCard } from '../types/scraped';
 import { getSupplyCardById } from '../utils/cards';

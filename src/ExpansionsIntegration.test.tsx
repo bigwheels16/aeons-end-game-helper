@@ -12,7 +12,7 @@ import { useGameStore } from './store';
 // Expansions: Base (all three datasets), Buried Secrets (supply only), Promo (supply + nemeses),
 // War Eternal (mages only) => ALL_EXPANSIONS has 4 entries. Base has two supply cards so the
 // randomizer can re-roll within it.
-vi.mock('../data/scraped/aeons_end_all.json', () => ({
+vi.mock('../data/aeons_end_all.json', () => ({
   default: {
     supply: [
       { id: 'supply:jade', name: 'Jade', type: 'Gem', expansions: ['Base'], cost: '2', effect: 'Gain 2 aether.' },

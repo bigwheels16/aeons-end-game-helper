@@ -41,7 +41,7 @@ SYNTHETIC_PAGES = {
 }
 
 
-DATASET_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "scraped", "aeons_end_all.json")
+DATASET_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "aeons_end_all.json")
 WIKI_IMG = "https://aeonsend.wiki.gg/images/"
 UNSAFE_MARKUP = re.compile(r"on\w+=|javascript:|style=|<a\b|<script|<svg|<math", re.IGNORECASE)
 
@@ -397,7 +397,7 @@ class ValidateIdsTests(unittest.TestCase):
 
 class MainExitTests(unittest.TestCase):
     def _write_cache(self, output_dir, pages):
-        cache_dir = os.path.join(output_dir, ".cache")
+        cache_dir = os.path.join(output_dir, scraper.SCRAPED_DIRNAME, ".cache")
         os.makedirs(cache_dir)
         for page in pages:
             with open(os.path.join(cache_dir, f"page_{page['pageid']}.json"), "w", encoding="utf-8") as f:
@@ -685,7 +685,7 @@ class DownloadImagesTests(unittest.TestCase):
         tmp = tempfile.TemporaryDirectory()
         self.addCleanup(tmp.cleanup)
         self.output_dir = tmp.name
-        self.images_dir = os.path.join(self.output_dir, "images")
+        self.images_dir = os.path.join(self.output_dir, scraper.SCRAPED_DIRNAME, "images")
         self.wiki = _FakeWiki(self.FILES)
 
     def _download(self):

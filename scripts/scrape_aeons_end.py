@@ -6,13 +6,13 @@ for each game and expansion from https://aeonsend.wiki.gg using the MediaWiki AP
 HTML fields are sanitized with nh3 (allowlisted tags/attributes, wiki-hosted images only).
 Each record lists the wiki file names of its card or mat images in "images".
 With --download-images, those images and the images inside the records' HTML fields are
-downloaded one at a time into <output-dir>/images/, skipping unchanged files.
+downloaded one at a time into <output-dir>/scraped/images/, skipping unchanged files.
 
 Requires: pip install --only-binary :all: -r scripts/requirements.txt
 
 Usage:
   python scrape_aeons_end.py
-  python scrape_aeons_end.py --output-dir ./data/scraped
+  python scrape_aeons_end.py --output-dir ./data
   python scrape_aeons_end.py --expansion "The Depths"
   python scrape_aeons_end.py --download-images
   docker run --rm -v ${PWD}:/app -w /app python:3 sh -c "pip install --only-binary :all: -r scripts/requirements.txt && python scripts/scrape_aeons_end.py"
@@ -38,6 +38,8 @@ import nh3
 API_URL = "https://aeonsend.wiki.gg/api.php"
 DEFAULT_USER_AGENT = "AeonsEndWikiScraper/1.0"
 OUTPUT_FILENAME = "aeons_end_all.json"
+# Folder in the output directory for the page cache and downloaded images
+SCRAPED_DIRNAME = "scraped"
 IMAGES_DIRNAME = "images"
 IMAGE_MANIFEST_FILENAME = "images.json"
 
@@ -1052,14 +1054,14 @@ def load_image_manifest(path: str) -> Dict[str, str]:
 def download_images(by_category: Dict[str, List[Dict[str, Any]]], args: argparse.Namespace) -> None:
     """
     Downloads the records' card and mat images, and the images in their HTML fields, into
-    <output-dir>/images/ under the names the records use, one request at a time, waiting
+    <output-dir>/scraped/images/ under the names the records use, one request at a time, waiting
     args.image_delay seconds after each download. images.json maps each file name to the wiki sha1 of
     the version on disk and is saved even when the downloads stop early; a file is only requested
     again when the wiki's sha1 changes. The wiki's CDN may re-encode images, so a download only has
     to be a non-empty image. Images the wiki doesn't have, or whose name is unsafe as a local file
     name, are listed and skipped.
     """
-    images_dir = os.path.join(args.output_dir, IMAGES_DIRNAME)
+    images_dir = os.path.join(args.output_dir, SCRAPED_DIRNAME, IMAGES_DIRNAME)
     manifest_path = os.path.join(images_dir, IMAGE_MANIFEST_FILENAME)
     used_by = collect_image_names(by_category)
     names = sorted(used_by)
@@ -1146,7 +1148,7 @@ def scrape(args: argparse.Namespace) -> None:
     print(f"Target: {API_URL}")
     print(f"Output Directory: {args.output_dir}\n")
 
-    cache_dir = os.path.join(args.output_dir, ".cache")
+    cache_dir = os.path.join(args.output_dir, SCRAPED_DIRNAME, ".cache")
     all_pages_data = collect_or_load_pages(args, cache_dir)
     if not all_pages_data:
         return
@@ -1162,8 +1164,8 @@ def main():
     parser = argparse.ArgumentParser(description="Scrape Aeon's End game data from aeonsend.wiki.gg")
     parser.add_argument(
         "--output-dir",
-        default=os.path.join(os.path.dirname(__file__), "..", "data", "scraped"),
-        help="Directory where scraped JSON data will be written",
+        default=os.path.join(os.path.dirname(__file__), "..", "data"),
+        help="Directory where the JSON dataset is written; the page cache and images go in its scraped/ folder",
     )
     parser.add_argument(
         "--batch-size",
@@ -1193,7 +1195,7 @@ def main():
         "--skip-download",
         action="store_true",
         dest="cache_only",
-        help="Skip all network downloads and parse directly from existing cached files in .cache/",
+        help="Skip all network downloads and parse directly from existing cached files in scraped/.cache/",
     )
     parser.add_argument(
         "--no-cache",
@@ -1208,7 +1210,7 @@ def main():
     parser.add_argument(
         "--download-images",
         action="store_true",
-        help="Also download card, mat and rules-text images into <output-dir>/images/; unchanged images are skipped",
+        help="Also download card, mat and rules-text images into <output-dir>/scraped/images/; unchanged images are skipped",
     )
     parser.add_argument(
         "--image-delay",
