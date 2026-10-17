@@ -1,18 +1,18 @@
-import { wikiImageUrl } from '../utils/wikiUrls';
+import { imageUrl } from '../utils/wikiUrls';
 
 export interface WikiImageProps {
-  /** Wiki image file name, e.g. "Jade.jpg" or "Brama_Front.jpg". */
-  file: string;
+  /** Image file name from the dataset, e.g. "Jade.webp" or "Brama_Front.webp". */
+  name: string;
 }
 
-/** Lazily loaded wiki image that opens full size in a new tab; the alt text is the file name without its extension. */
-export default function WikiImage({ file }: WikiImageProps) {
-  const url = wikiImageUrl(file);
+/** Lazily loaded hosted image that opens on its own in a new tab; the alt text is the name without its extension, with spaces for underscores. */
+export default function WikiImage({ name }: WikiImageProps) {
+  const url = imageUrl(name);
   return (
     <a href={url} target="_blank" rel="noopener noreferrer">
       <img
         src={url}
-        alt={file.replace(/\.[^.]*$/, '').replace(/_/g, ' ')}
+        alt={name.replace(/\.[^.]*$/, '').replace(/_/g, ' ')}
         loading="lazy"
         style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }}
       />

@@ -6,10 +6,10 @@ import { useGameStore } from '../store';
 vi.mock('../../data/aeons_end_all.json', () => ({
   default: {
     supply: [
-      { id: 'supply:jade', name: 'Jade', type: 'Gem', expansions: ['Base'], cost: '2', effect: 'Gain 2 aether.', images: ['Jade.jpg'] },
-      { id: 'supply:ruby', name: 'Ruby', type: 'Gem', expansions: ['Base'], cost: '4', effect: 'Gain 3 aether.', images: ['Ruby.jpg'] },
-      { id: 'supply:spark', name: 'Spark', type: 'Spell', expansions: ['Promo'], cost: '1', effect: 'Deal 1 damage.', images: ['Spark.jpg'] },
-      { id: 'supply:opal', name: 'Opal', type: 'Gem', expansions: ['Base'], cost: '4', effect: 'Gain 3 aether.', images: ['Opal.jpg'] },
+      { id: 'supply:jade', name: 'Jade', type: 'Gem', expansions: ['Base'], cost: '2', effect: 'Gain 2 aether.', images: ['Jade.webp'] },
+      { id: 'supply:ruby', name: 'Ruby', type: 'Gem', expansions: ['Base'], cost: '4', effect: 'Gain 3 aether.', images: ['Ruby.webp'] },
+      { id: 'supply:spark', name: 'Spark', type: 'Spell', expansions: ['Promo'], cost: '1', effect: 'Deal 1 damage.', images: ['Spark.webp'] },
+      { id: 'supply:opal', name: 'Opal', type: 'Gem', expansions: ['Base'], cost: '4', effect: 'Gain 3 aether.', images: ['Opal.webp'] },
     ],
     unique_starters: [],
     mages: [],

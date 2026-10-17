@@ -108,7 +108,7 @@ export default function MageDisplayItem({ mage }: MageDisplayItemProps) {
       </button>
       {showMats && (
         <div style={{ marginBottom: '1rem', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          {mage.images?.map(file => <WikiImage key={file} file={file} />)}
+          {mage.images?.map(name => <WikiImage key={name} name={name} />)}
         </div>
       )}
 

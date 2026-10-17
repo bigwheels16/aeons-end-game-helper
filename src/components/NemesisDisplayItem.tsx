@@ -70,7 +70,7 @@ export default function NemesisDisplayItem({ nemesis }: NemesisDisplayItemProps)
       </button>
       {showMats && (
         <div style={{ marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          {nemesis.images?.map(file => <WikiImage key={file} file={file} />)}
+          {nemesis.images?.map(name => <WikiImage key={name} name={name} />)}
         </div>
       )}
     </div>

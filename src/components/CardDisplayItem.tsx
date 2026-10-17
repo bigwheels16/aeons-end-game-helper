@@ -72,7 +72,7 @@ export default function CardDisplayItem({
       </button>
       {showImage && (
         <div style={{ marginTop: '0.5rem' }}>
-          {card.images?.map(file => <WikiImage key={file} file={file} />)}
+          {card.images?.map(name => <WikiImage key={name} name={name} />)}
         </div>
       )}
     </div>

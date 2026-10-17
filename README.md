@@ -65,7 +65,7 @@ The **Supply Randomizer** tool automates creating randomized, balanced market se
   - *Search Text Filters:* Instant keyword filtering against card names and rules/effect text.
   - *Live Match Previews:* Real-time matching card counter and horizontally scrollable preview chips that immediately indicate whether constraints can be satisfied.
 - **Intelligent Backtracking Randomization:** Employs a depth-first constraint satisfaction solver using the Most Constrained Variable (MRV) heuristic. It guarantees 100% unique card selection across all slots with zero duplicate cards, fast execution, loop/timeout protection, and graceful error messaging if constraints cannot be met.
-- **Visual Card Preview & Inline Image:** Upon randomization, each slot reveals the assigned card name, type, cost, and effect text. Players can click "Show Image" on any assigned slot to expand the official card artwork, and click the image to open it full size in a new tab.
+- **Visual Card Preview & Inline Image:** Upon randomization, each slot reveals the assigned card name, type, cost, and effect text. Players can click "Show Image" on any assigned slot to expand the official card artwork, and click the image to open it on its own in a new tab.
 - **Send to Scanner:** Once every slot has a card, *Send to Scanner* opens the **Supply Scanner** with those cards in slot order, replacing the scanner's current supply.
 
 ---
@@ -73,7 +73,7 @@ The **Supply Randomizer** tool automates creating randomized, balanced market se
 ### 3. Card Search Tool
 The integrated **Card Search** tool allows quick browsing, searching, and filtering of player market cards (Gems, Relics, Spells).
 - **Advanced Filters:** Filter by card name, effect text, cost ranges, and specific card types. Results only include cards from your app-wide **Expansions** setting, which "Clear All Filters" leaves unchanged.
-- **Inline Images:** Expand any card to see its full-resolution artwork, and click any expanded image to open it in a new tab for native zooming.
+- **Inline Images:** Expand any card to see its artwork, and click any expanded image to open it on its own in a new tab.
 
 ---
 
@@ -143,7 +143,7 @@ The database includes cards, mages, and nemeses from **13 sets and expansions**:
 
 ## Artwork & Assets
 
-All card texts, mechanical data, abilities, and image assets (including standard turn order cards, player mats, and nemesis mats) are sourced directly from the official [Aeon's End Wiki on wiki.gg](https://aeonsend.wiki.gg/). 
+All card texts, mechanical data, abilities, and image assets (including standard turn order cards, player mats, and nemesis mats) are sourced directly from the official [Aeon's End Wiki on wiki.gg](https://aeonsend.wiki.gg/).
 
 ---
 

@@ -6,6 +6,7 @@
  */
 
 import { shuffleInPlace } from './utils/shuffle';
+import { imageUrl } from './utils/wikiUrls';
 
 /**
  * Valid card types in the Aeon's End turn order deck.
@@ -41,18 +42,18 @@ export interface Card {
 }
 
 /**
- * Official card face image URLs sourced from the Aeon's End Wiki.
+ * Card face image URLs: hosted copies of the Aeon's End Wiki's turn order card images.
  * @see https://aeonsend.wiki.gg/wiki/Turn_Order_Deck
  */
 export const CARD_IMAGES: Record<CardType, string> = {
-  'Player 1': 'https://aeonsend.wiki.gg/images/Turn_Order_Card_1.jpg',
-  'Player 2': 'https://aeonsend.wiki.gg/images/Turn_Order_Card_2.jpg',
-  'Player 3': 'https://aeonsend.wiki.gg/images/Turn_Order_Card_3.jpg',
-  'Player 4': 'https://aeonsend.wiki.gg/images/Turn_Order_Card_4.jpg',
-  'Nemesis': 'https://aeonsend.wiki.gg/images/Turn_Order_Card_Nemesis.jpg',
-  'Wild': 'https://aeonsend.wiki.gg/images/Turn_Order_Card_Wild.jpg',
-  'Player 1/2': 'https://aeonsend.wiki.gg/images/Turn_Order_Card_1_2.jpg',
-  'Player 3/4': 'https://aeonsend.wiki.gg/images/Turn_Order_Card_3_4.jpg'
+  'Player 1': imageUrl('Turn_Order_Card_1.webp'),
+  'Player 2': imageUrl('Turn_Order_Card_2.webp'),
+  'Player 3': imageUrl('Turn_Order_Card_3.webp'),
+  'Player 4': imageUrl('Turn_Order_Card_4.webp'),
+  'Nemesis': imageUrl('Turn_Order_Card_Nemesis.webp'),
+  'Wild': imageUrl('Turn_Order_Card_Wild.webp'),
+  'Player 1/2': imageUrl('Turn_Order_Card_1_2.webp'),
+  'Player 3/4': imageUrl('Turn_Order_Card_3_4.webp')
 };
 
 /**

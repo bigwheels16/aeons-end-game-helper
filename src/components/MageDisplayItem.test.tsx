@@ -9,7 +9,7 @@ const mage: ScrapedMage = {
   type: 'Mage',
   starting_hand: '1x Buried Light<br>4x Crystal',
   starting_deck: '3x Crystal<br>2x Spark',
-  images: ['Brama_Front.jpg', 'Brama_Back.jpg'],
+  images: ['Brama_Front.webp', 'Brama_Back.webp'],
 };
 
 describe('MageDisplayItem', () => {
@@ -46,8 +46,8 @@ describe('MageDisplayItem', () => {
 
     const srcs = screen.getAllByRole('img').map(img => img.getAttribute('src'));
     expect(srcs).toEqual([
-      'https://aeonsend.wiki.gg/images/Brama_Front.jpg',
-      'https://aeonsend.wiki.gg/images/Brama_Back.jpg',
+      'https://aeons-end.jkbff.com/images/Brama_Front.webp',
+      'https://aeons-end.jkbff.com/images/Brama_Back.webp',
     ]);
     expect(screen.getByRole('img', { name: 'Brama Front' })).toBeTruthy();
   });

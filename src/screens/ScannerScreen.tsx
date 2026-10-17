@@ -139,7 +139,7 @@ function SupplyTile({ entry, showImages, onSwap, onRemove }: SupplyTileProps) {
             <span className={styles.tileName} title={card.name}>{card.name}</span>
             {controls}
           </div>
-          {card.images?.map(file => <WikiImage key={file} file={file} />)}
+          {card.images?.map(name => <WikiImage key={name} name={name} />)}
         </div>
       ) : (
         <CardDisplayItem card={card} headerExtra={controls} />
