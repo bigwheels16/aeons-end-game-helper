@@ -61,42 +61,43 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectTool }) => {
   };
 
   return (
-    <div
-      style={{
-        padding: '2rem 1rem',
-        textAlign: 'center',
-        fontFamily: 'sans-serif',
-        maxWidth: '480px',
-        width: '100%',
-        margin: '0 auto',
-        boxSizing: 'border-box',
-        overflowY: 'auto',
-      }}
-    >
-      <h1>Aeon's End Tools</h1>
-      <MyExpansionsChip />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'stretch' }}>
-        {TOOLS.map(({ id, label }) => (
-          <button key={id} onClick={() => onSelectTool(id)} style={buttonStyle}>
-            {label}
-          </button>
-        ))}
-      </div>
+    <div style={{ flex: 1, overflowY: 'auto' }}>
+      <div
+        style={{
+          padding: '2rem 1rem',
+          textAlign: 'center',
+          fontFamily: 'sans-serif',
+          maxWidth: '480px',
+          width: '100%',
+          margin: '0 auto',
+          boxSizing: 'border-box',
+        }}
+      >
+        <h1>Aeon's End Tools</h1>
+        <MyExpansionsChip />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'stretch' }}>
+          {TOOLS.map(({ id, label }) => (
+            <button key={id} onClick={() => onSelectTool(id)} style={buttonStyle}>
+              {label}
+            </button>
+          ))}
+        </div>
 
-      <div style={{ marginTop: '3rem', fontSize: '0.9rem', color: '#888' }}>
-        Images and game information provided by <a href="https://aeonsend.wiki.gg/" target="_blank" rel="noopener noreferrer" style={{ color: '#2b6cb0', textDecoration: 'none' }}>https://aeonsend.wiki.gg/</a>
-      </div>
-      <div style={{ marginTop: '1rem', fontSize: '0.8rem', color: '#666' }}>
-        Last Updated at {formatBuildTime(import.meta.env.VITE_BUILD_TIME)}
-      </div>
+        <div style={{ marginTop: '3rem', fontSize: '0.9rem', color: '#888' }}>
+          Images and game information provided by <a href="https://aeonsend.wiki.gg/" target="_blank" rel="noopener noreferrer" style={{ color: '#2b6cb0', textDecoration: 'none' }}>https://aeonsend.wiki.gg/</a>
+        </div>
+        <div style={{ marginTop: '1rem', fontSize: '0.8rem', color: '#666' }}>
+          Last Updated at {formatBuildTime(import.meta.env.VITE_BUILD_TIME)}
+        </div>
 
-      <div style={{ marginTop: '2rem', fontSize: '0.75rem', color: '#777', lineHeight: 1.5, textAlign: 'center' }}>
-        <p style={{ margin: '0 0 0.75rem 0' }}>
-          Disclaimer: This tool is an unofficial, fan-made project and is not affiliated with, endorsed, or sponsored by Indie Boards & Cards or Action Phase Games.
-        </p>
-        <p style={{ margin: 0 }}>
-          Aeon’s End and all associated logos, character names, card text, and artwork are trademarks and copyrights of Indie Boards & Cards. No copyright or trademark infringement is intended. All rights belong to their respective owners.
-        </p>
+        <div style={{ marginTop: '2rem', fontSize: '0.75rem', color: '#777', lineHeight: 1.5, textAlign: 'center' }}>
+          <p style={{ margin: '0 0 0.75rem 0' }}>
+            Disclaimer: This tool is an unofficial, fan-made project and is not affiliated with, endorsed, or sponsored by Indie Boards & Cards or Action Phase Games.
+          </p>
+          <p style={{ margin: 0 }}>
+            Aeon’s End and all associated logos, character names, card text, and artwork are trademarks and copyrights of Indie Boards & Cards. No copyright or trademark infringement is intended. All rights belong to their respective owners.
+          </p>
+        </div>
       </div>
     </div>
   );
